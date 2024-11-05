@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="3dp"
+    android:background="@drawable/listview"
+    android:id="@+id/list_view">
+
+    <TextView
+        android:id="@+id/tvEmployee"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        android:text="Employee"
+        android:textSize="24dp"
+        android:textStyle="bold"/>
+    <TextView
+        android:id="@+id/tvLeaveAppType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="Leave App Id"
+        android:textSize="20dp"
+        android:layout_below="@+id/tvEmployee"/>
+    <TextView
+        android:id="@+id/tvLeaveId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:visibility="gone"
+        android:layout_below="@+id/tvLeaveAppType"/>
+    <TextView
+        android:id="@+id/tvLeavetype"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="Leave Type"
+        android:textSize="20dp"
+        android:layout_below="@+id/tvLeaveId"/>
+    <TextView
+        android:id="@+id/tvUserId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:visibility="gone"
+        android:layout_below="@+id/tvLeavetype"/>
+
+</RelativeLayout>

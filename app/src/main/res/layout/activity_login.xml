@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LoginActivity"
+    android:orientation="vertical"
+    android:scrollbars="horizontal|vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal">
+
+                <ImageView
+                    android:layout_width="295dp"
+                    android:layout_height="271dp"
+                    app:srcCompat="@drawable/ic_employee_atten"
+                    android:layout_margin="15dp"/>
+
+                <EditText
+                    android:id="@+id/editUserText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginEnd="25dp"
+                    android:textSize="18sp"
+                    android:hint="User Name"
+                    android:textAllCaps="false"
+                    android:drawableEnd="@drawable/ic_username"/>
+
+                <EditText
+                    android:id="@+id/editPasswordText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginEnd="25dp"
+                    android:hint="Password"
+                    android:inputType="textPassword"
+                    android:textSize="18sp"
+                    android:drawableEnd="@drawable/ic_password"/>
+
+            </LinearLayout>
+
+            <CheckBox
+                android:id="@+id/checkboxRemember"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Remembar Me"
+                android:textSize="14sp"
+                android:checked="true"
+                android:layout_marginStart="20dp"/>
+            <TextView
+                android:id="@+id/txterrormsg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:visibility="gone"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="15dp">
+                <Button
+                    android:id="@+id/btnLogin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/login"
+                    android:layout_margin="10dp"
+                    android:backgroundTint="@color/submit"/>
+                <Button
+                    android:id="@+id/btnCancle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/cancel"
+                    android:layout_margin="10dp"
+                    android:backgroundTint="@color/cancle"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="15dp">
+
+                <TextView
+                    android:id="@+id/tvRegister"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:textColor="#b30000"
+                    android:textStyle="italic"
+                    android:text="@string/register"
+                    android:visibility="gone"/>
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

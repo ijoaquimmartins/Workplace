@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".RegisterActivity"
+    android:scrollbars="vertical|horizontal">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp"
+        android:scrollbars="vertical|horizontal">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Employee Registration"
+                    android:textStyle="bold"
+                    android:textSize="24sp"
+                    android:gravity="center_horizontal"/>
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"/>
+                <TextView
+                    android:id="@+id/txtdeviceId"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Device ID"
+                    android:textSize="24sp"
+                    android:layout_marginTop="10dp"/>
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/empfirstname"
+                    android:textSize="22sp"
+                    android:layout_marginTop="10dp"
+                    android:textStyle="italic"/>
+                <EditText
+                    android:id="@+id/txtEmployeeFirstName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="24sp"
+                    android:hint="First name"
+                    android:scrollHorizontally="true"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/empmidname"
+                    android:textSize="22sp"
+                    android:layout_marginTop="10dp"
+                    android:textStyle="italic"/>
+                <EditText
+                    android:id="@+id/txtEmployeeMiddleName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="24sp"
+                    android:hint="Middle name"
+                    android:scrollHorizontally="true"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/emplastname"
+                    android:textSize="22sp"
+                    android:layout_marginTop="10dp"
+                    android:textStyle="italic"/>
+
+                <EditText
+                    android:id="@+id/txtEmployeeLastName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="24sp"
+                    android:hint="Last name"
+                    android:scrollHorizontally="true"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mobileno"
+                    android:textSize="22sp"
+                    android:layout_marginTop="10dp"
+                    android:textStyle="italic"/>
+                <EditText
+                    android:id="@+id/txtMobileNo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="24sp"
+                    android:inputType="number"
+                    android:maxLength="10"
+                    android:hint="Mobile no"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/altmobileno"
+                    android:textSize="22sp"
+                    android:layout_marginTop="10dp"
+                    android:textStyle="italic"/>
+                <EditText
+                    android:id="@+id/txtAltmobileno"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="24sp"
+                    android:inputType="number"
+                    android:maxLength="10"
+                    android:hint="Alternate mobile no"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dob"
+                    android:textSize="22sp"
+                    android:layout_marginTop="10dp"
+                    android:textStyle="italic"/>
+                <EditText
+                        android:id="@+id/txtregisterDob"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="dd/mm/yyyy"
+                        android:inputType="date"
+                        android:textSize="24sp"
+                        android:drawableEnd="@drawable/ic_calendar"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/doj"
+                    android:textSize="24sp"
+                    android:layout_marginTop="10dp"
+                    android:textStyle="italic"/>
+                <EditText
+                    android:id="@+id/txtregisterDoj"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="date"
+                    android:textSize="24sp"
+                    android:hint="dd/mm/yyyy"
+                    android:drawableEnd="@drawable/ic_calendar"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/password"
+                    android:textSize="24sp"
+                    android:layout_marginTop="10dp"
+                    android:textStyle="italic"/>
+                <EditText
+                    android:id="@+id/txtregpassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="24sp"
+                    android:inputType="textPassword"
+                    android:hint="Enter password"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/repassword"
+                    android:textSize="24sp"
+                    android:layout_marginTop="10dp"
+                    android:textStyle="italic"/>
+                <EditText
+                    android:id="@+id/txtregconpassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="24sp"
+                    android:inputType="textPassword"
+                    android:hint="Confirm password"/>
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_horizontal">
+
+                <Button
+                    android:id="@+id/btnregsubmit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/submit"
+                    android:text="@string/submit"
+                    android:textSize="18sp"
+                    android:layout_margin="20dp"/>
+                <Button
+                    android:id="@+id/btnregcancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/cancel"
+                    android:backgroundTint="@color/cancle"
+                    android:textSize="18sp"
+                    android:layout_margin="20dp"/>
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>
