@@ -9,11 +9,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,7 +58,9 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
     TextView datesTV, tvTotalLeaves, tvLeaves, tvBalanceleaves, tvTypeCount;
     EditText etRemark;
     Button btnDatePicker, btnApplyLeave, btnCancel;
-    String stTotalLeaves, stLeaves, stBallance, stLeaveType, stDates, stremark, stLeave, selectedId, stTotalCount1, stMassage, stResponse;
+    String stTotalLeaves, stLeaves, stBallance, stLeaveType, stDates, stremark,
+            stLeave, selectedId, stTotalCount1, stMassage, stResponse, stDateEmp;
+
     String[] leavetype1 = {"Select", "Full Day", "Morning Half", "Evening Half"};
     String[] leavetype2 = {"Select", "Full Day"};
     String[] leavetype = {"Select"};
@@ -85,13 +91,11 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
         btnDatePicker = findViewById(R.id.btnDatePicker);
 
 
+
         btnApplyLeave.setVisibility(View.GONE);
 
         getLeave();
-
         getLeaveType();
-
-
 
         spinLeaveType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -347,6 +351,8 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
                         datearray.add(day1 + "/" + (month1 + 1) + "/" + year1);
                         newDateArray.add(year1 + "-" + (month1 + 1) + "-" + day1);
                         leavedates.put(year1 + "-" + (month1 + 1) + "-" + day1);
+                        stDateEmp = leavedates.toString();
+                        getLeaveEmps();
                     });
 
                 } else {
@@ -365,6 +371,8 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
                         datearray.add(day1 + "/" + (month1 + 1) + "/" + year1);
                         newDateArray.add(year1 + "-" + (month1 + 1) + "-" + day1);
                         leavedates.put(year1 + "-" + (month1 + 1) + "-" + day1);
+                        stDateEmp = leavedates.toString();
+                        getLeaveEmps();
                     });
                 }else{
                     stMassage = "You can apply only 1 half day at a time";
@@ -406,7 +414,56 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
         });
         request.add(stringRequest);
     }
+    public void setListViewHeightBasedOnChildren(ListView lvEmployeenames) {
+        ListAdapter listAdapter1 = lvEmployeenames.getAdapter();
+        if (listAdapter1 == null) {
+            // Pre-condition
+            return;
+        }
 
+        int totalHeight = 0;
+        int itemCount = listAdapter1.getCount();
+
+        for (int i = 0; i < itemCount; i++) {
+            View listItem = listAdapter1.getView(i, null, lvEmployeenames);
+            listItem.measure(0, 0);
+            totalHeight += listItem.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams params = lvEmployeenames.getLayoutParams();
+        params.height = totalHeight + (lvEmployeenames.getDividerHeight() * (itemCount - 1));
+        lvEmployeenames.setLayoutParams(params);
+        lvEmployeenames.requestLayout();
+    }
+    private void getLeaveEmps(){
+        String url = PublicURL + "getappliedemplist.php?leavedates="+stDateEmp;
+        RequestQueue request = Volley.newRequestQueue(this);
+        in.megasoft.workplace.HttpsTrustManager.allowAllSSL();
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d("response",response.toString());
+                try {
+                    JSONArray jsonArray = new JSONArray(response);
+                    String[] emps = new String[jsonArray.length()];
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        emps[i] = jsonArray.getString(i);
+                    }
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(LeaveApplication.this, android.R.layout.simple_list_item_1, emps);
+                    ListView lvEmployeenames = findViewById(R.id.lvEmployeenames);
+                    lvEmployeenames.setAdapter(adapter);
+                    setListViewHeightBasedOnChildren(lvEmployeenames);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+        });
+        request.add(stringRequest);
+    }
     public void applyleave(){
 
         stremark = etRemark.getText().toString();

@@ -41,6 +41,7 @@ public class LoginActivity extends AppCompatActivity {
     public static final String PASSWORD = "password";
     public static final String USER_NAME = "username";
     private final String loginurl = PublicURL +"login.php";
+    private RequestQueue requestQueue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,10 +97,10 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(String response) {
                     if (response.equals("success")) {
-                        stMassage = response.toString();
-                        functions = new Functions(LoginActivity.this);
-                        functions.getUserData();
-                        functions.getusermoduledata();
+                        Intent intent = new Intent(LoginActivity.this, LoadingActivity.class);
+                        intent.putExtra(USER_NAME, username);
+                        startActivity(intent);
+                        finish();
                     } else if (response.equals("failure")) {
                     //    Toast.makeText(LoginActivity.this, response.toString(), Toast.LENGTH_LONG).show();
                         stMassage = response.toString();
@@ -170,4 +171,5 @@ public class LoginActivity extends AppCompatActivity {
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
+
 }

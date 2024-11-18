@@ -4,9 +4,12 @@ import static in.megasoft.workplace.userDetails.PublicURL;
 import static in.megasoft.workplace.userDetails.UserId;
 
 import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.icu.util.Calendar;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -18,16 +21,21 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -36,38 +44,44 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MarkAttendance extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
-
     private String attngetmarked;
     private String attnmarkedas;
 
     private String[] atten = {"Present", "E L"};
-    private TextView datetime, errormassage, tvAttenDataTime, tvAttenAs;
-    private String attnspinvalue, newattnspinvalue, latitude, longitude, attnstatus, attendatetime;
+    private TextView datetime, errormassage, tvAttenDataTime, tvAttenAs, tvSelectDate, tvAdvanceElMark;
+    private String attnspinvalue, newattnspinvalue, latitude, longitude, attnstatus, attendatetime, stMassage;
     private ImageView imgsetalight;
-    private Button btnSubmitAttn, btncanceltAttn;
+    private Button btnSubmitAttn, btncanceltAttn, btnMarkAdvEl;
     private Spinner spinattnmark;
     private FusedLocationProviderClient mFusedLocationClient;
 
+    private LinearLayout llApplyEL;
     private static final int PERMISSION_ID = 44;
-    private static final long LOCATION_UPDATE_INTERVAL = 10000;
-
+    private static final long LOCATION_UPDATE_INTERVAL = 1000;
+    private static final long LOCATION_FASTEST_INTERVAL = 500;
+    private static final int MIN_DISTANCE = 30;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mark_attendance);
-
         errormassage = findViewById(R.id.txtErrorMassage);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         tvAttenDataTime = findViewById(R.id.tvAttenDataTime);
         tvAttenAs = findViewById(R.id.tvAttenAs);
 
-        getAttendance();
+        tvAdvanceElMark = findViewById(R.id.tvAdvanceElMark);
+        llApplyEL = findViewById(R.id.llApplyEL);
+        tvSelectDate = findViewById(R.id.tvSelectDate);
+        btnMarkAdvEl = findViewById(R.id.btnMarkAdvEl);
+
         getLastLocation();
 
         imgsetalight = findViewById(R.id.iconSatellite);
@@ -89,6 +103,19 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
             startActivity(new Intent(MarkAttendance.this, MainActivity.class));
             finish();
         });
+        tvAdvanceElMark.setOnClickListener(view -> llApplyEL.setVisibility(View.VISIBLE));
+
+        tvSelectDate.setOnClickListener(view -> openDatePicker());
+        btnMarkAdvEl.setOnClickListener(view -> MarkAdvanceEl());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (checkPermissions()) {
+            getLastLocation();
+            getAttendance();
+        }
     }
 
     @Override
@@ -116,14 +143,7 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
     private void getLastLocation() {
         if (checkPermissions()) {
             if (isLocationEnabled()) {
-                mFusedLocationClient.getLastLocation().addOnCompleteListener(task -> {
-                    Location location = task.getResult();
-                    if (location == null) {
-                        requestNewLocationData();
-                    } else {
-                        handleLocation(location);
-                    }
-                });
+                requestNewLocationData();
             } else {
                 promptUserToEnableLocation();
             }
@@ -137,8 +157,8 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
         LocationRequest mLocationRequest = LocationRequest.create();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setInterval(LOCATION_UPDATE_INTERVAL);
-        mLocationRequest.setFastestInterval(5000); // 5 seconds
-        mLocationRequest.setNumUpdates(1);
+        mLocationRequest.setFastestInterval(LOCATION_FASTEST_INTERVAL);
+        mLocationRequest.setSmallestDisplacement(MIN_DISTANCE); // Only update when location changes by 3 meters
 
         mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
     }
@@ -147,15 +167,19 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
         @Override
         public void onLocationResult(LocationResult locationResult) {
             Location mLastLocation = locationResult.getLastLocation();
-            handleLocation(mLastLocation);
+            handleLocation(mLastLocation);  // Handle new location
         }
     };
 
     private void handleLocation(Location location) {
-        imgsetalight.setImageResource(R.drawable.ic_satellite_live);
-        latitude = String.valueOf(location.getLatitude());
-        longitude = String.valueOf(location.getLongitude());
-        btnSubmitAttn.setVisibility(View.VISIBLE);
+        if (location != null) {
+            imgsetalight.setImageResource(R.drawable.ic_satellite_live);
+            latitude = String.valueOf(location.getLatitude());
+            longitude = String.valueOf(location.getLongitude());
+            btnSubmitAttn.setVisibility(View.VISIBLE);
+        } else {
+            Toast.makeText(MarkAttendance.this, "Location is null, retrying...", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void promptUserToEnableLocation() {
@@ -189,14 +213,6 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (checkPermissions()) {
-            getLastLocation();
-        }
-    }
-
     public void getAttendance() {
         String url = PublicURL + "atten_check.php?userid=" + UserId;
         RequestQueue request = Volley.newRequestQueue(this);
@@ -223,49 +239,114 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
             case "7":
                 tvAttenAs.setVisibility(View.GONE);
                 tvAttenDataTime.setVisibility(View.GONE);
-                spinattnmark.setVisibility(View.VISIBLE);
-                btnSubmitAttn.setVisibility(View.VISIBLE);
                 break;
         }
     }
 
-    public void submitbtn() {
+    private void submitbtn() {
         String attngetdatetime = datetime.getText().toString();
         String urlsubmit = userDetails.PublicURL + "attenmark.php";
 
-        if (!newattnspinvalue.equals("")) {
-            if (!latitude.equals("") && !longitude.equals("")) {
-                in.megasoft.workplace.HttpsTrustManager.allowAllSSL();
-                StringRequest stringRequest = new StringRequest(Request.Method.POST, urlsubmit, response -> {
-                    if ("success".equals(response)) {
-                        Toast.makeText(MarkAttendance.this, "Attendance Marked", Toast.LENGTH_SHORT).show();
-                        userDetails.AttnMarkedAs = attngetmarked;
-                        userDetails.AttnDateTime = attngetdatetime;
-                        startActivity(new Intent(MarkAttendance.this, MainActivity.class));
-                        finish();
-                    } else {
-                        Toast.makeText(MarkAttendance.this, "Error Marking Attendance", Toast.LENGTH_LONG).show();
-                    }
-                }, error -> Toast.makeText(MarkAttendance.this, error.toString().trim(), Toast.LENGTH_SHORT).show()) {
-                    @Override
-                    protected Map<String, String> getParams() {
-                        Map<String, String> data = new HashMap<>();
-                        data.put("atten_status", newattnspinvalue);
-                        data.put("userid", userDetails.UserId);
-                        data.put("location_let", latitude);
-                        data.put("location_long", longitude);
-                        return data;
-                    }
-                };
-                RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-                requestQueue.add(stringRequest);
+        in.megasoft.workplace.HttpsTrustManager.allowAllSSL();
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, urlsubmit, response -> {
+            if ("success".equals(response)) {
+                Toast.makeText(MarkAttendance.this, "Attendance Marked", Toast.LENGTH_SHORT).show();
+                userDetails.AttnMarkedAs = attngetmarked;
+                userDetails.AttnDateTime = attngetdatetime;
+                startActivity(new Intent(MarkAttendance.this, MainActivity.class));
+                finish();
             } else {
-                errormassage.setText("Please turn on Location");
-                Toast.makeText(this, "Please turn on Location", Toast.LENGTH_LONG).show();
+                Toast.makeText(MarkAttendance.this, "Error Marking Attendance", Toast.LENGTH_LONG).show();
             }
-        } else {
-            errormassage.setText("Please select attendance status");
-            Toast.makeText(this, "Please select attendance status or check", Toast.LENGTH_LONG).show();
-        }
+        }, error -> Toast.makeText(MarkAttendance.this, error.toString().trim(), Toast.LENGTH_SHORT).show()) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> data = new HashMap<>();
+                data.put("atten_status", newattnspinvalue);
+                data.put("userid", userDetails.UserId);
+                data.put("location_let", latitude);
+                data.put("location_long", longitude);
+                return data;
+            }
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        requestQueue.add(stringRequest);
+    }
+
+    private void openDatePicker() {
+        Calendar calendar = Calendar.getInstance();
+        DatePickerDialog datePickerDialog = new DatePickerDialog(MarkAttendance.this,
+                (view, year, month, dayOfMonth) -> tvSelectDate.setText(dayOfMonth + "/" + (month + 1) + "/" + year),
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH));
+        datePickerDialog.show();
+    }
+
+    public void MarkAdvanceEl(){
+
+        String elAvdDate = tvSelectDate.getText().toString();
+        String urlsub = userDetails.PublicURL + "markadvancel.php";
+
+        in.megasoft.workplace.HttpsTrustManager.allowAllSSL();
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, urlsub,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonResponse = new JSONObject(response);
+                            String error = jsonResponse.optString("error", "");
+                            String message = jsonResponse.optString("message", "");
+                            if(error.equals("")){
+                                stMassage=message.toString();
+                                showAlertDialog();
+                            }else{
+                                llApplyEL.setVisibility(View.GONE);
+                                stMassage=error.toString();
+                                showAlertDialog();
+                            }
+                        } catch (Exception e) {
+                            Log.e("JSON Parse Error", "Error parsing JSON response: " + e.getMessage());
+                            Toast.makeText(MarkAttendance.this, "Error processing response.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(MarkAttendance.this, "Error Adding request: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        error.printStackTrace();
+                    }
+                }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> data = new HashMap<>();
+                data.put("userid", userDetails.UserId);
+                data.put("eldate", elAvdDate);
+                return data;
+            }
+            @Override
+            public String getBodyContentType() {
+                return "application/x-www-form-urlencoded; charset=UTF-8";
+            }
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        requestQueue.add(stringRequest);
+    }
+    private void showAlertDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Massage");
+        builder.setMessage(stMassage);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setCancelable(false);
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 }
+

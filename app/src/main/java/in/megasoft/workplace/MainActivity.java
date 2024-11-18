@@ -29,13 +29,15 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class MainActivity extends AppCompatActivity {
 
-    private Functions functions;
     public static final String SHARED_PREFS = "sharedprefs";
     Button attendance, applyleave, dailywork, employeedetails,
             holidaydetails,  totalleave, approveleave, attendancedetails, leavedetails, dailyworkdetails;
-    TextView userfullname, emailid, mobileno, badge_notification_1;
+    TextView userfullname, emailid, mobileno, tvAttnLeaveList, badge_notification_1;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -64,8 +66,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        functions = new Functions(this);
-        functions.getusermoduledata();
 
         userdata();
         rights();
@@ -125,8 +125,22 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(leavedetails);
             }
         });
+        totalleave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent totalleave = new Intent(MainActivity.this, TotalLeave.class);
+                startActivity(totalleave);
+            }
+        });
     }
+protected void onResume() {
+    super.onResume();
+    userdata();
+    rights();
+    getLeaveCount();
+    getAttendanceLeave();
 
+}
     public void userdata(){
         userfullname = findViewById(R.id.txtUserFullName);
         emailid = findViewById(R.id.txtEmailID);
@@ -135,7 +149,6 @@ public class MainActivity extends AppCompatActivity {
         userfullname.setText(userDetails.UserFullName);
         emailid.setText(userDetails.EmailID);
         mobileno.setText(userDetails.MobileNo);
-
     }
 
     public void rights(){
@@ -228,6 +241,9 @@ public class MainActivity extends AppCompatActivity {
     }
     private void getAttendanceLeave(){
         //String[] employee = new String[];
+        tvAttnLeaveList = findViewById(R.id.tvAttnLeaveList);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        tvAttnLeaveList.setText("Attendance and Leave List for " + sdf.format(new Date()));
 
         String url = PublicURL + "getattendanceleave.php";
         RequestQueue request = Volley.newRequestQueue(this);

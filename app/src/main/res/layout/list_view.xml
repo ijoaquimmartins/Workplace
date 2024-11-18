@@ -45,5 +45,12 @@
         android:layout_marginStart="10dp"
         android:visibility="gone"
         android:layout_below="@+id/tvLeavetype"/>
+    <TextView
+        android:id="@+id/tvType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:visibility="gone"
+        android:layout_below="@+id/tvUserId"/>
 
 </RelativeLayout>

@@ -6,6 +6,7 @@ import static in.megasoft.workplace.userDetails.UserId;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -26,24 +27,29 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ApproveLeave extends AppCompatActivity {
 
-    TextView tvTotalLeaves, tvLeaves, tvBalanceleaves, tvEmployeeName;
+    TextView tvTotalLeaves, tvLeaves, tvBalanceleaves, tvEmployeeName, tvEmpRemark, tvHeader;
     ListView lvDates, lvEmployeenamesanddate;
-    LinearLayout llListAppliedemployee;
+    LinearLayout llListAppliedemployee, llLeaveDetails;
     EditText etApproveRemark;
-    Button btnApprove, btnDecline, btnCancel;
+    Button btnApprove, btnDecline, btnBack, btnCancel;
     String employeeName, leaveidleaveappId, leaveId, leaveType, stTotalLeaves, stLeaves, stBallance,
-            stUserId, stApproveDecline, stApproveRemark, stMassage;
+            stUserId, stApproveDecline, stApproveRemark, stMassage, stType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,27 +63,42 @@ public class ApproveLeave extends AppCompatActivity {
         leaveType = bundle.getString("leavetype");
         leaveId = bundle.getString("leaveid");
         stUserId = bundle.getString("userid");
+        stType = bundle.getString("type");
 
         tvEmployeeName = findViewById(R.id.tvEmployeeName);
         tvTotalLeaves = findViewById(R.id.tvApproveTotalLeaves);
         tvLeaves = findViewById(R.id.tvApproveLeaves);
         tvBalanceleaves = findViewById(R.id.tvApproveBalanceleaves);
     //    lvDates = findViewById(R.id.lvDates);
+        tvEmpRemark = findViewById(R.id.tvEmpRemark);
         etApproveRemark = findViewById(R.id.etApproveLeaveRemark);
+        llListAppliedemployee = findViewById(R.id.llListAppliedemployee);
+        tvHeader = findViewById(R.id.tvHeader);
+        llLeaveDetails =findViewById(R.id.llLeaveDetails);
         btnApprove = findViewById(R.id.btnApproveleave);
         btnDecline = findViewById(R.id.btnDeclineleave);
-        btnCancel = findViewById(R.id.btnApproveCancel);
+        btnBack = findViewById(R.id.btnApproveBack);
+        btnCancel = findViewById(R.id.btnCancleleave);
 
         getLeave();
         getLeaveDates();
-        getLeaveEmps();
         tvEmployeeName.setText(employeeName);
 
-        btnCancel.setOnClickListener(new View.OnClickListener() {
+        if(stType.equals("1")){
+            getLeaveEmps();
+            btnApprove.setVisibility(View.VISIBLE);
+            btnDecline.setVisibility(View.VISIBLE);
+        } else if (stType.equals("2")) {
+            llLeaveDetails.setVisibility(View.GONE);
+            btnCancel.setVisibility(View.VISIBLE);
+            etApproveRemark.setEnabled(false);
+            tvHeader.setText("Leave");
+            tvEmployeeName.setVisibility(View.GONE);
+        }
+
+        btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent iemp = new Intent(ApproveLeave.this, MainActivity.class);
-                startActivity(iemp);
                 finish();
             }
         });
@@ -98,8 +119,13 @@ public class ApproveLeave extends AppCompatActivity {
                 stMassage = "Leave Decline";
             }
         });
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cancleleave();
+            }
+        });
     }
-
     private void getLeave(){
         String url = PublicURL + "getleaves.php?userid="+stUserId;
         RequestQueue request = Volley.newRequestQueue(this);
@@ -165,24 +191,41 @@ public class ApproveLeave extends AppCompatActivity {
         lvEmployeenamesanddate.setLayoutParams(params);
         lvEmployeenamesanddate.requestLayout();
     }
-
     private void getLeaveDates(){
-        String url = PublicURL + "getleavedates.php?leaveid="+leaveId;
+        String url = PublicURL + "fatchleavedetails.php?leaveid="+leaveId;
         RequestQueue request = Volley.newRequestQueue(this);
         in.megasoft.workplace.HttpsTrustManager.allowAllSSL();
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+            new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response) {
                 try {
-                    JSONArray jsonArray = new JSONArray(response);
-                    String[] dates = new String[jsonArray.length()];
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        dates[i] = jsonArray.getString(i);
+
+                    JSONObject jsonObject = response.getJSONObject(0);
+                    String status = jsonObject.getString("status");
+                    String empremerk = jsonObject.getString("empremerk");
+                    String aproremark = jsonObject.getString("aproremark");
+                    tvEmpRemark.setText(empremerk);
+                    etApproveRemark.setText(aproremark);
+                    if(status.equals("0") && stType.equals("2")){
+                        btnCancel.setVisibility(View.VISIBLE);
                     }
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(ApproveLeave.this, android.R.layout.simple_list_item_1, dates);
-                    lvDates = findViewById(R.id.lvDates);
+
+                    String[] dateStrings = jsonObject.getString("dates").split(",");
+                    List<String> datesList = new ArrayList<>(Arrays.asList(dateStrings));
+                    datesList.clear();
+                    datesList.addAll(Arrays.asList(jsonObject.getString("dates").split(",")));
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(ApproveLeave.this, R.layout.list_item, R.id.tvItem, datesList);
+                    ListView lvDates = findViewById(R.id.lvDates);
                     lvDates.setAdapter(adapter);
                     setListViewHeightBasedOnChildren(lvDates);
+                    /*
+                    String[] dates = jsonObject.getString("dates").split(",");
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(ApproveLeave.this, android.R.layout.simple_list_item_1, dates);
+                    ListView lvDates = findViewById(R.id.lvDates);
+                    lvDates.setAdapter(adapter);
+                    setListViewHeightBasedOnChildren(lvDates);*/
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -192,7 +235,7 @@ public class ApproveLeave extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
             }
         });
-        request.add(stringRequest);
+        request.add(jsonArrayRequest);
     }
     private void getLeaveEmps(){
         String url = PublicURL + "gatleaveappliedemplist.php?leaveid="+leaveId;
@@ -202,22 +245,26 @@ public class ApproveLeave extends AppCompatActivity {
             @Override
             public void onResponse(String response) {
 
-                llListAppliedemployee.setVisibility(View.VISIBLE);
-                lvEmployeenamesanddate.setVisibility(View.VISIBLE);
-
                 try {
                     JSONArray jsonArray = new JSONArray(response);
                     String[] emps = new String[jsonArray.length()];
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        emps[i] = jsonArray.getString(i);
+                    if (jsonArray.length() == 0) {
+                        llListAppliedemployee.setVisibility(View.GONE);
+                    }else{
+                        llListAppliedemployee.setVisibility(View.VISIBLE);
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            emps[i] = jsonArray.getString(i);
+                        }
+
+                        ArrayAdapter<String> adapter = new ArrayAdapter<>(ApproveLeave.this, android.R.layout.simple_list_item_1, emps);
+                        ListView lvEmployeenamesanddate = findViewById(R.id.lvEmployeenamesanddate);
+                        lvEmployeenamesanddate.setAdapter(adapter);
+                        setListViewHeightBasedOnChildren1(lvEmployeenamesanddate);
                     }
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(ApproveLeave.this, android.R.layout.simple_list_item_1, emps);
-                    ListView lvEmployeenamesanddate = findViewById(R.id.lvEmployeenamesanddate);
-                    lvEmployeenamesanddate.setAdapter(adapter);
-                    setListViewHeightBasedOnChildren1(lvEmployeenamesanddate);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -229,22 +276,21 @@ public class ApproveLeave extends AppCompatActivity {
     private void approvedeclineLeave(){
 
         stApproveRemark = etApproveRemark.getText().toString();
-
         String urlsubmit = PublicURL + "approve_decline.php";
 
         in.megasoft.workplace.HttpsTrustManager.allowAllSSL();
         StringRequest stringRequest = new StringRequest(Request.Method.POST, urlsubmit, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+
                 if (response.equals("success")) {
-
                     showAlertDialog();
-                //    Toast.makeText(ApproveLeave.this, response.toString().trim(), Toast.LENGTH_SHORT).show();
-
                 } else if (response.equals("failure")){
                     stMassage = "Error Applying Leave";
                     showAlertDialog();
-                //    Toast.makeText(ApproveLeave.this, "Error Applying Leave", Toast.LENGTH_LONG).show();
+                }else{
+                    stMassage = "Please Contact Admin";
+                    showAlertDialog();
                 }
             }
         }, new Response.ErrorListener() {
@@ -266,7 +312,53 @@ public class ApproveLeave extends AppCompatActivity {
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(5000,3,1.0f));
         requestQueue.add(stringRequest);
+    }
+    private void cancleleave(){
 
+        String url = PublicURL + "cancleappliedleave.php";
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        in.megasoft.workplace.HttpsTrustManager.allowAllSSL();
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonResponse = new JSONObject(response);
+                            String error = jsonResponse.optString("error", "");
+                            String message = jsonResponse.optString("message", "");
+                            if(error.equals("")){
+                                stMassage=message.toString();
+                                showAlertDialog();
+                            }else{
+                                stMassage=error.toString();
+                                showAlertDialog();
+                            }
+
+                        } catch (Exception e) {
+                            Log.e("JSON Parse Error", "Error parsing JSON response: " + e.getMessage());
+                            Toast.makeText(ApproveLeave.this, "Error processing response.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(ApproveLeave.this, "Error deleting request: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        error.printStackTrace();
+                    }
+                }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("leaveid", leaveId);  // Add leave ID as a parameter in the body
+                return params;
+            }
+            @Override
+            public String getBodyContentType() {
+                return "application/x-www-form-urlencoded; charset=UTF-8";
+            }
+        };
+        requestQueue.add(stringRequest);
     }
     private void showAlertDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -275,16 +367,14 @@ public class ApproveLeave extends AppCompatActivity {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent i = new Intent(ApproveLeave.this, ApproveLeavesList.class);
+                Intent i = new Intent(ApproveLeave.this, MainActivity.class);
                 startActivity(i);
                 finish();
             }
-
         });
-        builder.setCancelable(false);// Prevent dismissing the dialog by tapping outside
+        builder.setCancelable(false);
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
-
 }

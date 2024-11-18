@@ -10,6 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -39,11 +40,19 @@ public class requestListAppliedAdaptar extends RecyclerView.Adapter<requestListA
         holder.leavetype.setText(requestAppliedList.getLeavetypeL());
         holder.leaveid.setText(requestAppliedList.getLeaveidL());
         holder.userid.setText(requestAppliedList.getUseridL());
+        holder.type.setText(requestAppliedList.gettypeL());
+
+        String stStatus = requestAppliedList.getStatusL();
+        if ("0".equals(stStatus)) {
+            holder.itemView.setBackground(ContextCompat.getDrawable(context, R.drawable.applied));
+        } else if ("1".equals(stStatus)) {
+            holder.itemView.setBackground(ContextCompat.getDrawable(context, R.drawable.approved));
+        } else if ("2".equals(stStatus)) {
+            holder.itemView.setBackground(ContextCompat.getDrawable(context, R.drawable.decline));
+        }
 
         String stEmployee;
-
         stEmployee = requestAppliedList.getUserL();
-
         if(stEmployee.equals("No Leaves Applied")){
             holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -53,7 +62,6 @@ public class requestListAppliedAdaptar extends RecyclerView.Adapter<requestListA
                 }
             });
         }else {
-
             holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -64,6 +72,7 @@ public class requestListAppliedAdaptar extends RecyclerView.Adapter<requestListA
                     bundle.putString("leavetype", requestAppliedList.getLeavetypeL());
                     bundle.putString("leaveid", requestAppliedList.getLeaveidL());
                     bundle.putString("userid", requestAppliedList.getUseridL());
+                    bundle.putString("type", requestAppliedList.gettypeL());
                     intent.putExtras(bundle); // Add this line to pass the bundle
                     context.startActivity(intent); // Start the activity
                 }
@@ -77,7 +86,7 @@ public class requestListAppliedAdaptar extends RecyclerView.Adapter<requestListA
     }
 
     public class requestHolder extends RecyclerView.ViewHolder {
-        TextView employee, leaveapptype, leavetype, leaveid, userid;
+        TextView employee, leaveapptype, leavetype, leaveid, userid, type;
         RelativeLayout relativeLayout;
 
         public requestHolder(@NonNull View itemView) {
@@ -87,9 +96,8 @@ public class requestListAppliedAdaptar extends RecyclerView.Adapter<requestListA
             leavetype = itemView.findViewById(R.id.tvLeavetype);
             leaveid = itemView.findViewById(R.id.tvLeaveId);
             userid = itemView.findViewById(R.id.tvUserId);
+            type = itemView.findViewById(R.id.tvType);
             relativeLayout = itemView.findViewById(R.id.list_view);
-
-
         }
     }
 }

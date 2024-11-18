@@ -84,7 +84,6 @@
                     android:minHeight="30dp"
                     android:textStyle="italic"/>
             </LinearLayout>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -138,6 +137,36 @@
                     android:id="@+id/tvAttenAs"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:visibility="gone"/>
+            </LinearLayout>
+            <TextView
+                android:id="@+id/tvAdvanceElMark"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Click to Mark Next EL in Advance"
+                android:layout_margin="15dp"
+                android:textColor="#03a534"/>
+            <LinearLayout
+                android:id="@+id/llApplyEL"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tvSelectDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Click to Select Date"
+                    android:textSize="22sp"/>
+                <Button
+                    android:id="@+id/btnMarkAdvEl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/submit"
+                    android:backgroundTint="@color/submit"
                     android:visibility="gone"/>
             </LinearLayout>
         </LinearLayout>

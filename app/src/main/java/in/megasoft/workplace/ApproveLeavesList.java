@@ -32,8 +32,8 @@ public class ApproveLeavesList extends AppCompatActivity {
     ActivityApproveLeavesListBinding binding;
     private RecyclerView recyclerView;
     private RequestQueue requestQueue;
-    private List<requestAppliedList> requestAppliedLists; // Ensure this is initialized
-    private Button btnRefresh; // Fixed typo in variable name
+    private List<requestAppliedList> requestAppliedLists;
+    private Button btnRefresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,74 +45,71 @@ public class ApproveLeavesList extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         requestQueue = volleySingelton.getmInstance(this).getRequestQueue();
 
-        // Initialize the list
-        requestAppliedLists = new ArrayList<>(); // Initialize the list to avoid NullPointerException
 
-        btnRefresh = findViewById(R.id.btnReferesh); // Fixed variable name
+        requestAppliedLists = new ArrayList<>();
+
+        btnRefresh = findViewById(R.id.btnReferesh);
         btnRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fetchData(); // Fixed method name
+                fetchData();
             }
         });
 
         fetchData();
     }
-
     private void fetchData() {
-        String urlFetch = PublicURL + "fatchappliedleaves.php";
+        String urlFetch = PublicURL + "fatchappliedleavesnew.php";
         HttpsTrustManager.allowAllSSL();
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.POST, urlFetch, null,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        Log.d("API Response", response.toString());
-                        if (response == null || response.length() == 0) {
-                            Toast.makeText(ApproveLeavesList.this, "NO DATA", Toast.LENGTH_LONG).show();
-                            return;
-                        }
-                        requestAppliedLists.clear(); // Clear the list before adding new data
-                        for (int i = 0; i < response.length(); i++) {
-                            try {
-                                JSONObject jsonObject = response.getJSONObject(i);
-                                String employeename = jsonObject.getString("employeename");
-                                String leaveapptype = jsonObject.getString("leaveapptype");
-                                String leavetype = jsonObject.getString("leavetype");
-                                String leaveid = jsonObject.getString("leaveid");
-                                String userid = jsonObject.getString("userid");
-
-                                requestAppliedList requestAppliedList = new requestAppliedList(employeename, leaveapptype, leavetype, leaveid, userid);
-                                requestAppliedLists.add(requestAppliedList); // Add to the list
-                            } catch (Exception e) {
-                                Log.e("JSON Error", e.toString());
-                            }
-                        }
-
-                        // Set the adapter after updating the list
-                        requestListAppliedAdaptar requestListAppliedAdapter = new requestListAppliedAdaptar(ApproveLeavesList.this, requestAppliedLists);
-                        recyclerView.setAdapter(requestListAppliedAdapter);
+            new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response) {
+                    Log.d("API Response", response.toString());
+                    if (response == null || response.length() == 0) {
+                        Toast.makeText(ApproveLeavesList.this, "NO DATA", Toast.LENGTH_LONG).show();
+                        return;
                     }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("Volley Error", error.toString());
-                        Toast.makeText(ApproveLeavesList.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    requestAppliedLists.clear(); // Clear the list before adding new data
+                    for (int i = 0; i < response.length(); i++) {
+                        try {
+                            JSONObject jsonObject = response.getJSONObject(i);
+                            String employeename = jsonObject.getString("employeename");
+                            String leaveapptype = jsonObject.getString("leaveapptype");
+                            String leavetype = jsonObject.getString("leavetype");
+                            String leaveid = jsonObject.getString("leaveid");
+                            String userid = jsonObject.getString("userid");
+                            String type = jsonObject.getString("type");
+                            String status = jsonObject.getString("status");
+
+                            requestAppliedList requestAppliedList = new requestAppliedList(employeename, leaveapptype, leavetype, leaveid, userid, type, status);
+                            requestAppliedLists.add(requestAppliedList);
+                        } catch (Exception e) {
+                            Log.e("JSON Error", e.toString());
+                        }
                     }
+                    requestListAppliedAdaptar requestListAppliedAdapter = new requestListAppliedAdaptar(ApproveLeavesList.this, requestAppliedLists);
+                    recyclerView.setAdapter(requestListAppliedAdapter);
                 }
+            },
+            new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e("Volley Error", error.toString());
+                    Toast.makeText(ApproveLeavesList.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
         );
-
         requestQueue.add(jsonArrayRequest);
     }
 
     @Override
-    public void onBackPressed() { // Fixed method name to override properly
+    public void onBackPressed() {
         super.onBackPressed();
         if (requestAppliedLists != null) {
             requestAppliedLists.clear();
         }
         startActivity(new Intent(ApproveLeavesList.this, MainActivity.class));
-
     }
 }

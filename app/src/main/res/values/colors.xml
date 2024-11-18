@@ -9,4 +9,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="submit">#008ae6</color>
     <color name="cancle">#808080</color>
+    <color name="color_applied">#B5A0FD8F</color>
+    <color name="color_approved">#476EFF</color>
+    <color name="color_decline">#9EFF5274</color>
 </resources>

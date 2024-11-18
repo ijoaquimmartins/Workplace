@@ -10,7 +10,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp">
+        android:padding="5dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -24,30 +24,57 @@
         <Button
             android:id="@+id/btnReferesh"
             android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:gravity="end|bottom"
+            android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:background="@drawable/ic_refresh"
             android:contentDescription="Refresh"
-            tools:ignore="RelativeOverlap"/>
+            android:gravity="end|bottom"
+            tools:ignore="RelativeOverlap" />
 
     </RelativeLayout>
-    <Spinner
-        android:id="@+id/spStatusSelect"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="30dp"/>
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal">
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="2dp"
+            android:drawableStart="@drawable/ic_applied"
+            android:enabled="false"
+            android:text="Applied"
+            android:textColor="@color/color_applied" />
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Approved"
+            android:drawableStart="@drawable/ic_approved"
+            android:enabled="false"
+            android:layout_margin="2dp"
+            android:textColor="@color/color_approved"/>
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Decline"
+            android:enabled="false"
+            android:drawableStart="@drawable/ic_decline"
+            android:layout_margin="2dp"
+            android:textColor="@color/color_decline"/>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="5dp">
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="?android:attr/listDivider"
-            android:layout_marginTop="5dp"/>
+            android:layout_marginTop="0dp"/>
     </LinearLayout>
 
     <include layout="@layout/recycler_view"/>
