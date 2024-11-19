@@ -61,7 +61,6 @@ public class LoginActivity extends AppCompatActivity {
             login();
         }
 
-
         tvregister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -162,9 +161,7 @@ public class LoginActivity extends AppCompatActivity {
                 }else{
                     dialog.dismiss();
                 }
-
             }
-
         });
         builder.setCancelable(false);// Prevent dismissing the dialog by tapping outside
 

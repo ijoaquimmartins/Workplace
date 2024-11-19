@@ -2,10 +2,15 @@ package in.megasoft.workplace;
 
 import static in.megasoft.workplace.userDetails.PublicURL;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ImageSpan;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -17,7 +22,9 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -41,32 +48,44 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0, 1, 1, menuIconWithText(this, R.drawable.ic_person, "PROFILE"));
+        menu.add(0, 2, 2, menuIconWithText(this, R.drawable.ic_logout, "LOGOUT"));
+
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
         return true;
     }
 
-    public boolean onMenuItemClick(MenuItem item){
-        switch (item.getItemId()) {
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
             case 1:
-
-            case 2:
-
                 return true;
-            case 3:
+            case 2:
                 logout();
                 return true;
         }
+        return super.onOptionsItemSelected(item);
+    }
 
-        return true;
+    private CharSequence menuIconWithText(Context context, int drawableId, String title) {
+        Drawable drawable = ContextCompat.getDrawable(context, drawableId);
+        if (drawable != null) {
+            drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        }
+        SpannableString sb = new SpannableString("   " + title);
+        if (drawable != null) {
+            ImageSpan imageSpan = new ImageSpan(drawable, ImageSpan.ALIGN_BOTTOM);
+            sb.setSpan(imageSpan, 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+        return sb;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
         userdata();
         rights();
         getLeaveCount();
@@ -139,7 +158,6 @@ protected void onResume() {
     rights();
     getLeaveCount();
     getAttendanceLeave();
-
 }
     public void userdata(){
         userfullname = findViewById(R.id.txtUserFullName);
@@ -272,7 +290,6 @@ protected void onResume() {
         });
         request.add(stringRequest);
     }
-
     public void logout(){
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -280,7 +297,6 @@ protected void onResume() {
         editor.apply();
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(intent);
+        this.finish();
     }
-
-
 }
