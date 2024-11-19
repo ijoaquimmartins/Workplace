@@ -35,6 +35,9 @@
         android:windowSoftInputMode="adjustPan"
         tools:targetApi="31">
         <activity
+            android:name=".DailyWorkDetails"
+            android:exported="false" />
+        <activity
             android:name=".TotalLeave"
             android:exported="false" />
         <activity
