@@ -54,31 +54,7 @@ public class TotalLeave extends AppCompatActivity {
         tvFromDate = findViewById(R.id.tvFromDate);
         tvToDate = findViewById(R.id.tvToDate);
         btnGet = findViewById(R.id.btnGet);
-/*
-        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
-        stFromDate = sdf1.format(Calendar.getInstance().getTime());
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, 1);
-        stToDate = sdf1.format(calendar.getTime());
-
-        SimpleDateFormat originalFormat = new SimpleDateFormat("yyyy-MM-dd");
-        SimpleDateFormat desiredFormat = new SimpleDateFormat("dd/MM/yyyy");
-
-        try {
-            Date fromDate = originalFormat.parse(stFromDate);
-            Date toDate = originalFormat.parse(stToDate);
-
-            String formattedFromDate = desiredFormat.format(fromDate);
-            String formattedToDate = desiredFormat.format(toDate);
-
-            tvFromDate.setText(formattedFromDate);
-            tvToDate.setText(formattedToDate);
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-*/
         tvFromDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

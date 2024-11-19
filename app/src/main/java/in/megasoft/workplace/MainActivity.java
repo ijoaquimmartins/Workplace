@@ -151,6 +151,13 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(totalleave);
             }
         });
+        dailyworkdetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent dailyworkdetails = new Intent(MainActivity.this, DailyWorkDetails.class);
+                startActivity(dailyworkdetails);
+            }
+        });
     }
 protected void onResume() {
     super.onResume();
