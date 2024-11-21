@@ -2,21 +2,25 @@ package in.megasoft.workplace;
 
 import static in.megasoft.workplace.userDetails.PublicURL;
 
-import android.app.DatePickerDialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -29,104 +33,67 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class TotalLeave extends AppCompatActivity {
+public class HolidayList extends AppCompatActivity {
 
-    DatePickerDialog picker;
-    private ExpandableListView expandableListView;
-    TextView tvFromDate, tvToDate;
-    Button btnGet;
-    String stFromDate, stToDate;
+    Spinner spnSelectYear;
+    ExpandableListView lvHolidayList;
+    String stYear;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_total_leave);
-
-        expandableListView = findViewById(R.id.expandableListView);
-        tvFromDate = findViewById(R.id.tvFromDate);
-        tvToDate = findViewById(R.id.tvToDate);
-        btnGet = findViewById(R.id.btnGet);
-
-        tvFromDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final java.util.Calendar cldr1 = java.util.Calendar.getInstance();
-                int day1 = cldr1.get(java.util.Calendar.DAY_OF_MONTH);
-                int month1 = cldr1.get(java.util.Calendar.MONTH);
-                int year1 = cldr1.get(java.util.Calendar.YEAR);
-                // date picker dialog
-                picker = new DatePickerDialog(TotalLeave.this,
-                        new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view1, int year1, int monthOfYear1, int dayOfMonth1) {
-                                tvFromDate.setText(dayOfMonth1 + "/" + (monthOfYear1 + 1) + "/" + year1);
-                                stFromDate = (year1 + "-" + (monthOfYear1 + 1) + "-" + dayOfMonth1);
-                            }
-                        }, year1, month1, day1);
-                picker.show();
-            }
-        });
-        tvToDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final java.util.Calendar cldr1 = java.util.Calendar.getInstance();
-                int day1 = cldr1.get(java.util.Calendar.DAY_OF_MONTH);
-                int month1 = cldr1.get(java.util.Calendar.MONTH);
-                int year1 = cldr1.get(java.util.Calendar.YEAR);
-                // date picker dialog
-                picker = new DatePickerDialog(TotalLeave.this,
-                        new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view1, int year1, int monthOfYear1, int dayOfMonth1) {
-                                tvToDate.setText(dayOfMonth1 + "/" + (monthOfYear1 + 1) + "/" + year1);
-                                stToDate = (year1 + "-" + (monthOfYear1 + 1) + "-" + dayOfMonth1);
-                            }
-                        }, year1, month1, day1);
-                picker.show();
-            }
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_holiday_list);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
         });
 
-        btnGet.setOnClickListener(new View.OnClickListener() {
+        spnSelectYear = findViewById(R.id.spnSelectYear);
+        lvHolidayList = findViewById(R.id.lvHolidayList);
+
+        List<String> years = getYearsList(2012);
+        years.add(0, "Upcoming");
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                years
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spnSelectYear.setAdapter(adapter);
+
+        spnSelectYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onClick(View view) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                stYear = spnSelectYear.toString();
+                HolidayList();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
 
-                if (!stFromDate.equals("") && !stToDate.equals("")) {
-                    try {
-                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                        sdf.setLenient(false);
-
-                        Date fromDate = sdf.parse(tvFromDate.getText().toString());
-                        Date toDate = sdf.parse(tvToDate.getText().toString());
-                        if (fromDate.before(toDate)) {
-                            fetchEmployeeData();
-                        } else {
-                            Toast.makeText(TotalLeave.this, "Please check dates", Toast.LENGTH_SHORT).show();
-                        }
-                    } catch (Exception e) {
-                        Toast.makeText(TotalLeave.this, "Invalid date format", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(TotalLeave.this, "Please enter dates", Toast.LENGTH_SHORT).show();
-                }
             }
         });
-        fetchEmployeeData();
     }
-
-    private void fetchEmployeeData() {
-        String datedata = stFromDate + "|" + stToDate;
-        String url = PublicURL + "fatchleavedatewise.php?dates=" + datedata;
+    private List<String> getYearsList(int startYear) {
+        List<String> years = new ArrayList<>();
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        for (int year = startYear; year <= currentYear; year++) {
+            years.add(String.valueOf(year));
+        }
+        return years;
+    }
+    private void HolidayList(){
+        String url = PublicURL + "fatchholiday.php?styear=" + stYear;
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         in.megasoft.workplace.HttpsTrustManager.allowAllSSL();
-
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -135,7 +102,7 @@ public class TotalLeave extends AppCompatActivity {
                             Log.d("JSON Response", response.toString()); // Log response for troubleshooting
                             JSONArray dataArray = response.optJSONArray("data");
                             if (dataArray == null || dataArray.length() == 0) {
-                                Toast.makeText(TotalLeave.this, "No data available for selected dates.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(HolidayList.this, "No data available for selected dates.", Toast.LENGTH_SHORT).show();
                                 return;
                             }
                             // Prepare data for the expandable list
@@ -208,15 +175,15 @@ public class TotalLeave extends AppCompatActivity {
                                     return true;
                                 }
                             };
-                            expandableListView.setAdapter(adapter);
+                            lvHolidayList.setAdapter(adapter);
                             for (int i = 0; i < adapter.getGroupCount(); i++) {
-                                expandableListView.expandGroup(i);
+                                lvHolidayList.expandGroup(i);
                             }
-                            setExpandableListViewHeightBasedOnChildren(expandableListView);
+                            setExpandableListViewHeightBasedOnChildren(lvHolidayList);
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Log.e("JSON Parsing Error", "Error parsing data: " + e.getMessage());
-                            Toast.makeText(TotalLeave.this, "Error parsing data", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(HolidayList.this, "Error parsing data", Toast.LENGTH_SHORT).show();
                         }
                     }
                 },
@@ -224,7 +191,7 @@ public class TotalLeave extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e("VolleyError", error.toString());
-                        Toast.makeText(TotalLeave.this, "Error fetching data", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(HolidayList.this, "Error fetching data", Toast.LENGTH_SHORT).show();
                     }
                 });
         requestQueue.add(jsonObjectRequest);
