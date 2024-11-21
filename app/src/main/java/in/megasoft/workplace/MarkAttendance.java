@@ -114,7 +114,6 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
         super.onResume();
         if (checkPermissions()) {
             getLastLocation();
-            getAttendance();
         }
     }
 
@@ -176,7 +175,7 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
             imgsetalight.setImageResource(R.drawable.ic_satellite_live);
             latitude = String.valueOf(location.getLatitude());
             longitude = String.valueOf(location.getLongitude());
-            btnSubmitAttn.setVisibility(View.VISIBLE);
+            getAttendance();
         } else {
             Toast.makeText(MarkAttendance.this, "Location is null, retrying...", Toast.LENGTH_SHORT).show();
         }
@@ -239,6 +238,7 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
             case "7":
                 tvAttenAs.setVisibility(View.GONE);
                 tvAttenDataTime.setVisibility(View.GONE);
+                btnSubmitAttn.setVisibility(View.VISIBLE);
                 break;
         }
     }
@@ -344,7 +344,6 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
             }
         });
         builder.setCancelable(false);
-
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
