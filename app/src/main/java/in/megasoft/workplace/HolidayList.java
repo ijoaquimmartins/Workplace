@@ -40,7 +40,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class HolidayList extends AppCompatActivity {
+public class HolidayList extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
 
     Spinner spnSelectYear;
     ExpandableListView lvHolidayList;
@@ -70,17 +70,6 @@ public class HolidayList extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spnSelectYear.setAdapter(adapter);
 
-        spnSelectYear.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                stYear = spnSelectYear.toString();
-                HolidayList();
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
     }
     private List<String> getYearsList(int startYear) {
         List<String> years = new ArrayList<>();
@@ -89,6 +78,16 @@ public class HolidayList extends AppCompatActivity {
             years.add(String.valueOf(year));
         }
         return years;
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        stYear = spnSelectYear.toString();
+        HolidayList();
+    }
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
     private void HolidayList(){
         String url = PublicURL + "fatchholiday.php?styear=" + stYear;
@@ -221,4 +220,6 @@ public class HolidayList extends AppCompatActivity {
         expandableListView.setLayoutParams(params);
         expandableListView.requestLayout();
     }
+
+
 }
