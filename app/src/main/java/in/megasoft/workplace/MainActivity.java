@@ -158,6 +158,13 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(dailyworkdetails);
             }
         });
+        holidaydetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent holidaydetails = new Intent(MainActivity.this, HolidayList.class);
+                startActivity(holidaydetails);
+            }
+        });
     }
 protected void onResume() {
     super.onResume();

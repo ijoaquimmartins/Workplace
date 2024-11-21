@@ -83,13 +83,14 @@ public class HolidayList extends AppCompatActivity implements AdapterView.OnItem
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         stYear = spnSelectYear.toString();
-        HolidayList();
+        HolidayListFun();
     }
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
-    private void HolidayList(){
+
+    private void HolidayListFun(){
         String url = PublicURL + "fatchholiday.php?styear=" + stYear;
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         in.megasoft.workplace.HttpsTrustManager.allowAllSSL();
@@ -109,7 +110,7 @@ public class HolidayList extends AppCompatActivity implements AdapterView.OnItem
                             for (int i = 0; i < dataArray.length(); i++) {
                                 JSONObject leaveObject = dataArray.getJSONObject(i);
                                 // Extract leave_date and name
-                                String leaveDate = leaveObject.getString("leave_dates");
+                                String leaveDate = leaveObject.getString("date");
                                 String employeeNames = leaveObject.getString("name");
                                 // Split names by comma and add to list
                                 List<String> employeeNameList = Arrays.asList(employeeNames.split(","));
@@ -195,6 +196,7 @@ public class HolidayList extends AppCompatActivity implements AdapterView.OnItem
                 });
         requestQueue.add(jsonObjectRequest);
     }
+
     public void setExpandableListViewHeightBasedOnChildren(ExpandableListView expandableListView) {
         ExpandableListAdapter listAdapter = expandableListView.getExpandableListAdapter();
         if (listAdapter == null) {
