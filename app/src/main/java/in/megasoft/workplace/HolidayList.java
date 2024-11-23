@@ -60,7 +60,7 @@ public class HolidayList extends AppCompatActivity implements AdapterView.OnItem
         spnSelectYear = findViewById(R.id.spnSelectYear);
         lvHolidayList = findViewById(R.id.lvHolidayList);
 
-        List<String> years = getYearsList(2012);
+        List<String> years = getYearsList(2023);
         years.add(0, "Upcoming");
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 this,
@@ -69,6 +69,8 @@ public class HolidayList extends AppCompatActivity implements AdapterView.OnItem
         );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spnSelectYear.setAdapter(adapter);
+
+        //HolidayListFun();
 
     }
     private List<String> getYearsList(int startYear) {
