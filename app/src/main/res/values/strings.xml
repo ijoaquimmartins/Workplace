@@ -18,7 +18,7 @@
 
     <string name="attendance">Attendance</string>
     <string name="apply">Leave\nApplication</string>
-    <string name="leaves">Total\nLeaves</string>
+    <string name="leaves">Employees\nOn Leave</string>
     <string name="work">Daily\nWork</string>
 
     <string name="employee">Employee\nDetails </string>

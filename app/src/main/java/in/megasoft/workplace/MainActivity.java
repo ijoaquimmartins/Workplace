@@ -2,6 +2,7 @@ package in.megasoft.workplace;
 
 import static in.megasoft.workplace.userDetails.PublicURL;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -103,8 +104,13 @@ public class MainActivity extends AppCompatActivity {
         }.start();
         getAttendanceLeave();
 
-        TextView marqueeTextView = findViewById(R.id.marquee_text);
-        marqueeTextView.setSelected(true);
+        TextView marqueeText = findViewById(R.id.marqueeText);
+        marqueeText.setSelected(true);
+        ObjectAnimator animator = ObjectAnimator.ofFloat(marqueeText, "translationX", 500f, -500f);
+        animator.setDuration(5000); // Animation duration in milliseconds
+        animator.setRepeatCount(ObjectAnimator.INFINITE);
+        animator.setRepeatMode(ObjectAnimator.RESTART);
+        animator.start();
 
         attendance.setOnClickListener(new View.OnClickListener() {
             @Override
