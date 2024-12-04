@@ -50,6 +50,8 @@ import java.util.List;
 import java.util.Map;
 
 public class DailyWorkDetails extends AppCompatActivity {
+
+    //test git hub
     Context context;
     String url;
     private static final int REQUEST_CODE = 1;
@@ -66,9 +68,10 @@ public class DailyWorkDetails extends AppCompatActivity {
         setContentView(R.layout.activity_daily_work_details);
 
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{ android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
         }
-         tvFromDate = findViewById(R.id.tvFromDate);
+
+        tvFromDate = findViewById(R.id.tvFromDate);
         tvToDate = findViewById(R.id.tvToDate);
         btnGet = findViewById(R.id.btnGetData);
         gridView = findViewById(R.id.gridView);
