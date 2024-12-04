@@ -5,11 +5,10 @@ import static in.megasoft.workplace.userDetails.PublicURL;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -25,10 +24,12 @@ import androidx.core.content.ContextCompat;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -36,6 +37,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -59,9 +63,12 @@ public class DailyWorkDetails extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_daily_work_details); // Always set the content view first!
+        setContentView(R.layout.activity_daily_work_details);
 
-        // Now initialize views
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+        }
+
         tvFromDate = findViewById(R.id.tvFromDate);
         tvToDate = findViewById(R.id.tvToDate);
         btnGet = findViewById(R.id.btnGetData);
@@ -151,12 +158,7 @@ public class DailyWorkDetails extends AppCompatActivity {
         btnExcelExport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (jsonData != null) {
-
-                    openUrlInBrowser(context, downloadUrl);
-                }else {
-                    Toast.makeText (DailyWorkDetails.this, "Error:- No Data to load",Toast.LENGTH_SHORT).show();
-                }
+                    generateExcelFile();
             }
         });
 
@@ -250,6 +252,73 @@ public class DailyWorkDetails extends AppCompatActivity {
         requestQueue.add(stringRequest);
     }
 
+
+    public void generateExcelFile(){
+
+        String url = "https://mssgpsdata.in/megasoft/employee/genreport";
+        HttpsTrustManager.allowAllSSL();
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            // Save the response as a file
+                            saveExcelFile(response.getBytes());
+                        } catch (Exception e) {
+                            Toast.makeText(DailyWorkDetails.this, "Failed to save file: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(DailyWorkDetails.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> data = new HashMap<>();
+                data.put("report_nm", "daily work");
+                data.put("from_dt", stFromDate);
+                data.put("to_dt", stToDate);
+                return data;
+            }
+
+            @Override
+            protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                // Convert response data to string
+                String data;
+                try {
+                    data = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+                } catch (Exception e) {
+                    data = new String(response.data);
+                }
+                return Response.success(data, HttpHeaderParser.parseCacheHeaders(response));
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(5000, 3, 1.0f));
+        requestQueue.add(stringRequest);
+
+    }
+    // Method to save the Excel file
+    private void saveExcelFile(byte[] fileData) {
+        try {
+            // Save file to Downloads folder
+            File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            File file = new File(downloadsDir, "daily_work_report.xlsx");
+
+            FileOutputStream outputStream = new FileOutputStream(file);
+            outputStream.write(fileData);
+            outputStream.close();
+
+            Toast.makeText(this, "File saved: " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
+        } catch (IOException e) {
+            Toast.makeText(this, "Error saving file: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
     private void handleFilePermissions(){
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -260,12 +329,6 @@ public class DailyWorkDetails extends AppCompatActivity {
                 // Generate the file only after data is fetched
             }
         }
-    }
-
-    public void openUrlInBrowser(Context context, String url) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(url));
-        this.context.startActivity(intent);
     }
 
     @Override

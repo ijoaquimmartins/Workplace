@@ -5,14 +5,14 @@ plugins {
 
 android {
     namespace 'in.megasoft.workplace'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         applicationId "in.megasoft.workplace"
         minSdk 26
         targetSdk 34
-        versionCode 3
-        versionName "1.2.0"
+        versionCode 4
+        versionName "1.2.2"
 
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -63,9 +63,9 @@ dependencies {
     implementation 'com.applandeo:material-calendar-view:1.9.2'
     implementation 'com.annimon:stream:1.1.0'
 
-    implementation 'com.google.firebase:firebase-messaging:24.1.0'
-    implementation platform('com.google.firebase:firebase-bom:33.6.0')
-    implementation 'com.google.firebase:firebase-auth'
-    implementation 'com.google.firebase:firebase-firestore'
+    implementation "androidx.work:work-runtime:2.10.0"
+    implementation 'androidx.work:work-runtime-ktx:2.8.0'
+    implementation 'androidx.work:work-rxjava2:2.8.0'
+    implementation 'com.google.guava:guava:31.1-android'
 
 }

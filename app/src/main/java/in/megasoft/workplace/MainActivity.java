@@ -26,6 +26,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -39,6 +42,7 @@ import org.json.JSONException;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -92,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
         getLeaveCount();
         long totalTime = 60000;
         long interval = 180000;
+        schedulePeriodicWork();
 
         new CountDownTimer(totalTime, interval) {
             public void onTick(long millisUntilFinished) {
@@ -318,5 +323,16 @@ protected void onResume() {
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(intent);
         this.finish();
+    }
+
+    private void schedulePeriodicWork() {
+        PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(NotificationWorker.class, 15, TimeUnit.MINUTES)
+                .build();
+
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+                "notification_work", // Unique work name
+                ExistingPeriodicWorkPolicy.KEEP, // Keep the existing work if it's already running
+                workRequest
+        );
     }
 }

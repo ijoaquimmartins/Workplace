@@ -29,7 +29,6 @@
     <uses-feature
         android:name="android.hardware.telephony"
         android:required="false" />
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -97,5 +96,4 @@
             android:name=".MainActivity"
             android:exported="false" />
     </application>
-
 </manifest>
