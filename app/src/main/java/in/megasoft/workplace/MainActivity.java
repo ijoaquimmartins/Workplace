@@ -49,12 +49,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
-
     public static final String SHARED_PREFS = "sharedprefs";
     Button attendance, applyleave, dailywork, employeedetails,
             holidaydetails,  totalleave, approveleave, attendancedetails, leavedetails, dailyworkdetails;
     TextView userfullname, emailid, mobileno, tvAttnLeaveList, badge_notification_1;
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, 1, 1, menuIconWithText(this, R.drawable.ic_person, "PROFILE"));
@@ -64,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
         inflater.inflate(R.menu.main_menu, menu);
         return true;
     }
-
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
@@ -77,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
     private CharSequence menuIconWithText(Context context, int drawableId, String title) {
         Drawable drawable = ContextCompat.getDrawable(context, drawableId);
         if (drawable != null) {
@@ -90,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
         }
         return sb;
     }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,6 +102,8 @@ public class MainActivity extends AppCompatActivity {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+        Intent serviceIntent = new Intent(MainActivity.this, RSSPullService.class);
+        startService(serviceIntent);
 
         new CountDownTimer(totalTime, interval) {
             public void onTick(long millisUntilFinished) {
@@ -117,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
                 getAttendanceLeave();
             }
         }.start();
+
         getAttendanceLeave();
 
         TextView marqueeText = findViewById(R.id.marqueeText);
@@ -202,7 +200,6 @@ protected void onResume() {
         emailid.setText(userDetails.EmailID);
         mobileno.setText(userDetails.MobileNo);
     }
-
     public void rights(){
 
         attendance = findViewById(R.id.btnAttendance);
@@ -252,7 +249,6 @@ protected void onResume() {
     public void getMarquee(){
 
     }
-
     public void getLeaveCount(){
         String url = PublicURL + "getappliedleave.php";
         RequestQueue request = Volley.newRequestQueue(this);
@@ -278,7 +274,6 @@ protected void onResume() {
             // Pre-condition
             return;
         }
-
         int totalHeight = 0;
         int itemCount = listAdapter.getCount();
 
@@ -287,7 +282,6 @@ protected void onResume() {
             listItem.measure(0, 0);
             totalHeight += listItem.getMeasuredHeight();
         }
-
         ViewGroup.LayoutParams params = lvEmployee.getLayoutParams();
         params.height = totalHeight + (lvEmployee.getDividerHeight() * (itemCount - 1));
         lvEmployee.setLayoutParams(params);

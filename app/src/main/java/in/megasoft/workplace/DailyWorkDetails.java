@@ -18,7 +18,6 @@ import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -165,7 +164,7 @@ public class DailyWorkDetails extends AppCompatActivity {
         });
 
         if (jsonData == null) {
-            jsonData = ""; // Initialize to avoid null
+            jsonData = "";
         }
 
         List<Map<String, String>> data = parseJson(jsonData);
@@ -311,6 +310,7 @@ public class DailyWorkDetails extends AppCompatActivity {
         stMassage = "File saved: " + file.getAbsolutePath();
         showAlertDialog();
     }
+    /*
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -322,7 +322,7 @@ public class DailyWorkDetails extends AppCompatActivity {
                 Toast.makeText(this, "Permission denied. Cannot save the file.", Toast.LENGTH_SHORT).show();
             }
         }
-    }
+    }*/
     private void showAlertDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Massage");
