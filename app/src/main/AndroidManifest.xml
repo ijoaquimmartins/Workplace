@@ -23,8 +23,6 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
-
-
     <uses-feature android:name="android.hardware.camera.any" />
     <uses-feature
         android:name="android.hardware.camera.autofocus"
@@ -44,6 +42,11 @@
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustPan"
         tools:targetApi="31">
+        <service
+            android:name=".NotificationService"
+            android:exported="true"
+            android:foregroundServiceType="dataSync"
+            android:permission="TODO" />
         <receiver
             android:name=".BootReceiver"
             android:enabled="true"

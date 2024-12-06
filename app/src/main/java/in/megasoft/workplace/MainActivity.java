@@ -343,15 +343,12 @@ protected void onResume() {
                         .setRequiresBatteryNotLow(true)
                         .build())
                 .build();
-
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-                "notification_work", // Unique work name
-                ExistingPeriodicWorkPolicy.KEEP, // Keep the existing work if it's already running
+                "notification_work",
+                ExistingPeriodicWorkPolicy.KEEP,
                 workRequest
         );
-
         WorkManager.getInstance(MainActivity.this).getWorkInfosForUniqueWork("notification_work")
                 .get().forEach(info -> Log.d("WorkerState", info.getState().toString()));
-
     }
 }
