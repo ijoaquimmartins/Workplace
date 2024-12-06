@@ -43,7 +43,6 @@ public class NotificationService extends Service {
         // Return START_STICKY to keep the service alive
         return START_STICKY;
     }
-
     private void schedulePeriodicTask() {
         // Example: Scheduling WorkManager
         PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(NotificationWorker.class, 5, TimeUnit.MINUTES)
@@ -52,27 +51,23 @@ public class NotificationService extends Service {
                         .setRequiresBatteryNotLow(true)
                         .build())
                 .build();
-
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
                 "notification_work",
                 ExistingPeriodicWorkPolicy.KEEP,
                 workRequest
         );
     }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
         // Cleanup tasks if needed
     }
-
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         // Not binding to any activity
         return null;
     }
-
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel serviceChannel = new NotificationChannel(
