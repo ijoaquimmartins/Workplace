@@ -6,6 +6,8 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.icu.text.SimpleDateFormat;
+import android.icu.util.Calendar;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -39,10 +41,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -51,7 +50,6 @@ import java.util.Map;
 
 public class DailyWorkDetails extends AppCompatActivity {
 
-    //test git hub
     Context context;
     String url;
     private static final int REQUEST_CODE = 1;
@@ -66,6 +64,8 @@ public class DailyWorkDetails extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_daily_work_details);
+
+        Permission();
 
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
@@ -90,8 +90,6 @@ public class DailyWorkDetails extends AppCompatActivity {
         stFromDate = stToDate= formattedDate.toString();
 
         DailyWorkData();
-
-        handleFilePermissions();
 
         tvFromDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -160,7 +158,9 @@ public class DailyWorkDetails extends AppCompatActivity {
         btnExcelExport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    generateExcelFile();
+
+                downloadFile();
+
             }
         });
 
@@ -177,11 +177,11 @@ public class DailyWorkDetails extends AppCompatActivity {
     }
     private int calculateColumnCount(int size) {
         if (size <= 5) {
-            return 1;
+            return 2;
         } else if (size <= 10) {
             return 2;
         } else {
-            return 3;
+            return 1;
         }
     }
     private List<Map<String, String>> parseJson(String json) {
@@ -254,92 +254,70 @@ public class DailyWorkDetails extends AppCompatActivity {
         requestQueue.add(stringRequest);
     }
 
-
-    public void generateExcelFile(){
-
+    public void Permission(){
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            if (ContextCompat.checkSelfPermission(DailyWorkDetails.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(DailyWorkDetails.this,
+                        new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE);
+            }
+        }
+    }
+    public void downloadFile() {
         String url = "https://mssgpsdata.in/megasoft/employee/genreport";
         HttpsTrustManager.allowAllSSL();
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            // Save the response as a file
-                            saveExcelFile(response.getBytes());
-                        } catch (Exception e) {
-                            Toast.makeText(DailyWorkDetails.this, "Failed to save file: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                },
+        Request<byte[]> request = new Request<byte[]>(Request.Method.POST, url,
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(DailyWorkDetails.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(DailyWorkDetails.this, "Download failed: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }) {
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> data = new HashMap<>();
-                data.put("report_nm", "daily work");
-                data.put("from_dt", stFromDate);
-                data.put("to_dt", stToDate);
-                return data;
+            protected Map<String, String> getParams() {
+                // Add POST parameters here
+                Map<String, String> params = new HashMap<>();
+                params.put("report_nm", "daily work");
+                params.put("from_dt", stFromDate);
+                params.put("to_dt", stToDate);
+                return params;
             }
-
             @Override
-            protected Response<String> parseNetworkResponse(NetworkResponse response) {
-                // Convert response data to string
-                String data;
+            protected Response<byte[]> parseNetworkResponse(NetworkResponse response) {
+                return Response.success(response.data, HttpHeaderParser.parseCacheHeaders(response));
+            }
+            @Override
+            protected void deliverResponse(byte[] response) {
                 try {
-                    data = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+                    saveFileToDisk(response);
                 } catch (Exception e) {
-                    data = new String(response.data);
+                    e.printStackTrace();
+                    Toast.makeText(DailyWorkDetails.this, "Failed to save file.", Toast.LENGTH_SHORT).show();
                 }
-                return Response.success(data, HttpHeaderParser.parseCacheHeaders(response));
             }
         };
-
-        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        stringRequest.setRetryPolicy(new DefaultRetryPolicy(5000, 3, 1.0f));
-        requestQueue.add(stringRequest);
-
+        Volley.newRequestQueue(this).add(request);
     }
-    // Method to save the Excel file
-    private void saveExcelFile(byte[] fileData) {
-        try {
-            // Save file to Downloads folder
-            File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-            File file = new File(downloadsDir, "daily_work_report.xlsx");
+    private void saveFileToDisk(byte[] fileData) throws Exception {
+        String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+        String fileName = "dwr_" + timestamp + ".xlsx";
+        File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File file = new File(downloadsDir, fileName);
 
-            FileOutputStream outputStream = new FileOutputStream(file);
-            outputStream.write(fileData);
-            outputStream.close();
-
-            Toast.makeText(this, "File saved: " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
-        } catch (IOException e) {
-            Toast.makeText(this, "Error saving file: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
+        FileOutputStream outputStream = new FileOutputStream(file);
+        outputStream.write(fileData);
+        outputStream.close();
+        stMassage = "File saved: " + file.getAbsolutePath();
+        showAlertDialog();
     }
-    private void handleFilePermissions(){
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE);
-            } else {
-                // Generate the file only after data is fetched
-            }
-        }
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (requestCode == REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                //generateExcelFile();
+
             } else {
                 Toast.makeText(this, "Permission denied. Cannot save the file.", Toast.LENGTH_SHORT).show();
             }
@@ -356,7 +334,6 @@ public class DailyWorkDetails extends AppCompatActivity {
             }
         });
         builder.setCancelable(false);
-
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }

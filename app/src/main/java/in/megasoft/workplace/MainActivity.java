@@ -12,6 +12,7 @@ import android.os.CountDownTimer;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ImageSpan;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -26,7 +27,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.NetworkType;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
@@ -42,6 +45,7 @@ import org.json.JSONException;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
@@ -96,7 +100,13 @@ public class MainActivity extends AppCompatActivity {
         getLeaveCount();
         long totalTime = 60000;
         long interval = 180000;
-        schedulePeriodicWork();
+        try {
+            schedulePeriodicWork();
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
         new CountDownTimer(totalTime, interval) {
             public void onTick(long millisUntilFinished) {
@@ -240,6 +250,9 @@ protected void onResume() {
             dailyworkdetails.setVisibility(View.VISIBLE);
         }
     }
+    public void getMarquee(){
+
+    }
 
     public void getLeaveCount(){
         String url = PublicURL + "getappliedleave.php";
@@ -260,7 +273,6 @@ protected void onResume() {
         });
         request.add(stringRequest);
     }
-// Absent = 0, Present = 1, "E L = 2, Half Day Leave Morning = 3, Half Day Leave Evening = 4, Work from Home = 5, Full Leave = 6
     public void setListViewHeightBasedOnChildren(ListView lvEmployee) {
         ListAdapter listAdapter = lvEmployee.getAdapter();
         if (listAdapter == null) {
@@ -324,9 +336,12 @@ protected void onResume() {
         startActivity(intent);
         this.finish();
     }
-
-    private void schedulePeriodicWork() {
+    private void schedulePeriodicWork() throws ExecutionException, InterruptedException {
         PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(NotificationWorker.class, 15, TimeUnit.MINUTES)
+                .setConstraints(new Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .setRequiresBatteryNotLow(true)
+                        .build())
                 .build();
 
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
@@ -334,5 +349,9 @@ protected void onResume() {
                 ExistingPeriodicWorkPolicy.KEEP, // Keep the existing work if it's already running
                 workRequest
         );
+
+        WorkManager.getInstance(MainActivity.this).getWorkInfosForUniqueWork("notification_work")
+                .get().forEach(info -> Log.d("WorkerState", info.getState().toString()));
+
     }
 }

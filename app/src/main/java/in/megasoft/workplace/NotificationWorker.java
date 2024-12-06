@@ -21,21 +21,16 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class NotificationWorker extends Worker {
-
     public NotificationWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
-
     @NonNull
     @Override
     public Result doWork() {
-
         try {
-
             URL url = new URL( PublicURL+"notification.php?user_id="+UserId);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
-
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             StringBuilder response = new StringBuilder();
             String line;
@@ -43,20 +38,17 @@ public class NotificationWorker extends Worker {
                 response.append(line);
             }
             in.close();
-
             JSONArray notifications = new JSONArray(response.toString());
             for (int i = 0; i < notifications.length(); i++) {
                 JSONObject notification = notifications.getJSONObject(i);
                 createNotification(notification.getString("title"), notification.getString("body"));
             }
-
             return Result.success();
         } catch (Exception e) {
             e.printStackTrace();
             return Result.failure();
         }
     }
-
     private void createNotification(String title, String message) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "channel_id")
                 .setSmallIcon(R.drawable.ic_notification)
