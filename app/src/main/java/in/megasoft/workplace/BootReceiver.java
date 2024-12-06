@@ -1,7 +1,5 @@
 package in.megasoft.workplace;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -21,14 +19,14 @@ public class BootReceiver extends BroadcastReceiver {
         if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
             try {
                 schedulePeriodicWork(context);
-                scheduleAlarm(context);
+               // scheduleAlarm(context);
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
             }
         }
     }
     private void schedulePeriodicWork(Context context) throws ExecutionException, InterruptedException {
-        PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(NotificationWorker.class, 15, TimeUnit.MINUTES)
+        PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(NotificationWorker.class, 5, TimeUnit.MINUTES)
                 .setConstraints(new Constraints.Builder()
                         .setRequiredNetworkType(NetworkType.CONNECTED)
                         .setRequiresBatteryNotLow(true)
@@ -40,7 +38,7 @@ public class BootReceiver extends BroadcastReceiver {
                 workRequest
         );
     }
-    private void scheduleAlarm(Context context) {
+ /*   private void scheduleAlarm(Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, NotificationWorker.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -51,5 +49,5 @@ public class BootReceiver extends BroadcastReceiver {
                 AlarmManager.INTERVAL_FIFTEEN_MINUTES,
                 pendingIntent
         );
-    }
+    }*/
 }
