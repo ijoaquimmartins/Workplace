@@ -198,7 +198,6 @@ protected void onResume() {
         userfullname = findViewById(R.id.txtUserFullName);
         emailid = findViewById(R.id.txtEmailID);
         mobileno = findViewById(R.id.txtMobile);
-
         userfullname.setText(userDetails.UserFullName);
         emailid.setText(userDetails.EmailID);
         mobileno.setText(userDetails.MobileNo);
