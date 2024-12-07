@@ -103,9 +103,15 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
             startActivity(new Intent(MarkAttendance.this, MainActivity.class));
             finish();
         });
-        tvAdvanceElMark.setOnClickListener(view -> llApplyEL.setVisibility(View.VISIBLE));
-
-        tvSelectDate.setOnClickListener(view -> openDatePicker());
+        //tvAdvanceElMark.setOnClickListener(view -> llApplyEL.setVisibility(View.VISIBLE));
+        tvAdvanceElMark.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                llApplyEL.setVisibility(View.VISIBLE);
+                openDatePicker();
+            }
+        });
+        //tvSelectDate.setOnClickListener(view -> openDatePicker());
         btnMarkAdvEl.setOnClickListener(view -> MarkAdvanceEl());
     }
 
@@ -116,7 +122,6 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
             getLastLocation();
         }
     }
-
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         attnspinvalue = adapterView.getItemAtPosition(i).toString();
@@ -211,7 +216,6 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
             }
         }
     }
-
     public void getAttendance() {
         String url = PublicURL + "atten_check.php?userid=" + UserId;
         RequestQueue request = Volley.newRequestQueue(this);
@@ -275,11 +279,31 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
 
     private void openDatePicker() {
         Calendar calendar = Calendar.getInstance();
-        DatePickerDialog datePickerDialog = new DatePickerDialog(MarkAttendance.this,
-                (view, year, month, dayOfMonth) -> tvSelectDate.setText(dayOfMonth + "/" + (month + 1) + "/" + year),
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH));
+
+        // Calculate the next Saturday
+        while (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY) {
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+        }
+
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                MarkAttendance.this,
+                (view, selectedYear, selectedMonth, selectedDay) -> {
+                    // Set the selected date to the TextView
+                    tvSelectDate.setText(day + "/" + (month + 1) + "/" + year);
+                },
+                year, month, day
+        );
+
+        // Restrict the selectable date to the next Saturday only
+        datePickerDialog.getDatePicker().setMinDate(calendar.getTimeInMillis());
+        datePickerDialog.getDatePicker().setMaxDate(calendar.getTimeInMillis());
+
+        // Show the dialog
+        datePickerDialog.setTitle("Select Next Saturday");
         datePickerDialog.show();
     }
 
@@ -299,9 +323,11 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
                             String message = jsonResponse.optString("message", "");
                             if(error.equals("")){
                                 stMassage=message.toString();
+                                btnMarkAdvEl.setVisibility(View.GONE);
                                 showAlertDialog();
                             }else{
                                 llApplyEL.setVisibility(View.GONE);
+                                btnMarkAdvEl.setVisibility(View.GONE);
                                 stMassage=error.toString();
                                 showAlertDialog();
                             }

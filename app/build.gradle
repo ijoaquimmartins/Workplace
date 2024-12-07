@@ -53,6 +53,8 @@ dependencies {
     implementation 'androidx.privacysandbox.tools:tools-core:1.0.0-alpha09'
     implementation files('Piashsarker')
     implementation 'com.google.firebase:firebase-messaging:24.0.3'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.8.7'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
