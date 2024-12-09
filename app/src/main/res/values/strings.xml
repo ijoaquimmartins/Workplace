@@ -41,5 +41,6 @@
 
     <string name="approveL">Approve</string>
     <string name="decline">Decline</string>
+    <string name="title_activity_attendance_details">MSS</string>
 
 </resources>
