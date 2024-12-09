@@ -54,9 +54,7 @@
         <activity
             android:name=".AttendanceDetails"
             android:exported="false"
-            android:label="@string/title_activity_attendance_details"
-            android:theme="@style/Theme.Workplace.NoActionBar" />
-
+            android:label="@string/title_activity_attendance_details"/>
         <service
             android:name=".RSSPullService"
             android:exported="true" />

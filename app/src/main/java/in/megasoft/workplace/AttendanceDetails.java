@@ -2,7 +2,6 @@ package in.megasoft.workplace;
 
 import android.os.Bundle;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -14,7 +13,6 @@ public class AttendanceDetails extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_attendance_details);
         ViewPager2 viewPager = findViewById(R.id.view_pager);
         TabLayout tabs = findViewById(R.id.tabs);
@@ -33,6 +31,4 @@ public class AttendanceDetails extends AppCompatActivity {
             }
         }).attach();
     }
-
-
 }
