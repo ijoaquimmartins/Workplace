@@ -41,9 +41,5 @@
 
     <string name="approveL">Approve</string>
     <string name="decline">Decline</string>
-    <string name="title_activity_attendance_details">AttendanceDetails</string>
-    <string name="tab_text_1">Tab 1</string>
-    <string name="tab_text_2">Tab 2</string>
-
 
 </resources>

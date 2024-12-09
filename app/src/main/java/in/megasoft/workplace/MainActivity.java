@@ -184,6 +184,13 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(holidaydetails);
             }
         });
+        attendancedetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent attendancedetails = new Intent(MainActivity.this, AttendanceDetails.class);
+                startActivity(attendancedetails);
+            }
+        });
     }
 protected void onResume() {
     super.onResume();
