@@ -26,6 +26,6 @@ public class SectionsPagerAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return 2; // Number of tabs
+        return 2;
     }
 }
