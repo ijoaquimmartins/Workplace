@@ -62,10 +62,11 @@ public class MainActivity extends AppCompatActivity {
             holidaydetails,  totalleave, approveleave, attendancedetails, leavedetails, dailyworkdetails;
     TextView userfullname, emailid, mobileno, tvAttnLeaveList, badge_notification_1, tvUserId;
     EditText etOldPassword, etNewPassword, etConfirmPassword;
+    String stErrorMassage;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, 1, 1, menuIconWithText(this, R.drawable.ic_person, "PROFILE"));
-        menu.add(0, 2, 2, menuIconWithText(this, R.drawable.ic_logout, "LOGOUT"));
+        menu.add(0, 2, 2, menuIconWithText(this, R.drawable.ic_password, "CHANGE PASSWORD"));
         menu.add(0, 3, 3, menuIconWithText(this, R.drawable.ic_logout, "LOGOUT"));
 
         MenuInflater inflater = getMenuInflater();
@@ -377,7 +378,7 @@ protected void onResume() {
         String txtOldPass = etOldPassword.getText().toString();
         String txtNewPass = etNewPassword.getText().toString();
         String txtConfPass = etConfirmPassword.getText().toString();
-        String urlsubmit = URL + "";
+        String urlsubmit = URL + "user-changepass";
 
         if (txtOldPass.equals("")){
             Toast.makeText(MainActivity.this, "Please enter Old Password", Toast.LENGTH_SHORT).show();
@@ -389,14 +390,10 @@ protected void onResume() {
                 StringRequest stringRequest = new StringRequest(Request.Method.POST, urlsubmit, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        if(response.equals("success")){
-                            Toast.makeText(MainActivity.this, "Password Change Successfully", Toast.LENGTH_SHORT).show();
-                            logout();
-                        } else if (response.equals("passwordmismatch")) {
-                            Toast.makeText(MainActivity.this, "Old Password entered do not match", Toast.LENGTH_LONG).show();
-                        } else if (response.equals("failure")) {
-                            Toast.makeText(MainActivity.this, "Error Changing Password", Toast.LENGTH_SHORT).show();
-                        }
+
+                        stErrorMassage = response.toString();
+                        showAlertDialog();
+
                     }
                 }, new Response.ErrorListener() {
                     @Override
@@ -407,10 +404,10 @@ protected void onResume() {
                     @Override
                     protected Map<String, String> getParams() throws AuthFailureError {
                         Map<String, String> data = new HashMap<>();
-                        data.put("userid", userid);
-                        data.put("OldPass", txtOldPass);
-                        data.put("NewPass", txtNewPass);
-                        data.put("NewPass", txtNewPass);
+                        data.put("user_id", userid);
+                        data.put("oldpassword", txtOldPass);
+                        data.put("newpassword", txtNewPass);
+                        data.put("newpassword_confirmation", txtNewPass);
                         return data;
                     }
                 };
@@ -433,5 +430,19 @@ protected void onResume() {
         );
         WorkManager.getInstance(MainActivity.this).getWorkInfosForUniqueWork("notification_work")
                 .get().forEach(info -> Log.d("WorkerState", info.getState().toString()));
+    }
+    private void showAlertDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Massage");
+        builder.setMessage(stErrorMassage);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setCancelable(false);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 }

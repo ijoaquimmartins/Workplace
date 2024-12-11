@@ -36,7 +36,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Name:-  "
-                        android:textStyle="bold|italic" />
+                        android:textStyle="bold|italic"
+                        android:textSize="20dp"/>
 
                     <TextView
                         android:id="@+id/lblUserEmployeeID"
@@ -44,7 +45,8 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/lblUsername"
                         android:text="Email ID:-  "
-                        android:textStyle="bold|italic" />
+                        android:textStyle="bold|italic"
+                        android:textSize="20dp"/>
 
                     <TextView
                         android:id="@+id/lblDesignation"
@@ -52,7 +54,8 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/lblUserEmployeeID"
                         android:text="Designation:-  "
-                        android:textStyle="bold|italic" />
+                        android:textStyle="bold|italic"
+                        android:textSize="20dp"/>
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -63,21 +66,24 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="User Full Name "
-                        android:textStyle="italic" />
+                        android:textStyle="italic"
+                        android:textSize="20dp"/>
                     <TextView
                         android:id="@+id/txtEmailID"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/txtUserFullName"
                         android:text="Email ID "
-                        android:textStyle="italic" />
+                        android:textStyle="italic"
+                        android:textSize="20dp"/>
                     <TextView
                         android:id="@+id/txtDesignation"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/txtEmailID"
                         android:text="Designation"
-                        android:textStyle="italic" />
+                        android:textStyle="italic"
+                        android:textSize="20dp"/>
                 </RelativeLayout>
             </LinearLayout>
         </com.google.android.flexbox.FlexboxLayout>

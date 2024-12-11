@@ -47,18 +47,9 @@
             android:name=".EmployeeDetails"
             android:exported="false" />
         <activity
-            android:name=".Tab2Fragment"
-            android:exported="false"
-            tools:ignore="Instantiatable" />
-        <activity
-            android:name=".Tab1Fragment"
-            android:exported="false"
-            tools:ignore="Instantiatable" />
-        <activity
             android:name=".AttendanceDetails"
             android:exported="false"
             android:label="@string/title_activity_attendance_details" />
-
         <service
             android:name=".RSSPullService"
             android:exported="true" />
@@ -67,7 +58,6 @@
             android:exported="true"
             android:foregroundServiceType="dataSync"
             android:permission="TODO" />
-
         <receiver
             android:name=".BootReceiver"
             android:enabled="true"
@@ -76,7 +66,6 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
         <activity
             android:name=".HolidayList"
             android:exported="false" />
@@ -105,11 +94,9 @@
         <activity
             android:name=".LeaveApplication"
             android:exported="false" />
-
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
-
         <activity
             android:name=".RegisterActivity"
             android:exported="false" />
@@ -121,7 +108,6 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -132,5 +118,4 @@
             android:name=".MainActivity"
             android:exported="false" />
     </application>
-
 </manifest>
