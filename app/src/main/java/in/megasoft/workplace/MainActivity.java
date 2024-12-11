@@ -1,9 +1,11 @@
 package in.megasoft.workplace;
 
 import static in.megasoft.workplace.userDetails.PublicURL;
+import static in.megasoft.workplace.userDetails.URL;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
@@ -13,6 +15,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ImageSpan;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,11 +23,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.work.Constraints;
@@ -33,6 +39,7 @@ import androidx.work.NetworkType;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -45,6 +52,8 @@ import org.json.JSONException;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -52,11 +61,13 @@ public class MainActivity extends AppCompatActivity {
     public static final String SHARED_PREFS = "sharedprefs";
     Button attendance, applyleave, dailywork, employeedetails,
             holidaydetails,  totalleave, approveleave, attendancedetails, leavedetails, dailyworkdetails;
-    TextView userfullname, emailid, mobileno, tvAttnLeaveList, badge_notification_1;
+    TextView userfullname, emailid, mobileno, tvAttnLeaveList, badge_notification_1, tvUserId;
+    EditText etOldPassword, etNewPassword, etConfirmPassword;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, 1, 1, menuIconWithText(this, R.drawable.ic_person, "PROFILE"));
         menu.add(0, 2, 2, menuIconWithText(this, R.drawable.ic_logout, "LOGOUT"));
+        menu.add(0, 3, 3, menuIconWithText(this, R.drawable.ic_logout, "LOGOUT"));
 
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
@@ -69,6 +80,32 @@ public class MainActivity extends AppCompatActivity {
             case 1:
                 return true;
             case 2:
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                LayoutInflater inflater = getLayoutInflater();
+                View view1 = inflater.inflate(R.layout.change_password, null);
+                builder.setView(view1);
+
+                tvUserId = view1.findViewById(R.id.txtUserID);
+                etOldPassword = view1.findViewById(R.id.txtOldPassword);
+                etNewPassword = view1.findViewById(R.id.txtNewPassword);
+                etConfirmPassword = view1.findViewById(R.id.txtConfirmPassword);
+
+                builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ChangePassword();
+                        dialog.dismiss();
+                    }
+                });
+                builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.show();
+                return true;
+            case 3:
                 logout();
                 return true;
         }
@@ -335,6 +372,52 @@ protected void onResume() {
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(intent);
         this.finish();
+    }
+    public void ChangePassword(){
+        String userid = userDetails.UserId;
+        String txtOldPass = etOldPassword.getText().toString();
+        String txtNewPass = etNewPassword.getText().toString();
+        String txtConfPass = etConfirmPassword.getText().toString();
+        String urlsubmit = URL + "";
+
+        if (txtOldPass.equals("")){
+            Toast.makeText(MainActivity.this, "Please enter Old Password", Toast.LENGTH_SHORT).show();
+        } else {
+            if (!txtNewPass.equals(txtConfPass)) {
+                Toast.makeText(MainActivity.this, "New Password and Confirm Password do not Match", Toast.LENGTH_LONG).show();
+            }else {
+                HttpsTrustManager.allowAllSSL();
+                StringRequest stringRequest = new StringRequest(Request.Method.POST, urlsubmit, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        if(response.equals("success")){
+                            Toast.makeText(MainActivity.this, "Password Change Successfully", Toast.LENGTH_SHORT).show();
+                            logout();
+                        } else if (response.equals("passwordmismatch")) {
+                            Toast.makeText(MainActivity.this, "Old Password entered do not match", Toast.LENGTH_LONG).show();
+                        } else if (response.equals("failure")) {
+                            Toast.makeText(MainActivity.this, "Error Changing Password", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(MainActivity.this, error.toString().trim(), Toast.LENGTH_LONG).show();
+                    }
+                }){
+                    @Override
+                    protected Map<String, String> getParams() throws AuthFailureError {
+                        Map<String, String> data = new HashMap<>();
+                        data.put("userid", userid);
+                        data.put("OldPass", txtOldPass);
+                        data.put("NewPass", txtNewPass);
+                        return data;
+                    }
+                };
+                RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+                requestQueue.add(stringRequest);
+            }
+        }
     }
     private void schedulePeriodicWork() throws ExecutionException, InterruptedException {
         PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(NotificationWorker.class, 5, TimeUnit.MINUTES)
