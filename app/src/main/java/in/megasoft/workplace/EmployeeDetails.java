@@ -11,6 +11,8 @@ public class EmployeeDetails extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_employee_details);
 
+        //SELECT * FROM `employees` LEFT JOIN designations ON employees.designation=designations.id LEFT JOIN locations ON employees.depot=locations.id WHERE employees.id='1'
+
 
 
     }
