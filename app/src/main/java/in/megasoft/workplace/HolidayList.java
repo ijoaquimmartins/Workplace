@@ -50,11 +50,11 @@ public class HolidayList extends AppCompatActivity{
             return insets;
         });
 
-        stYear = "Upcoming";
 
         spnSelectYear = findViewById(R.id.spnSelectYear);
         lvHolidayList = findViewById(R.id.lvHolidayList);
 
+        stYear = "Upcoming";
         List<String> years = getYearsList(2023);
         years.add(0, "Upcoming");
         ArrayAdapter<String> adapter = new ArrayAdapter<>(

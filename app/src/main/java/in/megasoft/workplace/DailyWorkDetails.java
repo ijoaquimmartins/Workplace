@@ -1,6 +1,6 @@
 package in.megasoft.workplace;
 
-import static in.megasoft.workplace.userDetails.PublicURL;
+import static in.megasoft.workplace.userDetails.*;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
@@ -263,7 +263,7 @@ public class DailyWorkDetails extends AppCompatActivity {
         }
     }
     public void downloadFile() {
-        String url = "https://mssgpsdata.in/megasoft/employee/genreport";
+        String url = URL + "employee-gen-report";
         HttpsTrustManager.allowAllSSL();
 
         Request<byte[]> request = new Request<byte[]>(Request.Method.POST, url,

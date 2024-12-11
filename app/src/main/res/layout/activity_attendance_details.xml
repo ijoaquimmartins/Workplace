@@ -1,29 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     tools:context=".AttendanceDetails">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="1dp">
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabs"
-            android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal">
+        <Spinner
+            android:id="@+id/spnMonth"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:tabMode="fixed"
-            app:tabGravity="fill" />
-    </com.google.android.material.appbar.AppBarLayout>
+            android:layout_margin="10dp"/>
+        <Spinner
+            android:id="@+id/spnYear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"/>
+        <Button
+            android:id="@+id/btnGetAttendance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/get"
+            android:padding="5dp"
+            />
+    </LinearLayout>
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/view_pager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical">
+        <HorizontalScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scrollbars="horizontal">
+            <TableLayout
+                android:id="@+id/tlAttendance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:stretchColumns="0,1"/>
+        </HorizontalScrollView>
+    </ScrollView>
 </LinearLayout>
