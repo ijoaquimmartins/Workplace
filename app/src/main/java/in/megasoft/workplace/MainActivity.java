@@ -1,7 +1,6 @@
 package in.megasoft.workplace;
 
-import static in.megasoft.workplace.userDetails.PublicURL;
-import static in.megasoft.workplace.userDetails.URL;
+import static in.megasoft.workplace.userDetails.*;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;

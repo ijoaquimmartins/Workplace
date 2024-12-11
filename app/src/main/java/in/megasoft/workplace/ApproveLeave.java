@@ -1,7 +1,6 @@
 package in.megasoft.workplace;
 
-import static in.megasoft.workplace.userDetails.PublicURL;
-import static in.megasoft.workplace.userDetails.UserId;
+import static in.megasoft.workplace.userDetails.*;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -44,7 +43,6 @@ import java.util.Map;
 public class ApproveLeave extends AppCompatActivity {
 
     TextView tvTotalLeaves, tvLeaves, tvBalanceleaves, tvEmployeeName, tvEmpRemark, tvHeader;
-    ListView lvDates, lvEmployeenamesanddate;
     LinearLayout llListAppliedemployee, llLeaveDetails;
     EditText etApproveRemark;
     Button btnApprove, btnDecline, btnBack, btnCancel;
@@ -69,7 +67,6 @@ public class ApproveLeave extends AppCompatActivity {
         tvTotalLeaves = findViewById(R.id.tvApproveTotalLeaves);
         tvLeaves = findViewById(R.id.tvApproveLeaves);
         tvBalanceleaves = findViewById(R.id.tvApproveBalanceleaves);
-    //    lvDates = findViewById(R.id.lvDates);
         tvEmpRemark = findViewById(R.id.tvEmpRemark);
         etApproveRemark = findViewById(R.id.etApproveLeaveRemark);
         llListAppliedemployee = findViewById(R.id.llListAppliedemployee);
@@ -176,7 +173,6 @@ public class ApproveLeave extends AppCompatActivity {
             // Pre-condition
             return;
         }
-
         int totalHeight = 0;
         int itemCount = listAdapter1.getCount();
 
@@ -185,7 +181,6 @@ public class ApproveLeave extends AppCompatActivity {
             listItem.measure(0, 0);
             totalHeight += listItem.getMeasuredHeight();
         }
-
         ViewGroup.LayoutParams params = lvEmployeenamesanddate.getLayoutParams();
         params.height = totalHeight + (lvEmployeenamesanddate.getDividerHeight() * (itemCount - 1));
         lvEmployeenamesanddate.setLayoutParams(params);
@@ -200,7 +195,6 @@ public class ApproveLeave extends AppCompatActivity {
                 @Override
                 public void onResponse(JSONArray response) {
                 try {
-
                     JSONObject jsonObject = response.getJSONObject(0);
                     String status = jsonObject.getString("status");
                     String empremerk = jsonObject.getString("empremerk");
@@ -210,7 +204,6 @@ public class ApproveLeave extends AppCompatActivity {
                     if(status.equals("0") && stType.equals("2")){
                         btnCancel.setVisibility(View.VISIBLE);
                     }
-
                     String[] dateStrings = jsonObject.getString("dates").split(",");
                     List<String> datesList = new ArrayList<>(Arrays.asList(dateStrings));
                     datesList.clear();
@@ -219,13 +212,6 @@ public class ApproveLeave extends AppCompatActivity {
                     ListView lvDates = findViewById(R.id.lvDates);
                     lvDates.setAdapter(adapter);
                     setListViewHeightBasedOnChildren(lvDates);
-                    /*
-                    String[] dates = jsonObject.getString("dates").split(",");
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(ApproveLeave.this, android.R.layout.simple_list_item_1, dates);
-                    ListView lvDates = findViewById(R.id.lvDates);
-                    lvDates.setAdapter(adapter);
-                    setListViewHeightBasedOnChildren(lvDates);*/
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -244,7 +230,6 @@ public class ApproveLeave extends AppCompatActivity {
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-
                 try {
                     JSONArray jsonArray = new JSONArray(response);
                     String[] emps = new String[jsonArray.length()];
@@ -255,7 +240,6 @@ public class ApproveLeave extends AppCompatActivity {
                         for (int i = 0; i < jsonArray.length(); i++) {
                             emps[i] = jsonArray.getString(i);
                         }
-
                         ArrayAdapter<String> adapter = new ArrayAdapter<>(ApproveLeave.this, android.R.layout.simple_list_item_1, emps);
                         ListView lvEmployeenamesanddate = findViewById(R.id.lvEmployeenamesanddate);
                         lvEmployeenamesanddate.setAdapter(adapter);
@@ -277,12 +261,10 @@ public class ApproveLeave extends AppCompatActivity {
 
         stApproveRemark = etApproveRemark.getText().toString();
         String urlsubmit = PublicURL + "approve_decline.php";
-
         in.megasoft.workplace.HttpsTrustManager.allowAllSSL();
         StringRequest stringRequest = new StringRequest(Request.Method.POST, urlsubmit, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-
                 if (response.equals("success")) {
                     showAlertDialog();
                 } else if (response.equals("failure")){
@@ -350,7 +332,7 @@ public class ApproveLeave extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
-                params.put("leaveid", leaveId);  // Add leave ID as a parameter in the body
+                params.put("leaveid", leaveId);
                 return params;
             }
             @Override
@@ -373,7 +355,6 @@ public class ApproveLeave extends AppCompatActivity {
             }
         });
         builder.setCancelable(false);
-
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }

@@ -1,6 +1,6 @@
 package in.megasoft.workplace;
 
-import static in.megasoft.workplace.userDetails.PublicURL;
+import static in.megasoft.workplace.userDetails.*;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -28,7 +28,6 @@ import java.util.List;
 import in.megasoft.workplace.databinding.ActivityApproveLeavesListBinding;
 
 public class ApproveLeavesList extends AppCompatActivity {
-
     ActivityApproveLeavesListBinding binding;
     private RecyclerView recyclerView;
     private RequestQueue requestQueue;
@@ -44,8 +43,6 @@ public class ApproveLeavesList extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         requestQueue = volleySingelton.getmInstance(this).getRequestQueue();
-
-
         requestAppliedLists = new ArrayList<>();
 
         btnRefresh = findViewById(R.id.btnReferesh);
@@ -103,7 +100,6 @@ public class ApproveLeavesList extends AppCompatActivity {
         );
         requestQueue.add(jsonArrayRequest);
     }
-
     @Override
     public void onBackPressed() {
         super.onBackPressed();

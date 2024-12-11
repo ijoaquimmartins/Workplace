@@ -1,7 +1,6 @@
 package in.megasoft.workplace;
 
-import static in.megasoft.workplace.userDetails.PublicURL;
-import static in.megasoft.workplace.userDetails.UserId;
+import static in.megasoft.workplace.userDetails.*;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -34,7 +33,6 @@ public class DailyWork extends AppCompatActivity {
     EditText etDeptRecieptCmplt, etAformCmplt, etRformCmplt, etDformCmplt, etFinalBillCmplt, etAdvanceCmplt, etReconnectionCmplt, etBillcorrectionCmplt, etMeterRepCmplt, etgfrCmplt, etStatementCmplt, etBookAdjstCmplt, etDeptRecieptPndg, etAformPndg, etRformPndg, etDformPndg, etFinalBillPndg, etAdvancePndg, etReconnectionPndg, etBillcorrectionPndg, etMeterRepPndg, etgfrPndg, etStatementPndg, etBookAdjstPndg, etRemark;
     CheckBox cbDataUploaded;
     Button btnDailyWorkDataSub, btnDailyWorkDataCan;
-
     String dataUploaded, rowId = "0";
 
     @Override
@@ -76,9 +74,7 @@ public class DailyWork extends AppCompatActivity {
         btnDailyWorkDataSub.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                    dailyWorkSubmit();
-
             }
         });
         btnDailyWorkDataCan.setOnClickListener(new View.OnClickListener() {
@@ -90,7 +86,6 @@ public class DailyWork extends AppCompatActivity {
             }
         });
     }
-
     private void getWorkDetails(){
         String url = PublicURL + "getworkdetails.php?userid=" + UserId;
         RequestQueue request = Volley.newRequestQueue(this);
@@ -98,13 +93,9 @@ public class DailyWork extends AppCompatActivity {
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-
                 String jsonString = response.toString();
-
                 try {
-
                     JSONObject jsonObject = new JSONObject(jsonString);
-
                     rowId = jsonObject.getString("id");
                     etDeptRecieptCmplt.setText(jsonObject.getString("etDeptRecieptCmplt"));
                     etAformCmplt.setText(jsonObject.getString("etAformCmplt"));
@@ -135,22 +126,17 @@ public class DailyWork extends AppCompatActivity {
                     if(dataUploaded.equals("1")){
                         cbDataUploaded.setChecked(true);
                     }
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
             }
         });
         request.add(stringRequest);
-
     }
-
     public void dailyWorkSubmit(){
 
         String etDeptRecieptCmplt1 = etDeptRecieptCmplt.getText().toString();
@@ -186,13 +172,8 @@ public class DailyWork extends AppCompatActivity {
         }else {
             cbDataUploaded1 = "0";
         }
-
         String dailyworkdata = etDeptRecieptCmplt1  +  "|"  + etAformCmplt1  +  "|"  + etRformCmplt1  +  "|"  + etDformCmplt1  +  "|"  + etFinalBillCmplt1  +  "|"  + etAdvanceCmplt1  +  "|"  + etReconnectionCmplt1  +  "|"  + etBillcorrectionCmplt1  +  "|"  + etMeterRepCmplt1  +  "|"  + etgfrCmplt1  +  "|"  + etStatementCmplt1  +  "|"  + etBookAdjstCmplt1  +  "|"  + etDeptRecieptPndg1  +  "|"  + etAformPndg1  +  "|"  + etRformPndg1  +  "|"  + etDformPndg1  +  "|"  + etFinalBillPndg1  +  "|"  + etAdvancePndg1  +  "|"  + etReconnectionPndg1  +  "|"  + etBillcorrectionPndg1  +  "|"  + etMeterRepPndg1  +  "|"  + etgfrPndg1  +  "|"  + etStatementPndg1  +  "|"  + etBookAdjstPndg1  +  "|"  + etRemark1  +  "|"  + cbDataUploaded1;
-
-    //    String dailyworkdata = etDeptRecieptCmplt1;
-
         String dailyworkurl = PublicURL + "adddailywork.php";
-
 
         if(!dailyworkdata.equals("")){
             in.megasoft.workplace.HttpsTrustManager.allowAllSSL();

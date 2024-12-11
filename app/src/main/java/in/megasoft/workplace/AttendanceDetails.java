@@ -1,6 +1,6 @@
 package in.megasoft.workplace;
 
-import static in.megasoft.workplace.userDetails.URL;
+import static in.megasoft.workplace.userDetails.*;
 
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -86,8 +86,6 @@ public class AttendanceDetails extends AppCompatActivity {
                 }
             }
         });
-
-
     }
     private List<String> getYearsList(int startYear) {
         List<String> years = new ArrayList<>();
@@ -109,22 +107,16 @@ public class AttendanceDetails extends AppCompatActivity {
                         String jsonData = response.toString();
                         try {
                             JSONArray jsonArray = new JSONArray(jsonData);
-
-                            // Get column headers from the first object
                             JSONObject firstObject = jsonArray.getJSONObject(0);
                             Iterator<String> keys = firstObject.keys();
-
-                            // Create header row
                             TableRow headerRow = new TableRow(AttendanceDetails.this);
                             TextView nameHeader = new TextView(AttendanceDetails.this);
                             nameHeader.setText("Name");
                             nameHeader.setPadding(16, 16, 16, 16);
                             headerRow.addView(nameHeader);
-
-                            // Add day headers dynamically
                             while (keys.hasNext()) {
                                 String key = keys.next();
-                                if (!key.equals("name")) { // Skip "name" field for day headers
+                                if (!key.equals("name")) {
                                     TextView headerCell = new TextView(AttendanceDetails.this);
                                     headerCell.setText(key.toUpperCase());
                                     headerCell.setPadding(16, 16, 16, 16);
@@ -132,30 +124,21 @@ public class AttendanceDetails extends AppCompatActivity {
                                 }
                             }
                             tableLayout.addView(headerRow);
-
-                            // Add data rows dynamically
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 TableRow dataRow = new TableRow(AttendanceDetails.this);
                                 JSONObject rowObject = jsonArray.getJSONObject(i);
-
-                                // Add name cell
                                 TextView nameCell = new TextView(AttendanceDetails.this);
                                 nameCell.setText(rowObject.getString("name"));
                                 nameCell.setPadding(16, 16, 16, 16);
                                 dataRow.addView(nameCell);
-
-                                // Add day data cells
-                                keys = rowObject.keys(); // Reset iterator for days
+                                keys = rowObject.keys();
                                 while (keys.hasNext()) {
                                     String key = keys.next();
-                                    if (!key.equals("name")) { // Skip "name" field for day data
+                                    if (!key.equals("name")) {
                                         JSONObject dayObject = rowObject.getJSONObject(key);
-
                                         TextView cell = new TextView(AttendanceDetails.this);
                                         cell.setText(dayObject.getString("status"));
                                         cell.setPadding(16, 16, 16, 16);
-
-                                        // Set background color based on flags
                                         if (dayObject.getBoolean("isSunday")) {
                                             cell.setBackgroundColor(Color.GRAY);
                                         } else if (dayObject.getBoolean("isHoliday")) {
@@ -163,7 +146,6 @@ public class AttendanceDetails extends AppCompatActivity {
                                         } else {
                                             cell.setBackgroundColor(Color.TRANSPARENT);
                                         }
-
                                         dataRow.addView(cell);
                                     }
                                 }
@@ -205,7 +187,7 @@ public class AttendanceDetails extends AppCompatActivity {
                 dialog.dismiss();
             }
         });
-        builder.setCancelable(false);// Prevent dismissing the dialog by tapping outside
+        builder.setCancelable(false);
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
