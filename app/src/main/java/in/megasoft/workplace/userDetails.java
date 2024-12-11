@@ -3,9 +3,8 @@ package in.megasoft.workplace;
 import android.app.Application;
 
 public class userDetails extends Application {
-
     public static String UserId, UserName, UserFullName, EmailID,
-    MobileNo, PicPath, WorkFromHome;
+    MobileNo, PicPath;
     public static String AttendanceMark, LeaveApplication, DailyWork, EmployeeDetails, HolidayDetails,
             TotalLeave, ApproveLeave, AttendanceDetails, LeaveDetails, DailyWorkDetails;
     public static String AttnDateTime, AttnMarkedAs;
