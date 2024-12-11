@@ -180,7 +180,6 @@ public class DailyWork extends AppCompatActivity {
             StringRequest stringRequest = new StringRequest(Request.Method.POST, dailyworkurl, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-
                     if(response.equals("success")){
                         Intent intent = new Intent(DailyWork.this, MainActivity.class);
                         startActivity(intent);

@@ -410,6 +410,7 @@ protected void onResume() {
                         data.put("userid", userid);
                         data.put("OldPass", txtOldPass);
                         data.put("NewPass", txtNewPass);
+                        data.put("NewPass", txtNewPass);
                         return data;
                     }
                 };

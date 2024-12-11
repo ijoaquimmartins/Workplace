@@ -1,9 +1,9 @@
 package in.megasoft.workplace;
 
-import static in.megasoft.workplace.userDetails.*;
+import static in.megasoft.workplace.userDetails.PublicURL;
+import static in.megasoft.workplace.userDetails.URL;
 
 import android.app.DatePickerDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.icu.text.SimpleDateFormat;
@@ -49,15 +49,12 @@ import java.util.Map;
 
 public class DailyWorkDetails extends AppCompatActivity {
 
-    Context context;
-    String url;
     private static final int REQUEST_CODE = 1;
     private GridView gridView;
     DatePickerDialog picker;
     TextView tvFromDate, tvToDate;
     String stFromDate, stToDate, stMassage;
     Button btnGet, btnExcelExport;
-    String downloadUrl = PublicURL + "dailyreport.php";
     private String jsonData;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +96,6 @@ public class DailyWorkDetails extends AppCompatActivity {
                 int year1 = cldr1.get(Calendar.YEAR);
                 btnGet.setVisibility(View.GONE);
                 tvToDate.setVisibility(View.GONE);
-                // date picker dialog
                 picker = new DatePickerDialog(DailyWorkDetails.this,
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
@@ -121,7 +117,6 @@ public class DailyWorkDetails extends AppCompatActivity {
                 int year1 = cldr1.get(Calendar.YEAR);
                 btnGet.setVisibility(View.GONE);
                 btnExcelExport.setVisibility(View.GONE);
-                // date picker dialog
                 picker = new DatePickerDialog(DailyWorkDetails.this,
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
@@ -157,18 +152,14 @@ public class DailyWorkDetails extends AppCompatActivity {
         btnExcelExport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 downloadFile();
-
             }
         });
 
         if (jsonData == null) {
             jsonData = "";
         }
-
         List<Map<String, String>> data = parseJson(jsonData);
-
         int columnCount = calculateColumnCount(data.size());
         gridView.setNumColumns(columnCount);
         GridAdapter adapter = new GridAdapter(this, data);
@@ -185,12 +176,10 @@ public class DailyWorkDetails extends AppCompatActivity {
     }
     private List<Map<String, String>> parseJson(String json) {
         List<Map<String, String>> list = new ArrayList<>();
-
         if (json == null || json.isEmpty()) {
             Toast.makeText(this, "No data available to parse.", Toast.LENGTH_SHORT).show();
-            return list; // Return an empty list
+            return list;
         }
-
         try {
             JSONArray jsonArray = new JSONArray(json);
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -208,7 +197,6 @@ public class DailyWorkDetails extends AppCompatActivity {
         }
         return list;
     }
-
     public void DailyWorkData() {
         String url = PublicURL + "dailyworkdetails.php";
         HttpsTrustManager.allowAllSSL();
@@ -227,7 +215,6 @@ public class DailyWorkDetails extends AppCompatActivity {
                             gridView.setAdapter(adapter);
                             btnGet.setVisibility(View.GONE);
                             btnExcelExport.setVisibility(View.VISIBLE);
-                            // generateExcelFile(); // Generate Excel only after valid data is fetched
                         } else {
                             Toast.makeText(DailyWorkDetails.this, "No data received.", Toast.LENGTH_SHORT).show();
                         }
@@ -252,7 +239,6 @@ public class DailyWorkDetails extends AppCompatActivity {
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(5000, 3, 1.0f));
         requestQueue.add(stringRequest);
     }
-
     public void Permission(){
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             if (ContextCompat.checkSelfPermission(DailyWorkDetails.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -310,7 +296,6 @@ public class DailyWorkDetails extends AppCompatActivity {
         stMassage = "File saved: " + file.getAbsolutePath();
         showAlertDialog();
     }
-
     private void showAlertDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Massage");
