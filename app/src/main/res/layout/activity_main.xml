@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#CACACAFF"
     tools:context=".MainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:gravity="center_horizontal"
-        android:background="#CACACAFF">
+        android:gravity="center_horizontal">
 
         <com.google.android.flexbox.FlexboxLayout
             android:id="@+id/layout_1"

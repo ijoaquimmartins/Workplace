@@ -58,14 +58,7 @@
             android:exported="true"
             android:foregroundServiceType="dataSync"
             android:permission="TODO" />
-        <receiver
-            android:name=".BootReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
+
         <activity
             android:name=".HolidayList"
             android:exported="false" />
@@ -103,6 +96,14 @@
         <activity
             android:name=".LoadingActivity"
             android:exported="false" />
+        <receiver
+            android:name=".BootReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
         <activity
             android:name=".LoginActivity"
             android:exported="true">

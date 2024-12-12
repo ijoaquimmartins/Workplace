@@ -8,7 +8,7 @@
     tools:context=".HolidayList"
     android:orientation="vertical"
     android:gravity="center_horizontal"
-    android:layout_marginTop="20dp">
+    android:background="#CACACAFF">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
