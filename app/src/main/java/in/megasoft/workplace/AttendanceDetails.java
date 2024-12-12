@@ -1,6 +1,6 @@
 package in.megasoft.workplace;
 
-import static in.megasoft.workplace.userDetails.*;
+import static in.megasoft.workplace.userDetails.URL;
 
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -25,10 +25,19 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -108,6 +117,7 @@ public class AttendanceDetails extends AppCompatActivity {
                         try {
                             JSONArray jsonArray = new JSONArray(jsonData);
                             JSONObject firstObject = jsonArray.getJSONObject(0);
+
                             Iterator<String> keys = firstObject.keys();
                             TableRow headerRow = new TableRow(AttendanceDetails.this);
                             TextView nameHeader = new TextView(AttendanceDetails.this);
@@ -147,15 +157,18 @@ public class AttendanceDetails extends AppCompatActivity {
                                             cell.setBackgroundColor(Color.TRANSPARENT);
                                         }
                                         String status = dayObject.getString("status");
-                                        if(status.equals("L") || status.equals("L1") || status.equals("L2") ){
-                                            cell.setBackgroundColor(Color.rgb(252,109,98));
+                                        if (status.equals("L") || status.equals("L1") || status.equals("L2")) {
+                                            cell.setBackgroundColor(Color.rgb(252, 109, 98));
+                                        } else if (status.equals("A")) {
+                                            cell.setBackgroundColor(Color.rgb(10, 10, 10));
+                                            cell.setTextColor(Color.WHITE);
                                         }
                                         dataRow.addView(cell);
                                     }
                                 }
                                 tableLayout.addView(dataRow);
                             }
-                        } catch (JSONException e) {
+                    } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
@@ -180,6 +193,51 @@ public class AttendanceDetails extends AppCompatActivity {
             }
         };
         requestQueue.add(stringRequest);
+    }
+    public void exportTableToExcel(TableLayout tableLayout, String fileName) {
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Attendance");
+
+        // Iterate through TableLayout rows
+        int rowIndex = 0;
+        for (int i = 0; i < tableLayout.getChildCount(); i++) {
+            View view = tableLayout.getChildAt(i);
+
+            if (view instanceof TableRow) {
+                TableRow tableRow = (TableRow) view;
+                Row row = sheet.createRow(rowIndex++);
+                int cellIndex = 0;
+                for (int j = 0; j < tableRow.getChildCount(); j++) {
+                    View cellView = tableRow.getChildAt(j);
+
+                    if (cellView instanceof TextView) {
+                        TextView textView = (TextView) cellView;
+                        Cell cell = row.createCell(cellIndex++);
+                        cell.setCellValue(textView.getText().toString());
+                        CellStyle style = workbook.createCellStyle();
+                        style.setWrapText(true);
+                        cell.setCellStyle(style);
+                    }
+                }
+            }
+        }
+
+        try {
+            File file = new File(getExternalFilesDir(null), fileName + ".xlsx");
+            FileOutputStream outputStream = new FileOutputStream(file);
+            workbook.write(outputStream);
+            outputStream.close();
+            workbook.close();
+
+            stErrorMassage = "Excel file saved to: " + file.getAbsolutePath();
+            showAlertDialog();
+        //    Toast.makeText(this, "Excel file saved to: " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            stErrorMassage = "Error saving Excel file" + e.getMessage().toString();
+            showAlertDialog();
+         //   Toast.makeText(this, "Error saving Excel file", Toast.LENGTH_SHORT).show();
+        }
     }
     private void showAlertDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
