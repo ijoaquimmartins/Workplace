@@ -142,9 +142,13 @@ public class AttendanceDetails extends AppCompatActivity {
                                         if (dayObject.getBoolean("isSunday")) {
                                             cell.setBackgroundColor(Color.GRAY);
                                         } else if (dayObject.getBoolean("isHoliday")) {
-                                            cell.setBackgroundColor(Color.RED);
+                                            cell.setBackgroundColor(Color.rgb(194, 52, 41));
                                         } else {
                                             cell.setBackgroundColor(Color.TRANSPARENT);
+                                        }
+                                        String status = dayObject.getString("status");
+                                        if(status.equals("L") || status.equals("L1") || status.equals("L2") ){
+                                            cell.setBackgroundColor(Color.rgb(252,109,98));
                                         }
                                         dataRow.addView(cell);
                                     }

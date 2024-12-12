@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".DailyWorkDetails"
     android:orientation="vertical"
-    android:background="#CACACAFF">
+    android:background="@color/color_back">
 
     <LinearLayout
         android:layout_width="match_parent"

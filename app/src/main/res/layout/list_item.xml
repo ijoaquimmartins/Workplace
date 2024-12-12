@@ -7,4 +7,4 @@
         android:textSize="20sp"
         android:textColor="#0027FF"
         android:padding="2dp"
-        android:background="#CACACAFF"/>
+        android:background="@color/color_back"/>

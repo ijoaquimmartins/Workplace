@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".RegisterActivity"
     android:scrollbars="vertical|horizontal"
-    android:background="#CACACAFF">
+    android:background="@color/color_back">
 
     <ScrollView
         android:layout_width="match_parent"

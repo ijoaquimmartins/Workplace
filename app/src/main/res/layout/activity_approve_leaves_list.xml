@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".ApproveLeavesList"
     android:orientation="vertical"
-    android:background="#CACACAFF">
+    android:background="@color/color_back">
 
     <RelativeLayout
         android:layout_width="match_parent"
