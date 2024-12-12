@@ -230,7 +230,8 @@
                 android:layout_margin="12dp"
                 android:backgroundTint="@color/submit"
                 android:text="@string/approveL"
-                android:visibility="gone"/>
+                android:visibility="gone"
+                android:textColor="@color/black"/>
 
             <Button
                 android:id="@+id/btnDeclineleave"
@@ -239,7 +240,8 @@
                 android:layout_margin="12dp"
                 android:backgroundTint="@color/cancle"
                 android:text="@string/decline"
-                android:visibility="gone"/>
+                android:visibility="gone"
+                android:textColor="@color/black"/>
             <Button
                 android:id="@+id/btnCancleleave"
                 android:layout_width="wrap_content"
@@ -247,14 +249,16 @@
                 android:layout_margin="12dp"
                 android:backgroundTint="@color/cancle"
                 android:text="CANCLE LEAVE"
-                android:visibility="gone"/>
+                android:visibility="gone"
+                android:textColor="@color/black"/>
             <Button
                 android:id="@+id/btnApproveBack"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="12dp"
                 android:backgroundTint="@color/cancle"
-                android:text="BACK" />
+                android:text="BACK"
+                android:textColor="@color/black"/>
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

@@ -13,16 +13,18 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_horizontal">
+
         <Spinner
             android:id="@+id/spnMonth"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_margin="10dp"/>
+
         <Spinner
             android:id="@+id/spnYear"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"/>
+            android:layout_height="40dp"
+            android:layout_margin="10dp" />
 
     </LinearLayout>
     <LinearLayout
@@ -36,6 +38,7 @@
             android:layout_height="wrap_content"
             android:text="@string/get"
             android:layout_margin="5dp"
+            android:textColor="@color/black"
             />
         <Button
             android:id="@+id/btnExportAttendance"
@@ -43,7 +46,8 @@
             android:layout_height="wrap_content"
             android:text="@string/export"
             android:layout_margin="5dp"
-            />
+            android:enabled="false"
+            android:textColor="@color/black"/>
     </LinearLayout>
 
     <ScrollView

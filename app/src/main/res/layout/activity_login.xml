@@ -82,14 +82,16 @@
                     android:layout_height="wrap_content"
                     android:text="@string/login"
                     android:layout_margin="10dp"
-                    android:backgroundTint="@color/submit"/>
+                    android:backgroundTint="@color/submit"
+                    android:textColor="@color/black"/>
                 <Button
                     android:id="@+id/btnCancle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/cancel"
                     android:layout_margin="10dp"
-                    android:backgroundTint="@color/cancle"/>
+                    android:backgroundTint="@color/cancle"
+                    android:textColor="@color/black"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="wrap_content"

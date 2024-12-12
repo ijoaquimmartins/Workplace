@@ -5,6 +5,7 @@ import static in.megasoft.workplace.userDetails.URL;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -49,7 +50,7 @@ public class AttendanceDetails extends AppCompatActivity {
     TableLayout tableLayout;
     Spinner spnMonth, spnYear;
     String stMonth, stYear, stErrorMassage;
-    Button btnGetAttendance;
+    Button btnGetAttendance, btnExportAttendance;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +61,7 @@ public class AttendanceDetails extends AppCompatActivity {
         spnMonth = findViewById(R.id.spnMonth);
         spnYear = findViewById(R.id.spnYear);
         btnGetAttendance = findViewById(R.id.btnGetAttendance);
+        btnExportAttendance = findViewById(R.id.btnExportAttendance);
 
         ArrayAdapter<String> monthadapter = new ArrayAdapter<>(
                 this,
@@ -93,6 +95,13 @@ public class AttendanceDetails extends AppCompatActivity {
                 }else {
                     getAttendance();
                 }
+            }
+        });
+        btnExportAttendance.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String attnFileName = stMonth + "_Attendance";
+                exportTableToExcel(tableLayout, attnFileName);
             }
         });
     }
@@ -221,9 +230,9 @@ public class AttendanceDetails extends AppCompatActivity {
                 }
             }
         }
-
         try {
-            File file = new File(getExternalFilesDir(null), fileName + ".xlsx");
+            File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            File file = new File(downloadsDir, fileName + ".xlsx");
             FileOutputStream outputStream = new FileOutputStream(file);
             workbook.write(outputStream);
             outputStream.close();

@@ -234,7 +234,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="12dp"
                 android:backgroundTint="@color/submit"
-                android:text="@string/submit" />
+                android:text="@string/submit"
+                android:textColor="@color/black"/>
 
             <Button
                 android:id="@+id/btnCancelleave"
@@ -242,7 +243,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="12dp"
                 android:backgroundTint="@color/cancle"
-                android:text="@string/cancel" />
+                android:text="@string/cancel"
+                android:textColor="@color/black"/>
         </LinearLayout>
     </LinearLayout>
 

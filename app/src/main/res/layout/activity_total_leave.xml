@@ -56,7 +56,8 @@
             android:id="@+id/btnGet"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="GET"/>
+            android:text="GET"
+            android:textColor="@color/black"/>
 
         <ExpandableListView
             android:id="@+id/expandableListView"

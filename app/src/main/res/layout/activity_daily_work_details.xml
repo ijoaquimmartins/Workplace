@@ -52,14 +52,16 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="2dp"
                 android:text="GET"
-                android:visibility="gone"/>
+                android:visibility="gone"
+                android:textColor="@color/black"/>
             <Button
                 android:id="@+id/btnExcelExport"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="2dp"
                 android:text="@string/export"
-                android:visibility="gone" />
+                android:visibility="gone"
+                android:textColor="@color/black"/>
         </LinearLayout>
         <TextView
             android:layout_width="wrap_content"

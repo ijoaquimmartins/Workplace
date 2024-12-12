@@ -98,14 +98,15 @@
                     android:layout_height="wrap_content"
                     android:text="@string/submit"
                     android:backgroundTint="@color/submit"
-                    android:visibility="gone"/>
+                    android:visibility="gone"
+                    android:textColor="@color/black"/>
                 <Button
                     android:id="@+id/btncanceltAttn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/cancel"
                     android:layout_marginStart="15dp"
-                    android:backgroundTint="@color/cancle"/>
+                    android:backgroundTint="@color/cancle" />
 
             </LinearLayout>
             <LinearLayout
@@ -167,7 +168,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/submit"
-                    android:backgroundTint="@color/submit"/>
+                    android:backgroundTint="@color/submit"
+                    android:textColor="@color/black"/>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

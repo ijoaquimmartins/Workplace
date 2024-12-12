@@ -504,14 +504,16 @@
                     android:layout_height="wrap_content"
                     android:text="@string/submit"
                     android:backgroundTint="@color/submit"
-                    android:layout_margin="15dp"/>
+                    android:layout_margin="15dp"
+                    android:textColor="@color/black"/>
                 <Button
                     android:id="@+id/btnDailyWorkDataCan"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/cancel"
                     android:backgroundTint="@color/cancle"
-                    android:layout_margin="15dp"/>
+                    android:layout_margin="15dp"
+                    android:textColor="@color/black"/>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

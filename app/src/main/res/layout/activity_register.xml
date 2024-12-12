@@ -196,7 +196,8 @@
                     android:backgroundTint="@color/submit"
                     android:text="@string/submit"
                     android:textSize="18sp"
-                    android:layout_margin="20dp"/>
+                    android:layout_margin="20dp"
+                    android:textColor="@color/black"/>
                 <Button
                     android:id="@+id/btnregcancel"
                     android:layout_width="wrap_content"
@@ -204,7 +205,8 @@
                     android:text="@string/cancel"
                     android:backgroundTint="@color/cancle"
                     android:textSize="18sp"
-                    android:layout_margin="20dp"/>
+                    android:layout_margin="20dp"
+                    android:textColor="@color/black"/>
 
             </LinearLayout>
         </LinearLayout>
