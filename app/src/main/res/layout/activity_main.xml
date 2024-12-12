@@ -11,16 +11,16 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:gravity="center_horizontal"
-        android:background="#00b3b3">
+        android:background="#CACACAFF">
 
         <com.google.android.flexbox.FlexboxLayout
             android:id="@+id/layout_1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
+            android:layout_marginStart="3dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="3dp"
             android:background="@drawable/round_corners">
 
             <LinearLayout
@@ -37,7 +37,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Name:-  "
-                        android:textStyle="bold|italic" />
+                        android:textStyle="bold|italic"
+                        android:textSize="20dp"/>
 
                     <TextView
                         android:id="@+id/txtLblUserEmployeeID"
@@ -45,7 +46,8 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/txtLblUsername"
                         android:text="Email ID:-  "
-                        android:textStyle="bold|italic" />
+                        android:textStyle="bold|italic"
+                        android:textSize="20dp"/>
 
                     <TextView
                         android:id="@+id/txtLblDesignation"
@@ -53,7 +55,8 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/txtLblUserEmployeeID"
                         android:text="Mobile No:-  "
-                        android:textStyle="bold|italic" />
+                        android:textStyle="bold|italic"
+                        android:textSize="20dp"/>
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -65,7 +68,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="User Full Name "
-                        android:textStyle="italic" />
+                        android:textStyle="italic"
+                        android:textSize="20dp"/>
 
                     <TextView
                         android:id="@+id/txtEmailID"
@@ -73,7 +77,8 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/txtUserFullName"
                         android:text="Email ID "
-                        android:textStyle="italic" />
+                        android:textStyle="italic"
+                        android:textSize="20dp"/>
 
                     <TextView
                         android:id="@+id/txtMobile"
@@ -81,7 +86,8 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/txtEmailID"
                         android:text="Mobile No "
-                        android:textStyle="italic" />
+                        android:textStyle="italic"
+                        android:textSize="20dp"/>
                 </RelativeLayout>
             </LinearLayout>
         </com.google.android.flexbox.FlexboxLayout>
@@ -122,10 +128,10 @@
             android:id="@+id/layout_3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="15dp"
+            android:layout_marginStart="3dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="3dp"
+            android:layout_marginBottom="3dp"
             app:justifyContent="center"
             app:flexWrap="wrap">
 
@@ -196,10 +202,10 @@
             android:id="@+id/layout_4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="15dp"
+            android:layout_marginStart="3dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="3dp"
+            android:layout_marginBottom="3dp"
             app:justifyContent="center"
             app:flexWrap="wrap">
 
@@ -264,10 +270,10 @@
             android:id="@+id/layout_5"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="15dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="3dp"
+            android:layout_marginBottom="3dp"
             app:justifyContent="center"
             app:flexWrap="wrap">
 
@@ -369,10 +375,11 @@
             android:id="@+id/layout_2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginBottom="15dp">
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="3dp"
+            android:layout_marginBottom="3dp"
+            >
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -393,11 +400,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:scrollbars="vertical"/>
-
             </LinearLayout>
-
         </com.google.android.flexbox.FlexboxLayout>
-
     </LinearLayout>
-
 </ScrollView>
