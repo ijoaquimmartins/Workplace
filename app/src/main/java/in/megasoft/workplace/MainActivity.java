@@ -228,6 +228,13 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(attendancedetails);
             }
         });
+        employeedetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent employeedetails = new Intent(MainActivity.this, EmployeeDetails.class);
+                startActivity(employeedetails);
+            }
+        });
     }
 protected void onResume() {
     super.onResume();

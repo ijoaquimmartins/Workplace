@@ -12,82 +12,426 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_margin="10dp">
-        <com.google.android.flexbox.FlexboxLayout
-            android:id="@+id/layout_1"
-            android:layout_width="match_parent"
+        android:gravity="center_horizontal">
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
-            android:background="@drawable/round_corners">
-
-            <LinearLayout
+            android:text="Employee Details"
+            android:textSize="24dp"
+            android:layout_marginTop="10dp"/>
+        <Spinner
+            android:id="@+id/spnEmployee"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_margin="10dp"/>
+            <com.google.android.flexbox.FlexboxLayout
+                android:id="@+id/layout_1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:id="@+id/lblUsername"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:backgroundTint="#75a3a3"
+                android:background="@drawable/round_corners">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:scrollbars="horizontal">
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Name:-  "
-                        android:textStyle="bold|italic"
-                        android:textSize="20dp"/>
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/lblUsername"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Name"
+                            android:textStyle="bold|italic"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:id="@+id/lblUserCode"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Code"
+                            android:textStyle="bold|italic"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:id="@+id/lblUserMobile"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Mobile"
+                            android:textStyle="bold|italic"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:id="@+id/lblUserMobileAlt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Mobile Alt"
+                            android:textStyle="bold|italic"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:id="@+id/lblUserEmployeeID"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Email ID "
+                            android:textStyle="bold|italic"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:id="@+id/lblDesignation"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Designation"
+                            android:textStyle="bold|italic"
+                            android:textSize="20dp"/>
+                        <com.google.android.material.divider.MaterialDivider
+                            android:layout_width="match_parent"
+                            android:layout_height="3dp"
+                            android:layout_marginTop="5dp"/>
+                        <TextView
+                            android:id="@+id/lblLocation"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Location"
+                            android:textStyle="bold|italic"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:id="@+id/lblEmployeeType"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Employee Type "
+                            android:textStyle="bold|italic"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:id="@+id/lblDOB"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="D.O.B"
+                            android:textStyle="bold|italic"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:id="@+id/lblDOJ"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="D.O.J"
+                            android:textStyle="bold|italic"
+                            android:textSize="20dp"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=":"
+                            android:textStyle="bold"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=":"
+                            android:textStyle="bold"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=":"
+                            android:textStyle="bold"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=":"
+                            android:textStyle="bold"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=":"
+                            android:textStyle="bold"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=":"
+                            android:textStyle="bold"
+                            android:textSize="20dp"/>
+                        <com.google.android.material.divider.MaterialDivider
+                            android:layout_width="match_parent"
+                            android:layout_height="3dp"
+                            android:layout_marginTop="5dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=":"
+                            android:textStyle="bold"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=":"
+                            android:textStyle="bold"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=":"
+                            android:textStyle="bold"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=":"
+                            android:textStyle="bold"
+                            android:textSize="20dp"/>
 
-                    <TextView
-                        android:id="@+id/lblUserEmployeeID"
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/txtUserFullName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" "
+                            android:textStyle="italic"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:id="@+id/txtUserCode"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" "
+                            android:textStyle="italic"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:id="@+id/txtMobile"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" "
+                            android:textStyle="italic"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:id="@+id/txtMobileAlt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" "
+                            android:textStyle="italic"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:id="@+id/txtEmailID"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" "
+                            android:textStyle="italic"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:id="@+id/txtDesignation"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" "
+                            android:textStyle="italic"
+                            android:textSize="20dp"/>
+                        <com.google.android.material.divider.MaterialDivider
+                            android:layout_width="match_parent"
+                            android:layout_height="3dp"
+                            android:layout_marginTop="5dp"/>
+                        <TextView
+                            android:id="@+id/txtLocation"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" "
+                            android:textStyle="italic"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:id="@+id/txtEmployeeType"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" "
+                            android:textStyle="italic"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:id="@+id/txtDOB"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" "
+                            android:textStyle="italic"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:id="@+id/txtDOJ"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" "
+                            android:textStyle="italic"
+                            android:textSize="20dp"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.flexbox.FlexboxLayout>
+            <com.google.android.flexbox.FlexboxLayout
+                android:id="@+id/layout_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:backgroundTint="#75a3a3"
+                android:background="@drawable/round_corners">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/lblUsername"
-                        android:text="Email ID:-  "
-                        android:textStyle="bold|italic"
-                        android:textSize="20dp"/>
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/lblLeavesAllotted"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Leaves Allotted"
+                            android:textStyle="bold|italic"
+                            android:textSize="20dp"/>
+                        <com.google.android.material.divider.MaterialDivider
+                            android:layout_width="match_parent"
+                            android:layout_height="3dp"
+                            android:layout_marginTop="5dp"/>
+                        <TextView
+                            android:id="@+id/lblPresentDays"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Present "
+                            android:textStyle="bold|italic"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:id="@+id/lblAbsentDays"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Absent "
+                            android:textStyle="bold|italic"
+                            android:textSize="20dp"/>
 
-                    <TextView
-                        android:id="@+id/lblDesignation"
+                        <TextView
+                            android:id="@+id/lblLeavesTaken"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Leaves Taken"
+                            android:textStyle="bold|italic"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:id="@+id/lblBalanceLeaves"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Balance Leaves "
+                            android:textStyle="bold|italic"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:id="@+id/lblELDays"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="EL "
+                            android:textStyle="bold|italic"
+                            android:textSize="20dp"/>
+                    </LinearLayout>
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/lblUserEmployeeID"
-                        android:text="Designation:-  "
-                        android:textStyle="bold|italic"
-                        android:textSize="20dp"/>
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:id="@+id/txtUserFullName"
-                        android:layout_width="wrap_content"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=":"
+                            android:textStyle="bold"
+                            android:textSize="20dp"/>
+                        <com.google.android.material.divider.MaterialDivider
+                            android:layout_width="match_parent"
+                            android:layout_height="3dp"
+                            android:layout_marginTop="5dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=":"
+                            android:textStyle="bold"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=":"
+                            android:textStyle="bold"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=":"
+                            android:textStyle="bold"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=":"
+                            android:textStyle="bold"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=":"
+                            android:textStyle="bold"
+                            android:textSize="20dp"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="User Full Name "
-                        android:textStyle="italic"
-                        android:textSize="20dp"/>
-                    <TextView
-                        android:id="@+id/txtEmailID"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/txtUserFullName"
-                        android:text="Email ID "
-                        android:textStyle="italic"
-                        android:textSize="20dp"/>
-                    <TextView
-                        android:id="@+id/txtDesignation"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/txtEmailID"
-                        android:text="Designation"
-                        android:textStyle="italic"
-                        android:textSize="20dp"/>
-                </RelativeLayout>
-            </LinearLayout>
-        </com.google.android.flexbox.FlexboxLayout>
-
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/txtLeavesAllotted"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" "
+                            android:textStyle="italic"
+                            android:textSize="20dp"/>
+                        <com.google.android.material.divider.MaterialDivider
+                            android:layout_width="match_parent"
+                            android:layout_height="3dp"
+                            android:layout_marginTop="5dp"/>
+                        <TextView
+                            android:id="@+id/txtPresent"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" "
+                            android:textStyle="italic"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:id="@+id/txtAbsent"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" "
+                            android:textStyle="italic"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:id="@+id/txtLeavesTaken"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" "
+                            android:textStyle="italic"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:id="@+id/txtBalanceLeaves"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" "
+                            android:textStyle="italic"
+                            android:textSize="20dp"/>
+                        <TextView
+                            android:id="@+id/txtEL"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" "
+                            android:textStyle="italic"
+                            android:textSize="20dp"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.flexbox.FlexboxLayout>
     </LinearLayout>
 </ScrollView>
