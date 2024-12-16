@@ -9,7 +9,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center_horizontal">
 
@@ -38,7 +38,7 @@
                         android:layout_height="wrap_content"
                         android:text="Name:-  "
                         android:textStyle="bold|italic"
-                        android:textSize="20dp"/>
+                        android:textSize="20sp"/>
 
                     <TextView
                         android:id="@+id/txtLblUserEmployeeID"
@@ -47,7 +47,7 @@
                         android:layout_below="@id/txtLblUsername"
                         android:text="Email ID:-  "
                         android:textStyle="bold|italic"
-                        android:textSize="20dp"/>
+                        android:textSize="20sp"/>
 
                     <TextView
                         android:id="@+id/txtLblDesignation"
@@ -56,7 +56,7 @@
                         android:layout_below="@id/txtLblUserEmployeeID"
                         android:text="Mobile No:-  "
                         android:textStyle="bold|italic"
-                        android:textSize="20dp"/>
+                        android:textSize="20sp"/>
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -69,7 +69,7 @@
                         android:layout_height="wrap_content"
                         android:text="User Full Name "
                         android:textStyle="italic"
-                        android:textSize="20dp"/>
+                        android:textSize="20sp"/>
 
                     <TextView
                         android:id="@+id/txtEmailID"
@@ -78,7 +78,7 @@
                         android:layout_below="@id/txtUserFullName"
                         android:text="Email ID "
                         android:textStyle="italic"
-                        android:textSize="20dp"/>
+                        android:textSize="20sp"/>
 
                     <TextView
                         android:id="@+id/txtMobile"
@@ -87,7 +87,7 @@
                         android:layout_below="@id/txtEmailID"
                         android:text="Mobile No "
                         android:textStyle="italic"
-                        android:textSize="20dp"/>
+                        android:textSize="20sp"/>
                 </RelativeLayout>
             </LinearLayout>
         </com.google.android.flexbox.FlexboxLayout>
@@ -392,13 +392,15 @@
                     android:layout_height="wrap_content"
                     android:text="Attendance and Leave List"
                     android:textSize="14sp"
-                    android:textStyle="bold|italic"/>
+                    android:textStyle="bold|italic"
+                    android:textColor="@color/black"/>
 
                 <ListView
                     android:id="@+id/lvEmployeeList"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:textColor="@color/black"
                     android:scrollbars="vertical"/>
             </LinearLayout>
         </com.google.android.flexbox.FlexboxLayout>

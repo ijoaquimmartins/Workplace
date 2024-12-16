@@ -40,8 +40,6 @@ public class EmployeeDetails extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_employee_details);
 
-        //SELECT * FROM `employees` LEFT JOIN designations ON employees.designation=designations.id LEFT JOIN locations ON employees.depot=locations.id WHERE employees.id='1'
-
         spnEmployee = findViewById(R.id.spnEmployee);
         txtUserFullName = findViewById(R.id.txtUserFullName);
         txtUserCode = findViewById(R.id.txtUserCode);
@@ -63,30 +61,6 @@ public class EmployeeDetails extends AppCompatActivity {
 
         getEmployeeList();
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, usernames);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spnEmployee.setAdapter(adapter);
-
-        spnEmployee.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
-                String selectedUsername = adapterView.getItemAtPosition(i).toString();
-                String selectedUserid = "";
-
-                for (HashMap.Entry<String, String> entry : userMap.entrySet()) {
-                    if (entry.getValue().equals(selectedUsername)) {
-                        selectedUserid = entry.getKey();
-                        break;
-                    }
-                }
-                Toast.makeText(EmployeeDetails.this, "Selected UserID: " + selectedUserid, Toast.LENGTH_SHORT).show();
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
     }
     public void getEmployeeList() {
 
@@ -112,8 +86,8 @@ public class EmployeeDetails extends AppCompatActivity {
                     for (int i = 0; i < response.length(); i++) {
                         try {
                             JSONObject jsonObject = response.getJSONObject(i);
-                            String id = jsonObject.getString("id");
-                            String name = jsonObject.getString("name");
+                            String id = jsonObject.getString("userid");
+                            String name = jsonObject.getString("username");
                             // Add to collections
                             employeeIds.add(id);
                             employeeNames.add(name);
@@ -130,7 +104,6 @@ public class EmployeeDetails extends AppCompatActivity {
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(EmployeeDetails.this, android.R.layout.simple_spinner_item, userDisplayList);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spnEmployee.setAdapter(adapter);
-
                     // Set item selection listener
                     spnEmployee.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
@@ -143,12 +116,12 @@ public class EmployeeDetails extends AppCompatActivity {
                                 Toast.makeText(EmployeeDetails.this, "UserID: " + selectedUserid + "\nUsername: " + selectedUsername, Toast.LENGTH_SHORT).show();
                             }
                         }
-
                         @Override
                         public void onNothingSelected(AdapterView<?> parent) {
                             // Handle no selection
                         }
                     });
+
                 }
             },
             new Response.ErrorListener() {

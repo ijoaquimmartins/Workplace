@@ -14,7 +14,8 @@
         android:layout_marginTop="5dp"
         android:text="Employee"
         android:textSize="24dp"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        android:textColor="@color/black"/>
     <TextView
         android:id="@+id/tvLeaveAppType"
         android:layout_width="wrap_content"
@@ -22,14 +23,16 @@
         android:layout_marginStart="10dp"
         android:text="Leave App Id"
         android:textSize="20dp"
-        android:layout_below="@+id/tvEmployee"/>
+        android:layout_below="@+id/tvEmployee"
+        android:textColor="@color/black"/>
     <TextView
         android:id="@+id/tvLeaveId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:visibility="gone"
-        android:layout_below="@+id/tvLeaveAppType"/>
+        android:layout_below="@+id/tvLeaveAppType"
+        />
     <TextView
         android:id="@+id/tvLeavetype"
         android:layout_width="wrap_content"
@@ -37,7 +40,8 @@
         android:layout_marginStart="10dp"
         android:text="Leave Type"
         android:textSize="20dp"
-        android:layout_below="@+id/tvLeaveId"/>
+        android:layout_below="@+id/tvLeaveId"
+        android:textColor="@color/black"/>
     <TextView
         android:id="@+id/tvUserId"
         android:layout_width="wrap_content"

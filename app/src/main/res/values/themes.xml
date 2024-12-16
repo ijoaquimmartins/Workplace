@@ -20,7 +20,5 @@
     </style>
 
     <style name="Theme.Workplace.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
-
-
     <style name="Theme.Workplace.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

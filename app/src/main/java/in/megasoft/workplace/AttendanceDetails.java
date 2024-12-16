@@ -177,6 +177,7 @@ public class AttendanceDetails extends AppCompatActivity {
                                 }
                                 tableLayout.addView(dataRow);
                             }
+                            btnExportAttendance.setEnabled(true);
                     } catch (JSONException e) {
                             e.printStackTrace();
                         }
