@@ -134,4 +134,30 @@ public class EmployeeDetails extends AppCompatActivity {
         );
         requestQueue.add(jsonArrayRequest);
     }
+    public void getEmployeeDetails(){
+        String urlFetch = PublicURL + "getemployeelist.php";
+        HttpsTrustManager.allowAllSSL();
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, urlFetch, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        if (response == null || response.length() == 0) {
+                            Toast.makeText(EmployeeDetails.this, "NO DATA", Toast.LENGTH_LONG).show();
+                            return;
+                        }else {
+
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("Volley Error", error.toString());
+                        Toast.makeText(EmployeeDetails.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+        requestQueue.add(jsonArrayRequest);
+    }
 }

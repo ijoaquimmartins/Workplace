@@ -97,14 +97,14 @@ public class DailyWorkDetails extends AppCompatActivity {
                 btnGet.setVisibility(View.GONE);
                 tvToDate.setVisibility(View.GONE);
                 picker = new DatePickerDialog(DailyWorkDetails.this,
-                        new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view1, int year1, int monthOfYear1, int dayOfMonth1) {
-                                tvFromDate.setText(dayOfMonth1 + "/" + (monthOfYear1 + 1) + "/" + year1);
-                                stFromDate = (year1 + "-" + (monthOfYear1 + 1) + "-" + dayOfMonth1);
-                                tvToDate.setVisibility(View.VISIBLE);
-                            }
-                        }, year1, month1, day1);
+                    new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker view1, int year1, int monthOfYear1, int dayOfMonth1) {
+                            tvFromDate.setText(dayOfMonth1 + "/" + (monthOfYear1 + 1) + "/" + year1);
+                            stFromDate = (year1 + "-" + (monthOfYear1 + 1) + "-" + dayOfMonth1);
+                            tvToDate.setVisibility(View.VISIBLE);
+                        }
+                    }, year1, month1, day1);
                 picker.show();
             }
         });
@@ -118,28 +118,28 @@ public class DailyWorkDetails extends AppCompatActivity {
                 btnGet.setVisibility(View.GONE);
                 btnExcelExport.setVisibility(View.GONE);
                 picker = new DatePickerDialog(DailyWorkDetails.this,
-                        new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view1, int year1, int monthOfYear1, int dayOfMonth1) {
-                                tvToDate.setText(dayOfMonth1 + "/" + (monthOfYear1 + 1) + "/" + year1);
-                                stToDate = (year1 + "-" + (monthOfYear1 + 1) + "-" + dayOfMonth1);
-                                try {
-                                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                                    sdf.setLenient(false);
-                                    Date fromDate = sdf.parse(tvFromDate.getText().toString());
-                                    Date toDate = sdf.parse(tvToDate.getText().toString());
-                                    if (!fromDate.after(toDate)) {
-                                        btnGet.setVisibility(View.VISIBLE);
-                                    } else {
-                                        stMassage="Please check dates";
-                                        showAlertDialog();
-                                    }
-                                } catch (Exception e) {
-                                    stMassage="Invalid Dates";
+                    new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker view1, int year1, int monthOfYear1, int dayOfMonth1) {
+                            tvToDate.setText(dayOfMonth1 + "/" + (monthOfYear1 + 1) + "/" + year1);
+                            stToDate = (year1 + "-" + (monthOfYear1 + 1) + "-" + dayOfMonth1);
+                            try {
+                                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                                sdf.setLenient(false);
+                                Date fromDate = sdf.parse(tvFromDate.getText().toString());
+                                Date toDate = sdf.parse(tvToDate.getText().toString());
+                                if (!fromDate.after(toDate)) {
+                                    btnGet.setVisibility(View.VISIBLE);
+                                } else {
+                                    stMassage="Please check dates";
                                     showAlertDialog();
                                 }
+                            } catch (Exception e) {
+                                stMassage="Invalid Dates";
+                                showAlertDialog();
                             }
-                        }, year1, month1, day1);
+                        }
+                    }, year1, month1, day1);
                 picker.show();
             }
         });

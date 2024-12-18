@@ -119,77 +119,77 @@ public class AttendanceDetails extends AppCompatActivity {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         in.megasoft.workplace.HttpsTrustManager.allowAllSSL();
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        String jsonData = response.toString();
-                        try {
-                            JSONArray jsonArray = new JSONArray(jsonData);
-                            JSONObject firstObject = jsonArray.getJSONObject(0);
+            new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    String jsonData = response.toString();
+                    try {
+                        JSONArray jsonArray = new JSONArray(jsonData);
+                        JSONObject firstObject = jsonArray.getJSONObject(0);
 
-                            Iterator<String> keys = firstObject.keys();
-                            TableRow headerRow = new TableRow(AttendanceDetails.this);
-                            TextView nameHeader = new TextView(AttendanceDetails.this);
-                            nameHeader.setText("Name");
-                            nameHeader.setPadding(16, 16, 16, 16);
-                            headerRow.addView(nameHeader);
+                        Iterator<String> keys = firstObject.keys();
+                        TableRow headerRow = new TableRow(AttendanceDetails.this);
+                        TextView nameHeader = new TextView(AttendanceDetails.this);
+                        nameHeader.setText("Name");
+                        nameHeader.setPadding(16, 16, 16, 16);
+                        headerRow.addView(nameHeader);
+                        while (keys.hasNext()) {
+                            String key = keys.next();
+                            if (!key.equals("name")) {
+                                TextView headerCell = new TextView(AttendanceDetails.this);
+                                headerCell.setText(key.toUpperCase());
+                                headerCell.setPadding(16, 16, 16, 16);
+                                headerRow.addView(headerCell);
+                            }
+                        }
+                        tableLayout.addView(headerRow);
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            TableRow dataRow = new TableRow(AttendanceDetails.this);
+                            JSONObject rowObject = jsonArray.getJSONObject(i);
+                            TextView nameCell = new TextView(AttendanceDetails.this);
+                            nameCell.setText(rowObject.getString("name"));
+                            nameCell.setPadding(16, 16, 16, 16);
+                            dataRow.addView(nameCell);
+                            keys = rowObject.keys();
                             while (keys.hasNext()) {
                                 String key = keys.next();
                                 if (!key.equals("name")) {
-                                    TextView headerCell = new TextView(AttendanceDetails.this);
-                                    headerCell.setText(key.toUpperCase());
-                                    headerCell.setPadding(16, 16, 16, 16);
-                                    headerRow.addView(headerCell);
-                                }
-                            }
-                            tableLayout.addView(headerRow);
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                TableRow dataRow = new TableRow(AttendanceDetails.this);
-                                JSONObject rowObject = jsonArray.getJSONObject(i);
-                                TextView nameCell = new TextView(AttendanceDetails.this);
-                                nameCell.setText(rowObject.getString("name"));
-                                nameCell.setPadding(16, 16, 16, 16);
-                                dataRow.addView(nameCell);
-                                keys = rowObject.keys();
-                                while (keys.hasNext()) {
-                                    String key = keys.next();
-                                    if (!key.equals("name")) {
-                                        JSONObject dayObject = rowObject.getJSONObject(key);
-                                        TextView cell = new TextView(AttendanceDetails.this);
-                                        cell.setText(dayObject.getString("status"));
-                                        cell.setPadding(16, 16, 16, 16);
-                                        if (dayObject.getBoolean("isSunday")) {
-                                            cell.setBackgroundColor(Color.GRAY);
-                                        } else if (dayObject.getBoolean("isHoliday")) {
-                                            cell.setBackgroundColor(Color.rgb(194, 52, 41));
-                                        } else {
-                                            cell.setBackgroundColor(Color.TRANSPARENT);
-                                        }
-                                        String status = dayObject.getString("status");
-                                        if (status.equals("L") || status.equals("L1") || status.equals("L2")) {
-                                            cell.setBackgroundColor(Color.rgb(252, 109, 98));
-                                        } else if (status.equals("A")) {
-                                            cell.setBackgroundColor(Color.rgb(10, 10, 10));
-                                            cell.setTextColor(Color.WHITE);
-                                        }
-                                        dataRow.addView(cell);
+                                    JSONObject dayObject = rowObject.getJSONObject(key);
+                                    TextView cell = new TextView(AttendanceDetails.this);
+                                    cell.setText(dayObject.getString("status"));
+                                    cell.setPadding(16, 16, 16, 16);
+                                    if (dayObject.getBoolean("isSunday")) {
+                                        cell.setBackgroundColor(Color.GRAY);
+                                    } else if (dayObject.getBoolean("isHoliday")) {
+                                        cell.setBackgroundColor(Color.rgb(194, 52, 41));
+                                    } else {
+                                        cell.setBackgroundColor(Color.TRANSPARENT);
                                     }
+                                    String status = dayObject.getString("status");
+                                    if (status.equals("L") || status.equals("L1") || status.equals("L2")) {
+                                        cell.setBackgroundColor(Color.rgb(252, 109, 98));
+                                    } else if (status.equals("A")) {
+                                        cell.setBackgroundColor(Color.rgb(10, 10, 10));
+                                        cell.setTextColor(Color.WHITE);
+                                    }
+                                    dataRow.addView(cell);
                                 }
-                                tableLayout.addView(dataRow);
                             }
-                            btnExportAttendance.setEnabled(true);
-                    } catch (JSONException e) {
-                            e.printStackTrace();
+                            tableLayout.addView(dataRow);
                         }
+                        btnExportAttendance.setEnabled(true);
+                } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(AttendanceDetails.this, "Error fetching request: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-                        error.printStackTrace();
-                    }
-                }){
+                }
+            },
+            new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(AttendanceDetails.this, "Error fetching request: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    error.printStackTrace();
+                }
+            }){
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
@@ -208,7 +208,6 @@ public class AttendanceDetails extends AppCompatActivity {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Attendance");
 
-        // Iterate through TableLayout rows
         int rowIndex = 0;
         for (int i = 0; i < tableLayout.getChildCount(); i++) {
             View view = tableLayout.getChildAt(i);
