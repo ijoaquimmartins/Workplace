@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:scrollbars="vertical"
+    android:layout_gravity="center_horizontal"
     tools:context=".EmployeeDetails"
     android:background="@color/color_back">
     <LinearLayout
@@ -35,7 +36,7 @@
                 android:backgroundTint="#75a3a3"
                 android:background="@drawable/round_corners">
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:scrollbars="horizontal">
@@ -191,14 +192,16 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:scrollbars="horizontal">
                         <TextView
                             android:id="@+id/txtUserFullName"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text=" "
                             android:textStyle="italic"
-                            android:textSize="20dp"/>
+                            android:textSize="20dp"
+                            android:lines="1"/>
                         <TextView
                             android:id="@+id/txtUserCode"
                             android:layout_width="wrap_content"
@@ -226,16 +229,20 @@
                             android:layout_height="wrap_content"
                             android:text=" "
                             android:textStyle="italic"
-                            android:textSize="20dp"/>
+                            android:textSize="20dp"
+                            android:lines="1"/>
+
                         <TextView
                             android:id="@+id/txtDesignation"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:lines="1"
                             android:text=" "
-                            android:textStyle="italic"
-                            android:textSize="20dp"/>
+                            android:textSize="20dp"
+                            android:textStyle="italic" />
+
                         <com.google.android.material.divider.MaterialDivider
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="3dp"
                             android:layout_marginTop="5dp"/>
                         <TextView
