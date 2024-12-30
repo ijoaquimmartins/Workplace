@@ -46,6 +46,7 @@ public class GridAdapter extends BaseAdapter {
 
         Map<String, String> currentItem = data.get(position);
 
+        textViewDetails.setTextColor(context.getResources().getColor(R.color.black));
         textViewName.setText(currentItem.get("NAME"));
         String details = "RECIPT: " + currentItem.get("RECIPT") + "\n" +
                 "GFR: " + currentItem.get("GFR") + "\n" +
