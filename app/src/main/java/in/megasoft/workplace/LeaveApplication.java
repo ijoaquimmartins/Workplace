@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -60,18 +61,15 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
     Button btnDatePicker, btnApplyLeave, btnCancel;
     String stTotalLeaves, stLeaves, stBallance, stLeaveType, stDates, stremark,
             stLeave, selectedId, stTotalCount1, stMassage, stResponse, stDateEmp;
-
     String[] leavetype1 = {"Select", "Full Day", "Morning Half", "Evening Half"};
     String[] leavetype2 = {"Select", "Full Day"};
     String[] leavetype = {"Select"};
     Calendar min, max;
     ArrayList datearray = new ArrayList<>();
     ArrayList newDateArray = new ArrayList<>();
-
+    LinearLayout layZeroLeave;
     ArrayAdapter leavead;
-
     JSONArray leavedates = new JSONArray();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,18 +87,14 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
         btnApplyLeave = findViewById(R.id.btnSubmitleave);
         btnCancel = findViewById(R.id.btnCancelleave);
         btnDatePicker = findViewById(R.id.btnDatePicker);
-
-
-
+        layZeroLeave.findViewById(R.id.layZeroLeave);
         btnApplyLeave.setVisibility(View.GONE);
-
         getLeave();
         getLeaveType();
 
         spinLeaveType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
                 LeaveType selectedLeaveType = (LeaveType) adapterView.getItemAtPosition(i);
                 selectedId = selectedLeaveType.getId();
                 String stLeaveType = selectedLeaveType.getLeaveType();
@@ -118,10 +112,8 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
                 TypeCount();
                 tvTypeCount.setText(stTotalCount1);
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                // Optional: Handle case where nothing is selected
             }
         });
 
@@ -131,7 +123,6 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
                 String selectedItem = parent.getItemAtPosition(position).toString();
                 handleSpinnerSelection(selectedItem);
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 btnDatePicker.setEnabled(false);
@@ -151,7 +142,6 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
             public void onClick(View view) {
                 if(stLeaveType.equals("fullday")){
                     min = Calendar.getInstance();
-
                     min.add(Calendar.DAY_OF_MONTH, -1);
                     max = Calendar.getInstance();
                     max.add(Calendar.DAY_OF_MONTH, -1);
@@ -161,14 +151,12 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
                     min.add(Calendar.DAY_OF_MONTH, -1);
                     max = Calendar.getInstance();
                     max.add(Calendar.DAY_OF_MONTH, -1);
-
                     openManyDaysPicker();
                 } else if(stLeaveType.equals("ehalfday")) {
                     min = Calendar.getInstance();
                     min.add(Calendar.DAY_OF_MONTH, -1);
                     max = Calendar.getInstance();
                     max.add(Calendar.DAY_OF_MONTH, -1);
-
                     openManyDaysPicker();
                 }
             }
@@ -183,20 +171,16 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
     public class LeaveType {
         private String id;
         private String leaveType;
-
         public LeaveType(String id, String leaveType) {
             this.id = id;
             this.leaveType = leaveType;
         }
-
         public String getId() {
             return id;
         }
-
         public String getLeaveType() {
             return leaveType;
         }
-
         @Override
         public String toString() {
             return leaveType; // This will be displayed in the spinner
@@ -236,7 +220,6 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
         request.add(stringRequest);
 
     }
-
     private void handleSpinnerSelection(String item) {
         switch (item) {
             case "Select":
@@ -274,13 +257,10 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
                 break;
         }
     }
-
     private void openManyDaysPicker() {
-
         List<Calendar> selectedDays = new ArrayList<>(getDisabledDays());
         selectedDays.add(min);
         selectedDays.add(max);
-
         DatePickerBuilder manyDaysBuilder = new DatePickerBuilder((Context) this, this)
                 .pickerType(CalendarView.MANY_DAYS_PICKER)
                 .headerColor(android.R.color.holo_green_dark)
@@ -300,13 +280,10 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
 
         Calendar firstDisabled = DateUtils.getCalendar();
         firstDisabled.add(Calendar.DAY_OF_MONTH, -2);
-
         Calendar secondDisabled = DateUtils.getCalendar();
         secondDisabled.add(Calendar.DAY_OF_MONTH, -3);
-
         Calendar thirdDisabled = DateUtils.getCalendar();
         thirdDisabled.add(Calendar.DAY_OF_MONTH, -1);
-
         List<Calendar> calendars = new ArrayList<>();
         calendars.add(firstDisabled);
         calendars.add(secondDisabled);
@@ -332,7 +309,6 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
         disabledDay.add(Calendar.DAY_OF_MONTH, offset);
         calendars.add(disabledDay);
     }
-
     @Override
     public void onSelect(@NotNull List<Calendar> calendars) {
 
@@ -354,11 +330,9 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
                         stDateEmp = leavedates.toString();
                         getLeaveEmps();
                     });
-
                 } else {
                     stMassage = "Maximum 5 Days Only through the app";
                     showAlertDialog();
-                //    Toast.makeText(getApplicationContext(), "Max 5 Days", Toast.LENGTH_LONG).show();
                 }
             } else if (stLeaveType.equals("mhalfday") || stLeaveType.equals("ehalfday")) {
                 if(calendars.size() == 1){
@@ -367,7 +341,6 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
                         int day1 = calendar.get(Calendar.DAY_OF_MONTH);
                         int month1 = calendar.get(Calendar.MONTH);
                         int year1 = calendar.get(Calendar.YEAR);
-
                         datearray.add(day1 + "/" + (month1 + 1) + "/" + year1);
                         newDateArray.add(year1 + "-" + (month1 + 1) + "-" + day1);
                         leavedates.put(year1 + "-" + (month1 + 1) + "-" + day1);
@@ -377,20 +350,16 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
                 }else{
                     stMassage = "You can apply only 1 half day at a time";
                     showAlertDialog();
-                //    Toast.makeText(getApplicationContext(), "For halfday select only 1 Day", Toast.LENGTH_LONG).show();
                 }
             }
         }else{
             stMassage = "No days selected";
             showAlertDialog();
-        //    Toast.makeText(getApplicationContext(), "No days selected", Toast.LENGTH_LONG).show();
         }
         datesTV.setText(datearray.toString());
         stDates = leavedates.toString();
     }
-
     private void getLeave(){
-
         String url = PublicURL + "getleaves.php?userid="+userDetails.UserId;
         RequestQueue request = Volley.newRequestQueue(this);
         in.megasoft.workplace.HttpsTrustManager.allowAllSSL();
@@ -401,15 +370,16 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
                 stTotalLeaves = data[0];
                 stLeaves = data[1];
                 stBallance = data[2];
-
                 tvTotalLeaves.setText(stTotalLeaves);
                 tvLeaves.setText(stLeaves);
                 tvBalanceleaves.setText(stBallance);
+                if(stBallance.equals("0")){
+                    layZeroLeave.setVisibility(View.GONE);
+                }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
             }
         });
         request.add(stringRequest);
@@ -417,19 +387,15 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
     public void setListViewHeightBasedOnChildren(ListView lvEmployeenames) {
         ListAdapter listAdapter1 = lvEmployeenames.getAdapter();
         if (listAdapter1 == null) {
-            // Pre-condition
             return;
         }
-
         int totalHeight = 0;
         int itemCount = listAdapter1.getCount();
-
         for (int i = 0; i < itemCount; i++) {
             View listItem = listAdapter1.getView(i, null, lvEmployeenames);
             listItem.measure(0, 0);
             totalHeight += listItem.getMeasuredHeight();
         }
-
         ViewGroup.LayoutParams params = lvEmployeenames.getLayoutParams();
         params.height = totalHeight + (lvEmployeenames.getDividerHeight() * (itemCount - 1));
         lvEmployeenames.setLayoutParams(params);
@@ -465,11 +431,8 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
         request.add(stringRequest);
     }
     public void applyleave(){
-
         stremark = etRemark.getText().toString();
-
         String urlsubmit = PublicURL + "apply_leave.php";
-
         if(!spinLeaveType.equals("")){
             if(!datesTV.equals("") && !etRemark.equals("")) {
                 in.megasoft.workplace.HttpsTrustManager.allowAllSSL();
@@ -479,12 +442,10 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
                         if (response.equals("success")) {
                             stResponse = response.toString();
                             stMassage = "Leave Applied "+leavedates.toString();
-                        //    Toast.makeText(LeaveApplication.this, response.toString().trim(), Toast.LENGTH_SHORT).show();
                             showAlertDialog();
                         } else if (response.equals("failure")){
                             stMassage = "Error Applying Leave";
                             showAlertDialog();
-                        //    Toast.makeText(LeaveApplication.this, "Error Applying Leave", Toast.LENGTH_LONG).show();
                         }else {
                             showCustomDialog(response.toString().trim());
                         }
@@ -513,12 +474,10 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
             }else{
                 stMassage = "Please select date";
                 showAlertDialog();
-            //    Toast.makeText(this, "Please select date", Toast.LENGTH_LONG).show();
             }
         } else {
             stMassage = "Please select leave type";
             showAlertDialog();
-        //    Toast.makeText(this, "Please select leave type", Toast.LENGTH_LONG).show();
         }
     }
     private void showCustomDialog(String errordates) {
@@ -538,8 +497,7 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Handle input
-                dialog.dismiss(); // Close the dialog
+                dialog.dismiss();
             }
         });
         dialog.show();
@@ -564,7 +522,6 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
         });
         request.add(stringRequest);
     }
-
     private void showAlertDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Massage");
@@ -579,7 +536,7 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
                 }
             }
         });
-        builder.setCancelable(false);// Prevent dismissing the dialog by tapping outside
+        builder.setCancelable(false);
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
