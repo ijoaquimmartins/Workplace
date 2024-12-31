@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
         TextView marqueeText = findViewById(R.id.marqueeText);
         marqueeText.setSelected(true);
         ObjectAnimator animator = ObjectAnimator.ofFloat(marqueeText, "translationX", 500f, -500f);
-        animator.setDuration(5000); // Animation duration in milliseconds
+        animator.setDuration(5000);
         animator.setRepeatCount(ObjectAnimator.INFINITE);
         animator.setRepeatMode(ObjectAnimator.RESTART);
         animator.start();
@@ -236,13 +236,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-protected void onResume() {
-    super.onResume();
-    userdata();
-    rights();
-    getLeaveCount();
-    getAttendanceLeave();
-}
+    protected void onResume() {
+        super.onResume();
+        userdata();
+        rights();
+        getLeaveCount();
+        getAttendanceLeave();
+    }
     public void userdata(){
         userfullname = findViewById(R.id.txtUserFullName);
         emailid = findViewById(R.id.txtEmailID);
@@ -322,7 +322,6 @@ protected void onResume() {
     public void setListViewHeightBasedOnChildren(ListView lvEmployee) {
         ListAdapter listAdapter = lvEmployee.getAdapter();
         if (listAdapter == null) {
-            // Pre-condition
             return;
         }
         int totalHeight = 0;
@@ -339,7 +338,6 @@ protected void onResume() {
         lvEmployee.requestLayout();
     }
     private void getAttendanceLeave(){
-        //String[] employee = new String[];
         tvAttnLeaveList = findViewById(R.id.tvAttnLeaveList);
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         tvAttnLeaveList.setText("Attendance and Leave List for " + sdf.format(new Date()));
@@ -397,10 +395,8 @@ protected void onResume() {
                 StringRequest stringRequest = new StringRequest(Request.Method.POST, urlsubmit, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-
                         stErrorMassage = response.toString();
                         showAlertDialog();
-
                     }
                 }, new Response.ErrorListener() {
                     @Override
