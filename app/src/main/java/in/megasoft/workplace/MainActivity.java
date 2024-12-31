@@ -48,6 +48,7 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -60,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String SHARED_PREFS = "sharedprefs";
     Button attendance, applyleave, dailywork, employeedetails,
             holidaydetails,  totalleave, approveleave, attendancedetails, leavedetails, dailyworkdetails;
-    TextView userfullname, emailid, mobileno, tvAttnLeaveList, badge_notification_1, tvUserId;
+    TextView userfullname, emailid, mobileno, tvAttnLeaveList, badge_notification_1, tvUserId, marqueeText;
     EditText etOldPassword, etNewPassword, etConfirmPassword;
     String stErrorMassage;
     @Override
@@ -154,13 +155,9 @@ public class MainActivity extends AppCompatActivity {
 
         getAttendanceLeave();
 
-        TextView marqueeText = findViewById(R.id.marqueeText);
-        marqueeText.setSelected(true);
-        ObjectAnimator animator = ObjectAnimator.ofFloat(marqueeText, "translationX", 500f, -500f);
-        animator.setDuration(5000);
-        animator.setRepeatCount(ObjectAnimator.INFINITE);
-        animator.setRepeatMode(ObjectAnimator.RESTART);
-        animator.start();
+        marqueeText = findViewById(R.id.marqueeText);
+
+        getMarquee();
 
         attendance.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -169,7 +166,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(attendance);
             }
         });
-
         applyleave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -177,7 +173,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(applyleave);
             }
         });
-
         dailywork.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -185,7 +180,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(dailywork);
             }
         });
-
         approveleave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -298,7 +292,38 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public void getMarquee(){
+        String urlFetch = PublicURL + "employeedetails.php?id=" + UserId;
+        RequestQueue request = Volley.newRequestQueue(this);
+        HttpsTrustManager.allowAllSSL();
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, urlFetch, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONArray jsonArray = new JSONArray(response);
 
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                        //txtUserFullName.setText(jsonObject.getString("username"));
+                        marqueeText.setText(jsonObject.getString("username"));
+                        marqueeText.setSelected(true);
+                        ObjectAnimator animator = ObjectAnimator.ofFloat(marqueeText, "translationX", 500f, -500f);
+                        animator.setDuration(5000);
+                        animator.setRepeatCount(ObjectAnimator.INFINITE);
+                        animator.setRepeatMode(ObjectAnimator.RESTART);
+                        animator.start();
+                    }
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        request.add(stringRequest);
     }
     public void getLeaveCount(){
         String url = PublicURL + "getappliedleave.php";
