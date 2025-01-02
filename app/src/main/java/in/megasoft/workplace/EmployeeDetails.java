@@ -67,6 +67,27 @@ public class EmployeeDetails extends AppCompatActivity {
 
         getEmployeeList();
 
+        spnEmployee.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedItem = parent.getItemAtPosition(position).toString();
+                String[] splitItem = selectedItem.split(" - ");
+
+                if(!selectedItem.equals("Select Employee")){
+                    if (splitItem.length == 2) {
+                        selectedUserid = splitItem[0];
+                        String selectedUsername = splitItem[1];
+                        getEmployeeDetails();
+                        //    Toast.makeText(EmployeeDetails.this, "UserID: " + selectedUserid + "\nUsername: " + selectedUsername, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Handle no selection
+            }
+        });
+
     }
     public void getEmployeeList() {
 
@@ -113,26 +134,7 @@ public class EmployeeDetails extends AppCompatActivity {
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spnEmployee.setAdapter(adapter);
                     // Set item selection listener
-                    spnEmployee.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                        @Override
-                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                            String selectedItem = parent.getItemAtPosition(position).toString();
-                            String[] splitItem = selectedItem.split(" - ");
 
-                            if(!selectedItem.equals("Select Employee")){
-                                if (splitItem.length == 2) {
-                                    selectedUserid = splitItem[0];
-                                    String selectedUsername = splitItem[1];
-                                    getEmployeeDetails();
-                                //    Toast.makeText(EmployeeDetails.this, "UserID: " + selectedUserid + "\nUsername: " + selectedUsername, Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        }
-                        @Override
-                        public void onNothingSelected(AdapterView<?> parent) {
-                            // Handle no selection
-                        }
-                    });
 
                 }
             },

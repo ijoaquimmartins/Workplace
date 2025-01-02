@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
 
         marqueeText = findViewById(R.id.marqueeText);
 
-        getMarquee();
+        //getMarquee();
 
         attendance.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -300,11 +300,9 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(String response) {
                 try {
                     JSONArray jsonArray = new JSONArray(response);
-
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-                        //txtUserFullName.setText(jsonObject.getString("username"));
                         marqueeText.setText(jsonObject.getString("username"));
                         marqueeText.setSelected(true);
                         ObjectAnimator animator = ObjectAnimator.ofFloat(marqueeText, "translationX", 500f, -500f);
