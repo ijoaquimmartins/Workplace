@@ -87,7 +87,6 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
         btnApplyLeave = findViewById(R.id.btnSubmitleave);
         btnCancel = findViewById(R.id.btnCancelleave);
         btnDatePicker = findViewById(R.id.btnDatePicker);
-        layZeroLeave.findViewById(R.id.layZeroLeave);
         btnApplyLeave.setVisibility(View.GONE);
         getLeave();
         getLeaveType();
@@ -100,7 +99,7 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
                 String stLeaveType = selectedLeaveType.getLeaveType();
                 if(stLeaveType.equals("WFH")){
                     leavetype=leavetype2;
-                     leavead  = new ArrayAdapter(LeaveApplication.this, android.R.layout.simple_spinner_item, leavetype);
+                    leavead  = new ArrayAdapter(LeaveApplication.this, android.R.layout.simple_spinner_item, leavetype);
                     leavead.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinLeaveApplicationType.setAdapter(leavead);
                 }else {
@@ -371,9 +370,9 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
                 tvTotalLeaves.setText(stTotalLeaves);
                 tvLeaves.setText(stLeaves);
                 tvBalanceleaves.setText(stBallance);
-                if(stBallance.equals("0")){
+            /*    if(stBallance.equals("0")){
                     layZeroLeave.setVisibility(View.GONE);
-                }
+                }*/
             }
         }, new Response.ErrorListener() {
             @Override
