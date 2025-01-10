@@ -1,6 +1,8 @@
 package in.megasoft.workplace;
 
-import static in.megasoft.workplace.userDetails.*;
+import static in.megasoft.workplace.userDetails.PublicURL;
+import static in.megasoft.workplace.userDetails.URL;
+import static in.megasoft.workplace.userDetails.UserId;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
@@ -64,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
     TextView userfullname, emailid, mobileno, tvAttnLeaveList, badge_notification_1, tvUserId, marqueeText;
     EditText etOldPassword, etNewPassword, etConfirmPassword;
     String stErrorMassage;
+    private FireworkView fireworkView;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, 1, 1, menuIconWithText(this, R.drawable.ic_person, "PROFILE"));
@@ -157,6 +160,9 @@ public class MainActivity extends AppCompatActivity {
 
         marqueeText = findViewById(R.id.marqueeText);
 
+        fireworkView = new FireworkView(this);
+    //    setContentView(fireworkView);
+
         //getMarquee();
 
         attendance.setOnClickListener(new View.OnClickListener() {
@@ -230,12 +236,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+    @Override
     protected void onResume() {
         super.onResume();
         userdata();
         rights();
         getLeaveCount();
         getAttendanceLeave();
+        fireworkView.resume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        fireworkView.pause();
     }
     public void userdata(){
         userfullname = findViewById(R.id.txtUserFullName);
@@ -303,13 +317,17 @@ public class MainActivity extends AppCompatActivity {
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-                        marqueeText.setText(jsonObject.getString("username"));
-                        marqueeText.setSelected(true);
-                        ObjectAnimator animator = ObjectAnimator.ofFloat(marqueeText, "translationX", 500f, -500f);
-                        animator.setDuration(5000);
-                        animator.setRepeatCount(ObjectAnimator.INFINITE);
-                        animator.setRepeatMode(ObjectAnimator.RESTART);
-                        animator.start();
+                        if (jsonObject.getString("").equals("birthday")) {
+
+                        }else {
+                            marqueeText.setText(jsonObject.getString("username"));
+                            marqueeText.setSelected(true);
+                            ObjectAnimator animator = ObjectAnimator.ofFloat(marqueeText, "translationX", 500f, -500f);
+                            animator.setDuration(5000);
+                            animator.setRepeatCount(ObjectAnimator.INFINITE);
+                            animator.setRepeatMode(ObjectAnimator.RESTART);
+                            animator.start();
+                        }
                     }
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
