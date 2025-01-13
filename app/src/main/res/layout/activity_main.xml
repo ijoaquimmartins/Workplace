@@ -112,6 +112,14 @@
             android:padding="10dp"
             android:textSize="16sp"/>
 
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/fireworkAnimation"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:lottie_rawRes="@raw/fireworks"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true" />
+
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

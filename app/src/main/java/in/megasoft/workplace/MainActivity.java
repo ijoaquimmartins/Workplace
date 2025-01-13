@@ -40,6 +40,7 @@ import androidx.work.NetworkType;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -66,8 +67,7 @@ public class MainActivity extends AppCompatActivity {
     TextView userfullname, emailid, mobileno, tvAttnLeaveList, badge_notification_1, tvUserId, marqueeText;
     EditText etOldPassword, etNewPassword, etConfirmPassword;
     String stErrorMassage;
-    private FireworkView fireworkView;
-    @Override
+     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, 1, 1, menuIconWithText(this, R.drawable.ic_person, "PROFILE"));
         menu.add(0, 2, 2, menuIconWithText(this, R.drawable.ic_password, "CHANGE PASSWORD"));
@@ -160,9 +160,8 @@ public class MainActivity extends AppCompatActivity {
 
         marqueeText = findViewById(R.id.marqueeText);
 
-        fireworkView = new FireworkView(this);
-    //    setContentView(fireworkView);
-
+        LottieAnimationView lottieAnimationView = findViewById(R.id.fireworkAnimation);
+        lottieAnimationView.playAnimation();
         //getMarquee();
 
         attendance.setOnClickListener(new View.OnClickListener() {
@@ -243,13 +242,6 @@ public class MainActivity extends AppCompatActivity {
         rights();
         getLeaveCount();
         getAttendanceLeave();
-        fireworkView.resume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        fireworkView.pause();
     }
     public void userdata(){
         userfullname = findViewById(R.id.txtUserFullName);
