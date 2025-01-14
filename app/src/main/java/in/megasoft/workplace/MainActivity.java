@@ -22,11 +22,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.LinearInterpolator;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +56,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -63,11 +66,12 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity {
     public static final String SHARED_PREFS = "sharedprefs";
     Button attendance, applyleave, dailywork, employeedetails,
-            holidaydetails,  totalleave, approveleave, attendancedetails, leavedetails, dailyworkdetails;
+            holidaydetails, totalleave, approveleave, attendancedetails, leavedetails, dailyworkdetails;
     TextView userfullname, emailid, mobileno, tvAttnLeaveList, badge_notification_1, tvUserId, marqueeText;
     EditText etOldPassword, etNewPassword, etConfirmPassword;
-    String stErrorMassage;
-     @Override
+    String stErrorMassage,holiday,birthday;
+    RelativeLayout RlMarquee;
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, 1, 1, menuIconWithText(this, R.drawable.ic_person, "PROFILE"));
         menu.add(0, 2, 2, menuIconWithText(this, R.drawable.ic_password, "CHANGE PASSWORD"));
@@ -127,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return sb;
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -160,8 +165,7 @@ public class MainActivity extends AppCompatActivity {
 
         marqueeText = findViewById(R.id.marqueeText);
 
-        LottieAnimationView lottieAnimationView = findViewById(R.id.fireworkAnimation);
-        lottieAnimationView.playAnimation();
+        FlashMassage();
         //getMarquee();
 
         attendance.setOnClickListener(new View.OnClickListener() {
@@ -243,7 +247,7 @@ public class MainActivity extends AppCompatActivity {
         getLeaveCount();
         getAttendanceLeave();
     }
-    public void userdata(){
+    public void userdata() {
         userfullname = findViewById(R.id.txtUserFullName);
         emailid = findViewById(R.id.txtEmailID);
         mobileno = findViewById(R.id.txtMobile);
@@ -251,7 +255,7 @@ public class MainActivity extends AppCompatActivity {
         emailid.setText(userDetails.EmailID);
         mobileno.setText(userDetails.MobileNo);
     }
-    public void rights(){
+    public void rights() {
 
         attendance = findViewById(R.id.btnAttendance);
         applyleave = findViewById(R.id.btnApply);
@@ -262,42 +266,42 @@ public class MainActivity extends AppCompatActivity {
         approveleave = findViewById(R.id.btnApprove);
         badge_notification_1 = findViewById(R.id.badge_notification_1);
         attendancedetails = findViewById(R.id.btnAttenDetails);
-        leavedetails= findViewById(R.id.btnLeaveDetails);
+        leavedetails = findViewById(R.id.btnLeaveDetails);
         dailyworkdetails = findViewById(R.id.btnWorkDetails);
 
-        if(userDetails.AttendanceMark.equals("1")){
+        if (userDetails.AttendanceMark.equals("1")) {
             attendance.setVisibility(View.VISIBLE);
         }
-        if (userDetails.LeaveApplication.equals("1")){
+        if (userDetails.LeaveApplication.equals("1")) {
             applyleave.setVisibility(View.VISIBLE);
         }
-        if (userDetails.DailyWork.equals("1")){
+        if (userDetails.DailyWork.equals("1")) {
             dailywork.setVisibility(View.VISIBLE);
         }
-        if (userDetails.EmployeeDetails.equals("1")){
+        if (userDetails.EmployeeDetails.equals("1")) {
             employeedetails.setVisibility(View.VISIBLE);
         }
-        if (userDetails.HolidayDetails.equals("1")){
+        if (userDetails.HolidayDetails.equals("1")) {
             holidaydetails.setVisibility(View.VISIBLE);
         }
-        if (userDetails.TotalLeave.equals("1")){
+        if (userDetails.TotalLeave.equals("1")) {
             totalleave.setVisibility(View.VISIBLE);
         }
-        if (userDetails.ApproveLeave.equals("1")){
+        if (userDetails.ApproveLeave.equals("1")) {
             approveleave.setVisibility(View.VISIBLE);
             badge_notification_1.setVisibility(View.VISIBLE);
         }
-        if (userDetails.AttendanceDetails.equals("1")){
+        if (userDetails.AttendanceDetails.equals("1")) {
             attendancedetails.setVisibility(View.VISIBLE);
         }
-        if (userDetails.LeaveDetails.equals("1")){
+        if (userDetails.LeaveDetails.equals("1")) {
             leavedetails.setVisibility(View.VISIBLE);
         }
-        if (userDetails.DailyWorkDetails.equals("1")){
+        if (userDetails.DailyWorkDetails.equals("1")) {
             dailyworkdetails.setVisibility(View.VISIBLE);
         }
     }
-    public void getMarquee(){
+    public void getMarquee() {
         String urlFetch = PublicURL + "employeedetails.php?id=" + UserId;
         RequestQueue request = Volley.newRequestQueue(this);
         HttpsTrustManager.allowAllSSL();
@@ -311,13 +315,20 @@ public class MainActivity extends AppCompatActivity {
 
                         if (jsonObject.getString("").equals("birthday")) {
 
-                        }else {
+                        } else {
                             marqueeText.setText(jsonObject.getString("username"));
                             marqueeText.setSelected(true);
-                            ObjectAnimator animator = ObjectAnimator.ofFloat(marqueeText, "translationX", 500f, -500f);
+                            marqueeText.setSingleLine(true);
+                            marqueeText.setEllipsize(null);
+
+                            float screenWidth = getResources().getDisplayMetrics().widthPixels;
+                            float textWidth = marqueeText.getPaint().measureText(marqueeText.getText().toString());
+
+                            ObjectAnimator animator = ObjectAnimator.ofFloat(marqueeText, "translationX", screenWidth, -textWidth);
                             animator.setDuration(5000);
                             animator.setRepeatCount(ObjectAnimator.INFINITE);
                             animator.setRepeatMode(ObjectAnimator.RESTART);
+                            animator.setInterpolator(new LinearInterpolator());
                             animator.start();
                         }
                     }
@@ -333,7 +344,7 @@ public class MainActivity extends AppCompatActivity {
         });
         request.add(stringRequest);
     }
-    public void getLeaveCount(){
+    public void getLeaveCount() {
         String url = PublicURL + "getappliedleave.php";
         RequestQueue request = Volley.newRequestQueue(this);
         in.megasoft.workplace.HttpsTrustManager.allowAllSSL();
@@ -370,7 +381,7 @@ public class MainActivity extends AppCompatActivity {
         lvEmployee.setLayoutParams(params);
         lvEmployee.requestLayout();
     }
-    private void getAttendanceLeave(){
+    private void getAttendanceLeave() {
         tvAttnLeaveList = findViewById(R.id.tvAttnLeaveList);
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         tvAttnLeaveList.setText("Attendance and Leave List for " + sdf.format(new Date()));
@@ -402,7 +413,7 @@ public class MainActivity extends AppCompatActivity {
         });
         request.add(stringRequest);
     }
-    public void logout(){
+    public void logout() {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.clear();
@@ -411,19 +422,19 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
         this.finish();
     }
-    public void ChangePassword(){
+    public void ChangePassword() {
         String userid = userDetails.UserId;
         String txtOldPass = etOldPassword.getText().toString();
         String txtNewPass = etNewPassword.getText().toString();
         String txtConfPass = etConfirmPassword.getText().toString();
         String urlsubmit = URL + "user-changepass";
 
-        if (txtOldPass.equals("")){
+        if (txtOldPass.equals("")) {
             Toast.makeText(MainActivity.this, "Please enter Old Password", Toast.LENGTH_SHORT).show();
         } else {
             if (!txtNewPass.equals(txtConfPass)) {
                 Toast.makeText(MainActivity.this, "New Password and Confirm Password do not Match", Toast.LENGTH_LONG).show();
-            }else {
+            } else {
                 HttpsTrustManager.allowAllSSL();
                 StringRequest stringRequest = new StringRequest(Request.Method.POST, urlsubmit, new Response.Listener<String>() {
                     @Override
@@ -436,7 +447,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
                         Toast.makeText(MainActivity.this, error.toString().trim(), Toast.LENGTH_LONG).show();
                     }
-                }){
+                }) {
                     @Override
                     protected Map<String, String> getParams() throws AuthFailureError {
                         Map<String, String> data = new HashMap<>();
@@ -480,5 +491,78 @@ public class MainActivity extends AppCompatActivity {
         builder.setCancelable(false);
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+    public void FlashMassage() {
+        String userid = Base64.getEncoder().encodeToString(userDetails.UserId.getBytes());
+
+        String urlflashmassage = URL + "get-flash-message";
+
+        HttpsTrustManager.allowAllSSL();
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, urlflashmassage, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    holiday = jsonObject.getString("holiday");
+                    birthday = jsonObject.getString("birthday");
+                    stErrorMassage = jsonObject.getString("error");
+
+                    if(!holiday.equals("")){
+
+                        RlMarquee = findViewById(R.id.RlMarquee);
+                        RlMarquee.getLayoutParams().width = (int) (marqueeText.getPaint().measureText(marqueeText.getText().toString(),0, marqueeText.length()));
+
+                        marqueeText.setVisibility(View.VISIBLE);
+                        marqueeText.setText(jsonObject.getString("holiday"));
+                        marqueeText.setSingleLine(true);
+                        marqueeText.setEllipsize(null);
+                        marqueeText.setSelected(true);
+                        marqueeText.post(() -> {
+                            float screenWidth = getResources().getDisplayMetrics().widthPixels;
+                            float textWidth = marqueeText.getPaint().measureText(marqueeText.getText().toString());
+                            if (textWidth > screenWidth) {
+                                ObjectAnimator animator = ObjectAnimator.ofFloat(
+                                        marqueeText,
+                                        "translationX",
+                                        screenWidth,
+                                        -textWidth
+                                );
+                                long duration = (long) (textWidth * 10);
+                                animator.setDuration(duration);
+                                animator.setRepeatCount(ObjectAnimator.INFINITE);
+                                animator.setRepeatMode(ObjectAnimator.RESTART);
+                                animator.setInterpolator(new LinearInterpolator());
+                                animator.start();
+                            }
+                        });
+                    }
+                    if (birthday.equals("true")){
+                        LottieAnimationView lottieAnimationView = findViewById(R.id.fireworkAnimation);
+                        lottieAnimationView.setVisibility(View.VISIBLE);
+                        lottieAnimationView.playAnimation();
+                    }
+                    if(!stErrorMassage.equals("")){
+                        showAlertDialog();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Toast.makeText(MainActivity.this, "Error parsing data", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(MainActivity.this, error.toString().trim(), Toast.LENGTH_LONG).show();
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> data = new HashMap<>();
+                data.put("userid", userid);
+                return data;
+            }
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        requestQueue.add(stringRequest);
     }
 }

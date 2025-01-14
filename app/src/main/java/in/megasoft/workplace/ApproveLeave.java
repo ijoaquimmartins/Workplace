@@ -41,28 +41,23 @@ import java.util.List;
 import java.util.Map;
 
 public class ApproveLeave extends AppCompatActivity {
-
     TextView tvTotalLeaves, tvLeaves, tvBalanceleaves, tvEmployeeName, tvEmpRemark, tvHeader;
     LinearLayout llListAppliedemployee, llLeaveDetails;
     EditText etApproveRemark;
     Button btnApprove, btnDecline, btnBack, btnCancel;
     String employeeName, leaveidleaveappId, leaveId, leaveType, stTotalLeaves, stLeaves, stBallance,
             stUserId, stApproveDecline, stApproveRemark, stMassage, stType;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_approve_leave);
-
         Bundle bundle = getIntent().getExtras();
-
         employeeName = bundle.getString("employeename");
         leaveidleaveappId = bundle.getString("leaveidleaveappid");
         leaveType = bundle.getString("leavetype");
         leaveId = bundle.getString("leaveid");
         stUserId = bundle.getString("userid");
         stType = bundle.getString("type");
-
         tvEmployeeName = findViewById(R.id.tvEmployeeName);
         tvTotalLeaves = findViewById(R.id.tvApproveTotalLeaves);
         tvLeaves = findViewById(R.id.tvApproveLeaves);
@@ -76,11 +71,9 @@ public class ApproveLeave extends AppCompatActivity {
         btnDecline = findViewById(R.id.btnDeclineleave);
         btnBack = findViewById(R.id.btnApproveBack);
         btnCancel = findViewById(R.id.btnCancleleave);
-
         getLeave();
         getLeaveDates();
         tvEmployeeName.setText(employeeName);
-
         if(stType.equals("1")){
             getLeaveEmps();
             btnApprove.setVisibility(View.VISIBLE);
@@ -92,7 +85,6 @@ public class ApproveLeave extends AppCompatActivity {
             tvHeader.setText("Leave");
             tvEmployeeName.setVisibility(View.GONE);
         }
-
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -134,7 +126,6 @@ public class ApproveLeave extends AppCompatActivity {
                 stTotalLeaves = data[0];
                 stLeaves = data[1];
                 stBallance = data[2];
-
                 tvTotalLeaves.setText(stTotalLeaves);
                 tvLeaves.setText(stLeaves);
                 tvBalanceleaves.setText(stBallance);
@@ -152,16 +143,13 @@ public class ApproveLeave extends AppCompatActivity {
             // Pre-condition
             return;
         }
-
         int totalHeight = 0;
         int itemCount = listAdapter.getCount();
-
         for (int i = 0; i < itemCount; i++) {
             View listItem = listAdapter.getView(i, null, lvDates);
             listItem.measure(0, 0);
             totalHeight += listItem.getMeasuredHeight();
         }
-
         ViewGroup.LayoutParams params = lvDates.getLayoutParams();
         params.height = totalHeight + (lvDates.getDividerHeight() * (itemCount - 1));
         lvDates.setLayoutParams(params);
@@ -175,7 +163,6 @@ public class ApproveLeave extends AppCompatActivity {
         }
         int totalHeight = 0;
         int itemCount = listAdapter1.getCount();
-
         for (int i = 0; i < itemCount; i++) {
             View listItem = listAdapter1.getView(i, null, lvEmployeenamesanddate);
             listItem.measure(0, 0);
@@ -248,7 +235,6 @@ public class ApproveLeave extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
             }
         }, new Response.ErrorListener() {
             @Override
@@ -258,7 +244,6 @@ public class ApproveLeave extends AppCompatActivity {
         request.add(stringRequest);
     }
     private void approvedeclineLeave(){
-
         stApproveRemark = etApproveRemark.getText().toString();
         String urlsubmit = PublicURL + "approve_decline.php";
         in.megasoft.workplace.HttpsTrustManager.allowAllSSL();
@@ -296,7 +281,6 @@ public class ApproveLeave extends AppCompatActivity {
         requestQueue.add(stringRequest);
     }
     private void cancleleave(){
-
         String url = PublicURL + "cancleappliedleave.php";
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         in.megasoft.workplace.HttpsTrustManager.allowAllSSL();

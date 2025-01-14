@@ -5,13 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/color_back"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:clipChildren="false"
+    android:clipToPadding="false">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:gravity="center_horizontal"
+        android:clipChildren="false"
+        android:clipToPadding="false">
 
         <com.google.android.flexbox.FlexboxLayout
             android:id="@+id/layout_1"
@@ -21,16 +25,22 @@
             android:layout_marginStart="3dp"
             android:layout_marginTop="3dp"
             android:layout_marginEnd="3dp"
-            android:background="@drawable/round_corners">
+            android:background="@drawable/round_corners"
+            android:clipChildren="false"
+            android:clipToPadding="false">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:clipChildren="false"
+                android:clipToPadding="false">
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:clipChildren="false"
+                    android:clipToPadding="false">
 
                     <TextView
                         android:id="@+id/txtLblUsername"
@@ -61,7 +71,9 @@
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:clipChildren="false"
+                    android:clipToPadding="false">
 
                     <TextView
                         android:id="@+id/txtUserFullName"
@@ -97,41 +109,46 @@
             android:layout_height="wrap_content"
             android:layout_weight="10"
             android:layout_marginTop="10dp"/>
-
-        <TextView
-            android:id="@+id/marqueeText"
-            android:layout_width="match_parent"
+        <RelativeLayout
+            android:id="@+id/RlMarquee"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ellipsize="marquee"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:scrollHorizontally="true"
-            android:singleLine="true"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:textColor="#000"
-            android:padding="10dp"
-            android:textSize="16sp"/>
-
+            android:clipChildren="false"
+            android:clipToPadding="false">
+            <TextView
+                android:id="@+id/marqueeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:scrollHorizontally="true"
+                android:layout_margin="16sp"
+                android:gravity="center_vertical"
+                android:textSize="18sp"
+                android:textColor="#990000"
+                android:maxLines="1"
+                android:textStyle="bold"/>
+        </RelativeLayout>
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/fireworkAnimation"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:lottie_rawRes="@raw/fireworks"
+            app:lottie_rawRes="@raw/firework"
             app:lottie_autoPlay="true"
-            app:lottie_loop="true" />
-
+            app:lottie_loop="true"
+            android:visibility="gone"/>
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="10"
             android:layout_marginTop="10dp"/>
-
-
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="10"/>
-
         <com.google.android.flexbox.FlexboxLayout
             android:id="@+id/layout_3"
             android:layout_width="match_parent"
@@ -142,11 +159,11 @@
             android:layout_marginBottom="3dp"
             app:justifyContent="center"
             app:flexWrap="wrap">
-
             <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
+                android:layout_height="wrap_content"
+                android:clipChildren="false"
+                android:clipToPadding="false">
                 <Button
                     android:id="@+id/btnAttendance"
                     style="@style/Widget.AppCompat.Button.Borderless.Colored"
@@ -158,12 +175,11 @@
                     android:textSize="12sp"
                     android:visibility="gone"/>
             </RelativeLayout>
-
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                >
-
+                android:clipChildren="false"
+                android:clipToPadding="false">
                 <Button
                     android:id="@+id/btnApply"
                     style="@style/Widget.AppCompat.Button.Borderless.Colored"
@@ -174,16 +190,12 @@
                     android:textColor="#000000"
                     android:textSize="12sp"
                     android:visibility="gone"/>
-
             </RelativeLayout>
-
-
-
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                >
-
+                android:clipChildren="false"
+                android:clipToPadding="false">
                 <Button
                     android:id="@+id/btnDailyWork"
                     style="@style/Widget.AppCompat.Button.Borderless.Colored"
@@ -194,17 +206,12 @@
                     android:textColor="#000000"
                     android:textSize="12sp"
                     android:visibility="gone"/>
-
             </RelativeLayout>
-
-
         </com.google.android.flexbox.FlexboxLayout>
-
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="10"/>
-
         <com.google.android.flexbox.FlexboxLayout
             android:id="@+id/layout_4"
             android:layout_width="match_parent"
@@ -215,12 +222,12 @@
             android:layout_marginBottom="3dp"
             app:justifyContent="center"
             app:flexWrap="wrap">
-
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp">
-
+                android:padding="5dp"
+                android:clipChildren="false"
+                android:clipToPadding="false">
                 <Button
                     android:id="@+id/btnEmployee"
                     style="@style/Widget.AppCompat.Button.Borderless.Colored"
@@ -235,8 +242,9 @@
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp">
-
+                android:padding="5dp"
+                android:clipChildren="false"
+                android:clipToPadding="false">
                 <Button
                     android:id="@+id/btnHoliday"
                     style="@style/Widget.AppCompat.Button.Borderless.Colored"
@@ -251,8 +259,9 @@
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp">
-
+                android:padding="5dp"
+                android:clipChildren="false"
+                android:clipToPadding="false">
                 <Button
                     android:id="@+id/btnLeaves"
                     style="@style/Widget.AppCompat.Button.Borderless.Colored"
@@ -263,16 +272,12 @@
                     android:textColor="#000000"
                     android:textSize="12sp"
                     android:visibility="gone"/>
-
             </RelativeLayout>
-
         </com.google.android.flexbox.FlexboxLayout>
-
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="10"/>
-
         <com.google.android.flexbox.FlexboxLayout
             android:id="@+id/layout_5"
             android:layout_width="match_parent"
@@ -283,18 +288,19 @@
             android:layout_marginBottom="3dp"
             app:justifyContent="center"
             app:flexWrap="wrap">
-
             <RelativeLayout
                 android:id="@+id/badge_layout1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp">
-
+                android:padding="5dp"
+                android:clipChildren="false"
+                android:clipToPadding="false">
                 <RelativeLayout
                     android:id="@+id/layApprove"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
+                    android:layout_height="wrap_content"
+                    android:clipChildren="false"
+                    android:clipToPadding="false">
                     <Button
                         android:id="@+id/btnApprove"
                         style="@style/Widget.AppCompat.Button.Borderless.Colored"
@@ -305,9 +311,7 @@
                         android:textColor="#000000"
                         android:textSize="12sp"
                         android:visibility="gone"/>
-
                 </RelativeLayout>
-
                 <TextView
                     android:id="@+id/badge_notification_1"
                     android:layout_width="wrap_content"
@@ -320,12 +324,12 @@
                     android:textStyle="bold"
                     android:visibility="visible"/>
             </RelativeLayout>
-
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp">
-
+                android:padding="5dp"
+                android:clipChildren="false"
+                android:clipToPadding="false">
                 <Button
                     android:id="@+id/btnAttenDetails"
                     style="@style/Widget.AppCompat.Button.Borderless.Colored"
@@ -337,11 +341,12 @@
                     android:textSize="12sp"
                     android:visibility="gone"/>
             </RelativeLayout>
-
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp">
+                android:padding="5dp"
+                android:clipChildren="false"
+                android:clipToPadding="false">
 
                 <Button
                     android:id="@+id/btnLeaveDetails"
@@ -357,7 +362,9 @@
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp">
+                android:padding="5dp"
+                android:clipChildren="false"
+                android:clipToPadding="false">
 
                 <Button
                     android:id="@+id/btnWorkDetails"
@@ -385,13 +392,14 @@
             android:layout_marginStart="2dp"
             android:layout_marginTop="3dp"
             android:layout_marginEnd="3dp"
-            android:layout_marginBottom="3dp"
-            >
+            android:layout_marginBottom="3dp">
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:clipChildren="false"
+                android:clipToPadding="false">
 
                 <TextView
                     android:id="@+id/tvAttnLeaveList"
