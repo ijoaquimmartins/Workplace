@@ -1,5 +1,6 @@
 package in.megasoft.workplace;
 
+import static in.megasoft.workplace.R.id.tvItem;
 import static in.megasoft.workplace.userDetails.*;
 
 import android.content.DialogInterface;
@@ -195,7 +196,7 @@ public class ApproveLeave extends AppCompatActivity {
                     List<String> datesList = new ArrayList<>(Arrays.asList(dateStrings));
                     datesList.clear();
                     datesList.addAll(Arrays.asList(jsonObject.getString("dates").split(",")));
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(ApproveLeave.this, R.layout.list_item, R.id.tvItem, datesList);
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(ApproveLeave.this, R.layout.list_item, tvItem, datesList);
                     ListView lvDates = findViewById(R.id.lvDates);
                     lvDates.setAdapter(adapter);
                     setListViewHeightBasedOnChildren(lvDates);
@@ -299,7 +300,6 @@ public class ApproveLeave extends AppCompatActivity {
                                 stMassage=error.toString();
                                 showAlertDialog();
                             }
-
                         } catch (Exception e) {
                             Log.e("JSON Parse Error", "Error parsing JSON response: " + e.getMessage());
                             Toast.makeText(ApproveLeave.this, "Error processing response.", Toast.LENGTH_SHORT).show();
