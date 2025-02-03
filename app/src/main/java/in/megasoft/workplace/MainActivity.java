@@ -2,7 +2,6 @@ package in.megasoft.workplace;
 
 import static in.megasoft.workplace.userDetails.PublicURL;
 import static in.megasoft.workplace.userDetails.URL;
-import static in.megasoft.workplace.userDetails.UserId;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
@@ -166,7 +165,6 @@ public class MainActivity extends AppCompatActivity {
         marqueeText = findViewById(R.id.marqueeText);
 
         FlashMassage();
-        //getMarquee();
 
         attendance.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -246,6 +244,7 @@ public class MainActivity extends AppCompatActivity {
         rights();
         getLeaveCount();
         getAttendanceLeave();
+        FlashMassage();
     }
     public void userdata() {
         userfullname = findViewById(R.id.txtUserFullName);
@@ -300,49 +299,6 @@ public class MainActivity extends AppCompatActivity {
         if (userDetails.DailyWorkDetails.equals("1")) {
             dailyworkdetails.setVisibility(View.VISIBLE);
         }
-    }
-    public void getMarquee() {
-        String urlFetch = PublicURL + "employeedetails.php?id=" + UserId;
-        RequestQueue request = Volley.newRequestQueue(this);
-        HttpsTrustManager.allowAllSSL();
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, urlFetch, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONArray jsonArray = new JSONArray(response);
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-
-                        if (jsonObject.getString("").equals("birthday")) {
-
-                        } else {
-                            marqueeText.setText(jsonObject.getString("username"));
-                            marqueeText.setSelected(true);
-                            marqueeText.setSingleLine(true);
-                            marqueeText.setEllipsize(null);
-
-                            float screenWidth = getResources().getDisplayMetrics().widthPixels;
-                            float textWidth = marqueeText.getPaint().measureText(marqueeText.getText().toString());
-
-                            ObjectAnimator animator = ObjectAnimator.ofFloat(marqueeText, "translationX", screenWidth, -textWidth);
-                            animator.setDuration(5000);
-                            animator.setRepeatCount(ObjectAnimator.INFINITE);
-                            animator.setRepeatMode(ObjectAnimator.RESTART);
-                            animator.setInterpolator(new LinearInterpolator());
-                            animator.start();
-                        }
-                    }
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        });
-        request.add(stringRequest);
     }
     public void getLeaveCount() {
         String url = PublicURL + "getappliedleave.php";
@@ -510,21 +466,34 @@ public class MainActivity extends AppCompatActivity {
                     if(!holiday.equals("")){
 
                         RlMarquee = findViewById(R.id.RlMarquee);
-                        RlMarquee.getLayoutParams().width = (int) (marqueeText.getPaint().measureText(marqueeText.getText().toString(),0, marqueeText.length()));
+                        marqueeText = findViewById(R.id.marqueeText);
 
+// Set text before measuring
+                        String holidayText = jsonObject.getString("holiday");
+                        marqueeText.setText(holidayText);
                         marqueeText.setVisibility(View.VISIBLE);
-                        marqueeText.setText(jsonObject.getString("holiday"));
+
+// Enable marquee effect
+                        marqueeText.setSelected(true);
                         marqueeText.setSingleLine(true);
                         marqueeText.setEllipsize(null);
-                        marqueeText.setSelected(true);
+                        marqueeText.requestFocus();
+
                         marqueeText.post(() -> {
                             float screenWidth = getResources().getDisplayMetrics().widthPixels;
                             float textWidth = marqueeText.getPaint().measureText(marqueeText.getText().toString());
+
+                            // Ensure RlMarquee gets the correct width
+                            ViewGroup.LayoutParams params = RlMarquee.getLayoutParams();
+                            params.width = (int) textWidth;
+                            RlMarquee.setLayoutParams(params);
+                            RlMarquee.requestLayout();
+
                             if (textWidth > screenWidth) {
                                 ObjectAnimator animator = ObjectAnimator.ofFloat(
                                         marqueeText,
                                         "translationX",
-                                        screenWidth,
+                                        screenWidth + 50,  // Start from slightly off-screen
                                         -textWidth
                                 );
                                 long duration = (long) (textWidth * 10);
@@ -533,6 +502,8 @@ public class MainActivity extends AppCompatActivity {
                                 animator.setRepeatMode(ObjectAnimator.RESTART);
                                 animator.setInterpolator(new LinearInterpolator());
                                 animator.start();
+                            } else {
+                                Log.d("MarqueeDebug", "Text width is smaller than screen width, no animation needed.");
                             }
                         });
                     }

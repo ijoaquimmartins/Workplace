@@ -111,7 +111,7 @@
             android:layout_marginTop="10dp"/>
         <RelativeLayout
             android:id="@+id/RlMarquee"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clipChildren="false"
             android:clipToPadding="false">
@@ -130,7 +130,9 @@
                 android:textSize="18sp"
                 android:textColor="#990000"
                 android:maxLines="1"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:clipChildren="false"
+                android:clipToPadding="false"/>
         </RelativeLayout>
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/fireworkAnimation"
