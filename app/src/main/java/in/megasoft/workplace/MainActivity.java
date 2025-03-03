@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
 
         marqueeText = findViewById(R.id.marqueeText);
 
-        FlashMassage();
+        //FlashMassage();
 
         attendance.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -465,7 +465,7 @@ public class MainActivity extends AppCompatActivity {
 
                     if(!holiday.equals("")){
 
-                        RlMarquee = findViewById(R.id.RlMarquee);
+                    //    RlMarquee = findViewById(R.id.RlMarquee);
                         marqueeText = findViewById(R.id.marqueeText);
 
 // Set text before measuring
@@ -484,10 +484,10 @@ public class MainActivity extends AppCompatActivity {
                             float textWidth = marqueeText.getPaint().measureText(marqueeText.getText().toString());
 
                             // Ensure RlMarquee gets the correct width
-                            ViewGroup.LayoutParams params = RlMarquee.getLayoutParams();
+                            ViewGroup.LayoutParams params = marqueeText.getLayoutParams();
                             params.width = (int) textWidth;
-                            RlMarquee.setLayoutParams(params);
-                            RlMarquee.requestLayout();
+                            marqueeText.setLayoutParams(params);
+                            marqueeText.requestLayout();
 
                             if (textWidth > screenWidth) {
                                 ObjectAnimator animator = ObjectAnimator.ofFloat(
