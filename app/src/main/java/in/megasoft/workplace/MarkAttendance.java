@@ -1,6 +1,7 @@
 package in.megasoft.workplace;
 
 import static in.megasoft.workplace.userDetails.PublicURL;
+import static in.megasoft.workplace.userDetails.URL;
 import static in.megasoft.workplace.userDetails.UserId;
 
 import android.annotation.SuppressLint;
@@ -249,7 +250,7 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
 
     private void submitbtn() {
         String attngetdatetime = datetime.getText().toString();
-        String urlsubmit = userDetails.PublicURL + "attenmark.php";
+        String urlsubmit = URL + "attendance-save";
 
         in.megasoft.workplace.HttpsTrustManager.allowAllSSL();
         StringRequest stringRequest = new StringRequest(Request.Method.POST, urlsubmit, response -> {
