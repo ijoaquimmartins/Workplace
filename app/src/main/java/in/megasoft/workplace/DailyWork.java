@@ -1,8 +1,8 @@
 package in.megasoft.workplace;
 
-import static in.megasoft.workplace.userDetails.*;
+import static in.megasoft.workplace.userDetails.PublicURL;
+import static in.megasoft.workplace.userDetails.UserId;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -80,8 +80,8 @@ public class DailyWork extends AppCompatActivity {
         btnDailyWorkDataCan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(DailyWork.this, MainActivity.class);
-                startActivity(i);
+//                Intent i = new Intent(DailyWork.this, MainActivity.class);
+ //               startActivity(i);
                 DailyWork.this.finish();
             }
         });
@@ -181,8 +181,8 @@ public class DailyWork extends AppCompatActivity {
                 @Override
                 public void onResponse(String response) {
                     if(response.equals("success")){
-                        Intent intent = new Intent(DailyWork.this, MainActivity.class);
-                        startActivity(intent);
+//                        Intent intent = new Intent(DailyWork.this, MainActivity.class);
+//                        startActivity(intent);
                         DailyWork.this.finish();
                     } else if (response.equals("failure")) {
                         Toast.makeText(DailyWork.this, "Error Adding Request", Toast.LENGTH_SHORT).show();

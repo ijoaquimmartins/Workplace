@@ -101,7 +101,7 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
 
         btncanceltAttn = findViewById(R.id.btncanceltAttn);
         btncanceltAttn.setOnClickListener(view -> {
-            startActivity(new Intent(MarkAttendance.this, MainActivity.class));
+//            startActivity(new Intent(MarkAttendance.this, MainActivity.class));
             finish();
         });
         //tvAdvanceElMark.setOnClickListener(view -> llApplyEL.setVisibility(View.VISIBLE));
@@ -258,7 +258,7 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
                 Toast.makeText(MarkAttendance.this, "Attendance Marked", Toast.LENGTH_SHORT).show();
                 userDetails.AttnMarkedAs = attngetmarked;
                 userDetails.AttnDateTime = attngetdatetime;
-                startActivity(new Intent(MarkAttendance.this, MainActivity.class));
+//                startActivity(new Intent(MarkAttendance.this, MainActivity.class));
                 finish();
             } else {
                 Toast.makeText(MarkAttendance.this, "Error Marking Attendance", Toast.LENGTH_LONG).show();

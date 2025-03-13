@@ -1,8 +1,7 @@
 package in.megasoft.workplace;
 
-import static in.megasoft.workplace.userDetails.*;
+import static in.megasoft.workplace.userDetails.PublicURL;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -22,7 +21,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.ArrayList; // Added import for ArrayList
+import java.util.ArrayList;
 import java.util.List;
 
 import in.megasoft.workplace.databinding.ActivityApproveLeavesListBinding;
@@ -106,6 +105,7 @@ public class ApproveLeavesList extends AppCompatActivity {
         if (requestAppliedLists != null) {
             requestAppliedLists.clear();
         }
-        startActivity(new Intent(ApproveLeavesList.this, MainActivity.class));
+//        startActivity(new Intent(ApproveLeavesList.this, MainActivity.class));
+        finish();
     }
 }

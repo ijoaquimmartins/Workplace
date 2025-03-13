@@ -7,7 +7,6 @@ import static in.megasoft.workplace.userDetails.UserName;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -129,8 +128,8 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(LeaveApplication.this, MainActivity.class);
-                startActivity(i);
+ //               Intent i = new Intent(LeaveApplication.this, MainActivity.class);
+ //               startActivity(i);
                 finish();
             }
         });
@@ -527,7 +526,8 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if ("success".equals(stResponse)){
-                    startActivity(new Intent(LeaveApplication.this, MainActivity.class));
+//                    startActivity(new Intent(LeaveApplication.this, MainActivity.class));
+                    finish();
                 }else{
                     dialog.dismiss();
                 }

@@ -40,11 +40,13 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class DailyWorkDetails extends AppCompatActivity {
@@ -122,20 +124,29 @@ public class DailyWorkDetails extends AppCompatActivity {
                         @Override
                         public void onDateSet(DatePicker view1, int year1, int monthOfYear1, int dayOfMonth1) {
                             tvToDate.setText(dayOfMonth1 + "/" + (monthOfYear1 + 1) + "/" + year1);
-                            stToDate = (year1 + "-" + (monthOfYear1 + 1) + "-" + dayOfMonth1);
+                            stToDate = year1 + "-" + (monthOfYear1 + 1) + "-" + dayOfMonth1;
+
                             try {
-                                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
                                 sdf.setLenient(false);
-                                Date fromDate = sdf.parse(tvFromDate.getText().toString());
-                                Date toDate = sdf.parse(tvToDate.getText().toString());
+                                String fromDateStr = tvFromDate.getText().toString();
+                                String toDateStr = tvToDate.getText().toString();
+
+                                if (!fromDateStr.matches("\\d{2}/\\d{2}/\\d{4}") || !toDateStr.matches("\\d{2}/\\d{2}/\\d{4}")) {
+                                    stMassage = "Invalid Date Format";
+                                    showAlertDialog();
+                                    return;
+                                }
+                                Date fromDate = sdf.parse(fromDateStr);
+                                Date toDate = sdf.parse(toDateStr);
                                 if (!fromDate.after(toDate)) {
                                     btnGet.setVisibility(View.VISIBLE);
                                 } else {
-                                    stMassage="Please check dates";
+                                    stMassage = "Please check dates";
                                     showAlertDialog();
                                 }
-                            } catch (Exception e) {
-                                stMassage="Invalid Dates";
+                            } catch (ParseException e) {
+                                stMassage = "Invalid Dates";
                                 showAlertDialog();
                             }
                         }

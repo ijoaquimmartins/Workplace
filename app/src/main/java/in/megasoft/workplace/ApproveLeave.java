@@ -1,10 +1,10 @@
 package in.megasoft.workplace;
 
 import static in.megasoft.workplace.R.id.tvItem;
-import static in.megasoft.workplace.userDetails.*;
+import static in.megasoft.workplace.userDetails.PublicURL;
+import static in.megasoft.workplace.userDetails.UserId;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -333,8 +333,8 @@ public class ApproveLeave extends AppCompatActivity {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent i = new Intent(ApproveLeave.this, MainActivity.class);
-                startActivity(i);
+//                Intent i = new Intent(ApproveLeave.this, MainActivity.class);
+//                startActivity(i);
                 finish();
             }
         });

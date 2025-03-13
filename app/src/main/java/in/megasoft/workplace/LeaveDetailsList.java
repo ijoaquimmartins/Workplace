@@ -3,7 +3,6 @@ package in.megasoft.workplace;
 import static in.megasoft.workplace.userDetails.PublicURL;
 import static in.megasoft.workplace.userDetails.UserId;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -112,6 +111,7 @@ public class LeaveDetailsList extends AppCompatActivity {
         if (requestAppliedLists != null) {
             requestAppliedLists.clear();
         }
-        startActivity(new Intent(LeaveDetailsList.this, MainActivity.class));
+//        startActivity(new Intent(LeaveDetailsList.this, MainActivity.class));
+        finish();
     }
 }
