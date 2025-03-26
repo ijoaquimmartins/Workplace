@@ -104,6 +104,7 @@ public class LoadingActivity extends AppCompatActivity {
                 userDetails.AttendanceDetails = Arrays.asList(data).contains("AttendanceDetails") ? "1" : "2";
                 userDetails.LeaveDetails = Arrays.asList(data).contains("LeaveDetails") ? "1" : "2";
                 userDetails.DailyWorkDetails = Arrays.asList(data).contains("DailyWorkDetails") ? "1" : "2";
+                userDetails.InOutTime = Arrays.asList(data).contains("InOutTime") ? "1" : "2";
 
                 isModuleDataLoaded = true; // Mark as loaded
                 checkIfAllDataLoaded();

@@ -22,8 +22,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -55,9 +55,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -65,10 +67,10 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity {
     public static final String SHARED_PREFS = "sharedprefs";
     Button attendance, applyleave, dailywork, employeedetails,
-            holidaydetails, totalleave, approveleave, attendancedetails, leavedetails, dailyworkdetails;
-    TextView userfullname, emailid, mobileno, tvAttnLeaveList, badge_notification_1, tvUserId, marqueeText;
+            holidaydetails, totalleave, approveleave, attendancedetails, leavedetails, dailyworkdetails, btnInOutTime;
+    TextView userfullname, emailid, mobileno, tvAttnLeaveList, badge_notification_1, tvUserId, marqueeText, tv_date;
     EditText etOldPassword, etNewPassword, etConfirmPassword;
-    String stErrorMassage,holiday,birthday;
+    String stErrorMassage,holiday,birthday, stDate;
     RelativeLayout RlMarquee;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -161,10 +163,16 @@ public class MainActivity extends AppCompatActivity {
         }.start();
 
         getAttendanceLeave();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        stDate =  sdf.format(new Date());
+
+        tv_date = findViewById(R.id.tv_date);
+        tv_date.setText(stDate);
+        tv_date.setOnClickListener(view -> showDatePickerDialog());
 
         marqueeText = findViewById(R.id.marqueeText);
 
-        //FlashMassage();
+        // FlashMassage();
 
         attendance.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -267,6 +275,7 @@ public class MainActivity extends AppCompatActivity {
         attendancedetails = findViewById(R.id.btnAttenDetails);
         leavedetails = findViewById(R.id.btnLeaveDetails);
         dailyworkdetails = findViewById(R.id.btnWorkDetails);
+        btnInOutTime = findViewById(R.id.btnInOutTime);
 
         if (userDetails.AttendanceMark.equals("1")) {
             attendance.setVisibility(View.VISIBLE);
@@ -298,6 +307,9 @@ public class MainActivity extends AppCompatActivity {
         }
         if (userDetails.DailyWorkDetails.equals("1")) {
             dailyworkdetails.setVisibility(View.VISIBLE);
+        }
+        if (userDetails.InOutTime.equals("1")) {
+            btnInOutTime.setVisibility(View.VISIBLE);
         }
     }
     public void getLeaveCount() {
@@ -337,37 +349,76 @@ public class MainActivity extends AppCompatActivity {
         lvEmployee.setLayoutParams(params);
         lvEmployee.requestLayout();
     }
-    private void getAttendanceLeave() {
-        tvAttnLeaveList = findViewById(R.id.tvAttnLeaveList);
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-        tvAttnLeaveList.setText("Attendance and Leave List for " + sdf.format(new Date()));
 
-        String url = PublicURL + "getattendanceleave.php";
-        RequestQueue request = Volley.newRequestQueue(this);
-        in.megasoft.workplace.HttpsTrustManager.allowAllSSL();
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+    private void showDatePickerDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        LayoutInflater inflater = getLayoutInflater();
+        View view = inflater.inflate(R.layout.date_picker, null);
+        builder.setView(view);
+
+        // Initialize DatePicker
+        DatePicker datePicker = view.findViewById(R.id.datePicker);
+
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
-            public void onResponse(String response) {
+            public void onClick(DialogInterface dialogInterface, int i) {
+                int selectedYear = datePicker.getYear();
+                int selectedMonth = datePicker.getMonth();
+                int selectedDay = datePicker.getDayOfMonth();
+
+                stDate = selectedDay + "-" + (selectedMonth + 1) + "-" + selectedYear;
+                tv_date.setText(stDate);
+                getAttendanceLeave();
+            }
+        });
+
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+
+        builder.show();
+    }
+    private void getAttendanceLeave(){
+        String url = URL + "fetch-attendance-datewise";
+        tvAttnLeaveList = findViewById(R.id.tvAttnLeaveList);
+
+        in.megasoft.workplace.HttpsTrustManager.allowAllSSL();
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, response -> {
                 try {
                     JSONArray jsonArray = new JSONArray(response);
-                    String[] employee = new String[jsonArray.length()];
+                    List<AttendanceItem> employeeList = new ArrayList<>();
                     for (int i = 0; i < jsonArray.length(); i++) {
-                        employee[i] = jsonArray.getString(i);
+                        String entry = jsonArray.getString(i);
+                        if (!entry.isEmpty()) {
+                            String trimmedEntry = entry.substring(0, entry.length() - 1);
+                            char status = entry.charAt(entry.length() - 1);
+                            employeeList.add(new AttendanceItem(trimmedEntry, status));
+                        }
                     }
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, employee);
+                    // Set custom adapter
+                    AttendanceAdapter adapter = new AttendanceAdapter(MainActivity.this, employeeList);
                     ListView lvEmployee = findViewById(R.id.lvEmployeeList);
                     lvEmployee.setAdapter(adapter);
                     setListViewHeightBasedOnChildren(lvEmployee);
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-            }
-        }, new Response.ErrorListener() {
+
+        }, error -> Toast.makeText(MainActivity.this, error.toString().trim(), Toast.LENGTH_SHORT).show()) {
             @Override
-            public void onErrorResponse(VolleyError error) {
+            protected Map<String, String> getParams() {
+                Map<String, String> data = new HashMap<>();
+                data.put("date", stDate);
+                return data;
             }
-        });
-        request.add(stringRequest);
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        requestQueue.add(stringRequest);
     }
     public void logout() {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
@@ -489,7 +540,7 @@ public class MainActivity extends AppCompatActivity {
                             marqueeText.setLayoutParams(params);
                             marqueeText.requestLayout();
 
-                            if (textWidth > screenWidth) {
+                        //    if (textWidth > screenWidth) {
                                 ObjectAnimator animator = ObjectAnimator.ofFloat(
                                         marqueeText,
                                         "translationX",
@@ -502,9 +553,9 @@ public class MainActivity extends AppCompatActivity {
                                 animator.setRepeatMode(ObjectAnimator.RESTART);
                                 animator.setInterpolator(new LinearInterpolator());
                                 animator.start();
-                            } else {
-                                Log.d("MarqueeDebug", "Text width is smaller than screen width, no animation needed.");
-                            }
+                        //    } else {
+                        //        Log.d("MarqueeDebug", "Text width is smaller than screen width, no animation needed.");
+                        //    }
                         });
                     }
                     if (birthday.equals("true")){

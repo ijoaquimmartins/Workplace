@@ -108,7 +108,6 @@
                     android:textStyle="italic"
                     android:text="@string/register"
                     android:visibility="gone"/>
-
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

@@ -45,9 +45,11 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -253,32 +255,43 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
         String urlsubmit = URL + "attendance-save";
 
         in.megasoft.workplace.HttpsTrustManager.allowAllSSL();
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, urlsubmit, response -> {
-            if ("success".equals(response)) {
-                Toast.makeText(MarkAttendance.this, "Attendance Marked", Toast.LENGTH_SHORT).show();
-                userDetails.AttnMarkedAs = attngetmarked;
-                userDetails.AttnDateTime = attngetdatetime;
-//                startActivity(new Intent(MarkAttendance.this, MainActivity.class));
-                finish();
-            } else {
-                Toast.makeText(MarkAttendance.this, "Error Marking Attendance", Toast.LENGTH_LONG).show();
-            }
-        }, error -> Toast.makeText(MarkAttendance.this, error.toString().trim(), Toast.LENGTH_SHORT).show()) {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, urlsubmit, new Response.Listener<String>() {
             @Override
-            protected Map<String, String> getParams() {
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonResponse = new JSONObject(response);
+                    if (jsonResponse.has("success")) {
+                        Toast.makeText(MarkAttendance.this, jsonResponse.getString("success"), Toast.LENGTH_LONG).show();
+                        userDetails.AttnMarkedAs = attngetmarked;
+                        userDetails.AttnDateTime = attngetdatetime;
+                        finish();
+                    }
+                } catch (JSONException e) {
+                    Toast.makeText(MarkAttendance.this, "Response parsing error", Toast.LENGTH_LONG).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(MarkAttendance.this, error.toString().trim(), Toast.LENGTH_LONG).show();
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> data = new HashMap<>();
                 data.put("atten_status", newattnspinvalue);
-                data.put("userid", userDetails.UserId);
+                data.put("userid", Base64.getEncoder().encodeToString((UserId.toString().trim()).getBytes()));
                 data.put("location_let", latitude);
                 data.put("location_long", longitude);
                 return data;
             }
         };
+
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         requestQueue.add(stringRequest);
     }
 
-    private void openDatePicker() {
+        private void openDatePicker() {
         Calendar calendar = Calendar.getInstance();
 
         // Calculate the next Saturday
