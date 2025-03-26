@@ -244,6 +244,10 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(employeedetails);
             }
         });
+        btnInOutTime.setOnClickListener(view -> {
+            Intent inouttime = new Intent(MainActivity.this, InOutTime.class);
+            startActivity(inouttime);
+        });
     }
     @Override
     protected void onResume() {
