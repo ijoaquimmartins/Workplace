@@ -2,6 +2,7 @@ package in.megasoft.workplace;
 
 import static in.megasoft.workplace.userDetails.PublicURL;
 import static in.megasoft.workplace.userDetails.URL;
+import static in.megasoft.workplace.userDetails.UserName;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
@@ -35,6 +36,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.NetworkType;
@@ -56,6 +58,7 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
@@ -72,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
     EditText etOldPassword, etNewPassword, etConfirmPassword;
     String stErrorMassage,holiday,birthday, stDate;
     RelativeLayout RlMarquee;
+    private RequestQueue requestQueue;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, 1, 1, menuIconWithText(this, R.drawable.ic_person, "PROFILE"));
@@ -137,6 +141,22 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.refreshLayout);
+    //    AttendanceMark = LeaveApplication = DailyWork = EmployeeDetails = HolidayDetails = TotalLeave = ApproveLeave = AttendanceDetails = LeaveDetails = DailyWorkDetails = InOutTime = "";
+
+        swipeRefreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        requestQueue = volleySingelton.getmInstance(MainActivity.this).getRequestQueue();
+                        getusermoduledata();
+                        rights();
+                        recreate();
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                }
+        );
         userdata();
         rights();
         getLeaveCount();
@@ -172,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
 
         marqueeText = findViewById(R.id.marqueeText);
 
-        // FlashMassage();
+        //FlashMassage();
 
         attendance.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -252,6 +272,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        requestQueue = volleySingelton.getmInstance(this).getRequestQueue();
+        getusermoduledata();
         userdata();
         rights();
         getLeaveCount();
@@ -363,6 +385,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Initialize DatePicker
         DatePicker datePicker = view.findViewById(R.id.datePicker);
+
+        datePicker.setMaxDate(System.currentTimeMillis());
 
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
@@ -589,6 +613,36 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        requestQueue.add(stringRequest);
+    }
+    public void getusermoduledata() {
+
+        String cntUrl = PublicURL + "fatchmodule.php?username=" + UserName;
+        HttpsTrustManager.allowAllSSL();
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, cntUrl, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                String[] data = response.split("#");
+
+                userDetails.AttendanceMark = Arrays.asList(data).contains("AttendanceMark") ? "1" : "2";
+                userDetails.LeaveApplication = Arrays.asList(data).contains("LeaveApplication") ? "1" : "2";
+                userDetails.DailyWork = Arrays.asList(data).contains("DailyWork") ? "1" : "2";
+                userDetails.EmployeeDetails = Arrays.asList(data).contains("EmployeeDetails") ? "1" : "2";
+                userDetails.HolidayDetails = Arrays.asList(data).contains("HolidayDetails") ? "1" : "2";
+                userDetails.TotalLeave = Arrays.asList(data).contains("TotalLeave") ? "1" : "2";
+                userDetails.ApproveLeave = Arrays.asList(data).contains("ApproveLeave") ? "1" : "2";
+                userDetails.AttendanceDetails = Arrays.asList(data).contains("AttendanceDetails") ? "1" : "2";
+                userDetails.LeaveDetails = Arrays.asList(data).contains("LeaveDetails") ? "1" : "2";
+                userDetails.DailyWorkDetails = Arrays.asList(data).contains("DailyWorkDetails") ? "1" : "2";
+                userDetails.InOutTime = Arrays.asList(data).contains("InOutTime") ? "1" : "2";
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(MainActivity.this, "Error fetching modules: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
         requestQueue.add(stringRequest);
     }
 }

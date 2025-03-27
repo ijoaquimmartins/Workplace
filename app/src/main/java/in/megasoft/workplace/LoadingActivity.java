@@ -1,7 +1,6 @@
 package in.megasoft.workplace;
 
-import static in.megasoft.workplace.userDetails.PublicURL;
-import static in.megasoft.workplace.userDetails.UserId;
+import static in.megasoft.workplace.userDetails.*;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -38,7 +37,7 @@ public class LoadingActivity extends AppCompatActivity {
 
         progressBar = findViewById(R.id.progressBar);
         requestQueue = volleySingelton.getmInstance(this).getRequestQueue();
-
+        AttendanceMark = LeaveApplication = DailyWork = EmployeeDetails = HolidayDetails = TotalLeave = ApproveLeave = AttendanceDetails = LeaveDetails = DailyWorkDetails = InOutTime = "";
         Intent i = this.getIntent();
         userDetails.UserName = i.getStringExtra(LoginActivity.USER_NAME);
         user_name = i.getStringExtra(LoginActivity.USER_NAME);
@@ -86,7 +85,8 @@ public class LoadingActivity extends AppCompatActivity {
     }
 
     public void getusermoduledata() {
-        String cntUrl = PublicURL + "fatchmodule.php?username=" + user_name;
+
+        String cntUrl = PublicURL + "fatchmodule.php?username=" + UserName;
         HttpsTrustManager.allowAllSSL();
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, cntUrl, new Response.Listener<String>() {

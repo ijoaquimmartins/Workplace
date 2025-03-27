@@ -15,12 +15,17 @@
         android:textSize="24sp"
         android:textStyle="bold"
         android:gravity="center_horizontal"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="5dp"/>
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="24h Timings"
-        android:layout_marginStart="15dp"/>
+        android:text="*Tap on a time to change"
+        android:textSize="12sp"
+        android:layout_marginStart="15dp"
+        android:gravity="end"
+        android:textColor="@color/darkred"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"

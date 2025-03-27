@@ -44,14 +44,14 @@
                     android:text="Out Time"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="5dp"
-                    android:visibility="visible"/>
+                    android:visibility="gone"/>
                 <TextView
                     android:id="@+id/etOutTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="18:00:00"
                     android:layout_marginStart="5dp"
-                    android:visibility="visible"/>
+                    android:visibility="gone"/>
             </LinearLayout>
         </LinearLayout>
     </HorizontalScrollView>
