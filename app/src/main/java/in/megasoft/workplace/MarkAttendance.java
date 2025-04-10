@@ -251,6 +251,9 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
     }
 
     private void submitbtn() {
+
+        getLastLocation();
+
         String attngetdatetime = datetime.getText().toString();
         String urlsubmit = URL + "attendance-save";
 
@@ -290,7 +293,6 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         requestQueue.add(stringRequest);
     }
-
         private void openDatePicker() {
         Calendar calendar = Calendar.getInstance();
 

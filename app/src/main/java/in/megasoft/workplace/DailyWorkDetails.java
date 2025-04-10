@@ -132,11 +132,11 @@ public class DailyWorkDetails extends AppCompatActivity {
                                 String fromDateStr = tvFromDate.getText().toString();
                                 String toDateStr = tvToDate.getText().toString();
 
-                                if (!fromDateStr.matches("\\d{2}/\\d{2}/\\d{4}") || !toDateStr.matches("\\d{2}/\\d{2}/\\d{4}")) {
-                                    stMassage = "Invalid Date Format";
-                                    showAlertDialog();
-                                    return;
-                                }
+//                                if (!fromDateStr.matches("\\d{2}/\\d{2}/\\d{4}") || !toDateStr.matches("\\d{2}/\\d{2}/\\d{4}")) {
+//                                    stMassage = "Invalid Date Format";
+//                                    showAlertDialog();
+//                                    return;
+//                                }
                                 Date fromDate = sdf.parse(fromDateStr);
                                 Date toDate = sdf.parse(toDateStr);
                                 if (!fromDate.after(toDate)) {
