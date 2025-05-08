@@ -36,7 +36,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.NetworkType;
@@ -69,7 +68,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
     public static final String SHARED_PREFS = "sharedprefs";
-    Button attendance, applyleave, dailywork, employeedetails,
+    Button attendance, applyleave, dailywork, employeedetails, btnRefrash,
             holidaydetails, totalleave, approveleave, attendancedetails, leavedetails, dailyworkdetails, btnInOutTime;
     TextView userfullname, emailid, mobileno, tvAttnLeaveList, badge_notification_1, tvUserId, marqueeText, tv_date;
     EditText etOldPassword, etNewPassword, etConfirmPassword;
@@ -136,27 +135,23 @@ public class MainActivity extends AppCompatActivity {
         }
         return sb;
     }
+    public void onRefresh() {
+        requestQueue = volleySingelton.getmInstance(MainActivity.this).getRequestQueue();
+        getusermoduledata();
+        rights();
+        recreate();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.refreshLayout);
+        btnRefrash = findViewById(R.id.btnRefrash);
+        btnRefrash.setOnClickListener(view -> onRefresh());
+
     //    AttendanceMark = LeaveApplication = DailyWork = EmployeeDetails = HolidayDetails = TotalLeave = ApproveLeave = AttendanceDetails = LeaveDetails = DailyWorkDetails = InOutTime = "";
 
-        swipeRefreshLayout.setOnRefreshListener(
-                new SwipeRefreshLayout.OnRefreshListener() {
-                    @Override
-                    public void onRefresh() {
-                        requestQueue = volleySingelton.getmInstance(MainActivity.this).getRequestQueue();
-                        getusermoduledata();
-                        rights();
-                        recreate();
-                        swipeRefreshLayout.setRefreshing(false);
-                    }
-                }
-        );
         userdata();
         rights();
         getLeaveCount();
