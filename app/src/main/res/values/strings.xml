@@ -31,6 +31,7 @@
     <string name="leavedetails">Leave\nDetails</string>
     <string name="workdetails">Work\nDetails</string>
     <string name="inouttime">Shift\nTime</string>
+    <string name="message">Whatsapp\nLeave List</string>
 
     <string name="empfirstname">Employee First Name<font color='#FF0000'>*</font></string>
     <string name="empmidname">Employee Middle Name</string>

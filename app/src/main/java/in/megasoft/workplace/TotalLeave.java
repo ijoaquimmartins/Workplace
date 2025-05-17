@@ -1,10 +1,12 @@
 package in.megasoft.workplace;
 
-import static in.megasoft.workplace.userDetails.PublicURL;
+import static in.megasoft.workplace.userDetails.URL;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,18 +34,20 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class TotalLeave extends AppCompatActivity {
 
     DatePickerDialog picker;
     private ExpandableListView expandableListView;
     TextView tvFromDate, tvToDate;
-    Button btnGet;
-    String stFromDate, stToDate;
+    Button btnGet, btnSend;
+    String stFromDate, stToDate, stButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +58,8 @@ public class TotalLeave extends AppCompatActivity {
         tvFromDate = findViewById(R.id.tvFromDate);
         tvToDate = findViewById(R.id.tvToDate);
         btnGet = findViewById(R.id.btnGet);
+        btnSend = findViewById(R.id.btnSend);
+        stButton="GET";
 
         tvFromDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,7 +103,7 @@ public class TotalLeave extends AppCompatActivity {
         btnGet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                stButton="GET";
                 if (!stFromDate.equals("") && !stToDate.equals("")) {
                     try {
                         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -118,16 +124,36 @@ public class TotalLeave extends AppCompatActivity {
                 }
             }
         });
+        btnSend.setOnClickListener(view -> {
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DATE, 1); // Add 1 day for tomorrow
+
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            String tomorrowDate = sdf.format(calendar.getTime());
+            stFromDate=stToDate=tomorrowDate;
+            stButton="SEND";
+            fetchEmployeeData();
+        });
         fetchEmployeeData();
     }
 
     private void fetchEmployeeData() {
-        String datedata = stFromDate + "|" + stToDate;
-        String url = PublicURL + "fatchleavedatewise.php?dates=" + datedata;
+        String url = URL + "fetch-leaves";
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         in.megasoft.workplace.HttpsTrustManager.allowAllSSL();
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+        // Prepare JSON POST body
+        JSONObject postParams = new JSONObject();
+        try {
+            postParams.put("fromdate", stFromDate);
+            postParams.put("todate", stToDate);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error creating request parameters", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postParams,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -140,47 +166,60 @@ public class TotalLeave extends AppCompatActivity {
                             }
                             // Prepare data for the expandable list
                             LinkedHashMap<String, List<String>> leaveDataMap = new LinkedHashMap<>();
+                            List<String> employeeNameList = null;
                             for (int i = 0; i < dataArray.length(); i++) {
                                 JSONObject leaveObject = dataArray.getJSONObject(i);
                                 // Extract leave_date and name
                                 String leaveDate = leaveObject.getString("leave_dates");
                                 String employeeNames = leaveObject.getString("name");
                                 // Split names by comma and add to list
-                                List<String> employeeNameList = Arrays.asList(employeeNames.split(","));
+                                employeeNameList = Arrays.asList(employeeNames.split(","));
                                 leaveDataMap.put(leaveDate, employeeNameList);
+                            }
+                            String result = TextUtils.join(",", employeeNameList);
+                            if ("SEND".equals(stButton)) {
+                                sendMessageToGroup("MSS ATTENDANCE", result);
                             }
                             // Adapter to display the data in ExpandableListView
                             ExpandableListAdapter adapter = new BaseExpandableListAdapter() {
                                 private final List<String> groupList = new ArrayList<>(leaveDataMap.keySet());
                                 private final HashMap<String, List<String>> childMap = new HashMap<>(leaveDataMap);
+
                                 @Override
                                 public int getGroupCount() {
                                     return groupList.size();
                                 }
+
                                 @Override
                                 public int getChildrenCount(int groupPosition) {
                                     return childMap.get(groupList.get(groupPosition)).size();
                                 }
+
                                 @Override
                                 public Object getGroup(int groupPosition) {
                                     return groupList.get(groupPosition);
                                 }
+
                                 @Override
                                 public Object getChild(int groupPosition, int childPosition) {
                                     return childMap.get(groupList.get(groupPosition)).get(childPosition);
                                 }
+
                                 @Override
                                 public long getGroupId(int groupPosition) {
                                     return groupPosition;
                                 }
+
                                 @Override
                                 public long getChildId(int groupPosition, int childPosition) {
                                     return childPosition;
                                 }
+
                                 @Override
                                 public boolean hasStableIds() {
                                     return true;
                                 }
+
                                 @Override
                                 public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
                                     if (convertView == null) {
@@ -192,6 +231,7 @@ public class TotalLeave extends AppCompatActivity {
                                     groupTitle.setTextSize(24);
                                     return convertView;
                                 }
+
                                 @Override
                                 public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
                                     if (convertView == null) {
@@ -203,6 +243,7 @@ public class TotalLeave extends AppCompatActivity {
                                     childText.setTextSize(18);
                                     return convertView;
                                 }
+
                                 @Override
                                 public boolean isChildSelectable(int groupPosition, int childPosition) {
                                     return true;
@@ -227,8 +268,10 @@ public class TotalLeave extends AppCompatActivity {
                         Toast.makeText(TotalLeave.this, "Error fetching data", Toast.LENGTH_SHORT).show();
                     }
                 });
+
         requestQueue.add(jsonObjectRequest);
     }
+
     public void setExpandableListViewHeightBasedOnChildren(ExpandableListView expandableListView) {
         ExpandableListAdapter listAdapter = expandableListView.getExpandableListAdapter();
         if (listAdapter == null) {
@@ -254,4 +297,19 @@ public class TotalLeave extends AppCompatActivity {
         expandableListView.setLayoutParams(params);
         expandableListView.requestLayout();
     }
+    public void sendMessageToGroup(String groupName, String message) {
+        try {
+            Intent sendIntent = new Intent(Intent.ACTION_SEND);
+            sendIntent.setType("text/plain");
+            sendIntent.putExtra(Intent.EXTRA_TEXT, message);
+            sendIntent.setPackage("com.whatsapp");
+
+            // Limitations: Only opens WhatsApp, doesn't auto-send
+            startActivity(Intent.createChooser(sendIntent, "Share with"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "WhatsApp not installed", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }
