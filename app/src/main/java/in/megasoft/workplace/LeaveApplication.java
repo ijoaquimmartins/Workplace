@@ -1,6 +1,7 @@
 package in.megasoft.workplace;
 
 import static in.megasoft.workplace.userDetails.PublicURL;
+import static in.megasoft.workplace.userDetails.URL;
 import static in.megasoft.workplace.userDetails.UserId;
 import static in.megasoft.workplace.userDetails.UserName;
 
@@ -47,6 +48,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -428,7 +430,7 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
     }
     public void applyleave(){
         stremark = etRemark.getText().toString();
-        String urlsubmit = PublicURL + "apply_leave.php";
+        String urlsubmit = URL + "leave-save";
         if(!spinLeaveType.equals("")){
             if(!datesTV.equals("") && !etRemark.equals("")) {
                 in.megasoft.workplace.HttpsTrustManager.allowAllSSL();
@@ -457,9 +459,9 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
                         Map<String, String> data = new HashMap<>();
                         data.put("datestv", leavedates.toString());
                         data.put("etremark", stremark);
-                        data.put("userid", userDetails.UserId.toString());
+                        data.put("userid", Base64.getEncoder().encodeToString(userDetails.UserId.toString().trim().getBytes()));
                         data.put("leavetype", stLeave);
-                        data.put("stleavetype", selectedId);
+                        data.put("stleavetype", Base64.getEncoder().encodeToString(selectedId.trim().getBytes()));
                         data.put("username", UserName);
                         return data;
                     }

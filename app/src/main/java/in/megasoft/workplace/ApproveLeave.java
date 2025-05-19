@@ -2,6 +2,7 @@ package in.megasoft.workplace;
 
 import static in.megasoft.workplace.R.id.tvItem;
 import static in.megasoft.workplace.userDetails.PublicURL;
+import static in.megasoft.workplace.userDetails.URL;
 import static in.megasoft.workplace.userDetails.UserId;
 
 import android.content.DialogInterface;
@@ -37,6 +38,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -246,7 +248,7 @@ public class ApproveLeave extends AppCompatActivity {
     }
     private void approvedeclineLeave(){
         stApproveRemark = etApproveRemark.getText().toString();
-        String urlsubmit = PublicURL + "approve_decline.php";
+        String urlsubmit = URL + "leave-approval";
         in.megasoft.workplace.HttpsTrustManager.allowAllSSL();
         StringRequest stringRequest = new StringRequest(Request.Method.POST, urlsubmit, new Response.Listener<String>() {
             @Override
@@ -270,10 +272,10 @@ public class ApproveLeave extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> data = new HashMap<>();
-                data.put("approveduserid", UserId);
+                data.put("approveduserid", Base64.getEncoder().encodeToString(UserId.trim().getBytes()));
                 data.put("remark", stApproveRemark);
                 data.put("approvedecline", stApproveDecline);
-                data.put("leaveid", leaveId);
+                data.put("leaveid", Base64.getEncoder().encodeToString(leaveId.trim().getBytes()));
                 return data;
             }
         };
@@ -282,7 +284,7 @@ public class ApproveLeave extends AppCompatActivity {
         requestQueue.add(stringRequest);
     }
     private void cancleleave(){
-        String url = PublicURL + "cancleappliedleave.php";
+        String url = URL + "leave-cancel";
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         in.megasoft.workplace.HttpsTrustManager.allowAllSSL();
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
@@ -316,7 +318,7 @@ public class ApproveLeave extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
-                params.put("leaveid", leaveId);
+                params.put("leaveid", Base64.getEncoder().encodeToString(leaveId.trim().getBytes()));
                 return params;
             }
             @Override

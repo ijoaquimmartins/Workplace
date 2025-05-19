@@ -33,7 +33,6 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -128,7 +127,7 @@ public class TotalLeave extends AppCompatActivity {
             Calendar calendar = Calendar.getInstance();
             calendar.add(Calendar.DATE, 1); // Add 1 day for tomorrow
 
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
             String tomorrowDate = sdf.format(calendar.getTime());
             stFromDate=stToDate=tomorrowDate;
             stButton="SEND";
@@ -142,7 +141,6 @@ public class TotalLeave extends AppCompatActivity {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         in.megasoft.workplace.HttpsTrustManager.allowAllSSL();
 
-        // Prepare JSON POST body
         JSONObject postParams = new JSONObject();
         try {
             postParams.put("fromdate", stFromDate);
@@ -158,27 +156,34 @@ public class TotalLeave extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            Log.d("JSON Response", response.toString()); // Log response for troubleshooting
+                            Log.d("JSON Response", response.toString());
                             JSONArray dataArray = response.optJSONArray("data");
+
                             if (dataArray == null || dataArray.length() == 0) {
                                 Toast.makeText(TotalLeave.this, "No data available for selected dates.", Toast.LENGTH_SHORT).show();
                                 return;
                             }
-                            // Prepare data for the expandable list
+
                             LinkedHashMap<String, List<String>> leaveDataMap = new LinkedHashMap<>();
-                            List<String> employeeNameList = null;
+
                             for (int i = 0; i < dataArray.length(); i++) {
                                 JSONObject leaveObject = dataArray.getJSONObject(i);
-                                // Extract leave_date and name
                                 String leaveDate = leaveObject.getString("leave_dates");
                                 String employeeNames = leaveObject.getString("name");
-                                // Split names by comma and add to list
-                                employeeNameList = Arrays.asList(employeeNames.split(","));
+
+                                List<String> employeeNameList = new ArrayList<>();
+                                for (String name : employeeNames.split(",")) {
+                                    employeeNameList.add(name.trim());
+                                }
+
                                 leaveDataMap.put(leaveDate, employeeNameList);
-                            }
-                            String result = TextUtils.join(",", employeeNameList);
-                            if ("SEND".equals(stButton)) {
-                                sendMessageToGroup("MSS ATTENDANCE", result);
+
+                                // SEND message
+                                if ("SEND".equals(stButton)) {
+                                    String names = TextUtils.join("\n", employeeNameList);
+                                    String result = "*_Employees on leave " + leaveDate + "_*" + "\n" + names;
+                                    sendMessageToGroup("MSS ATTENDANCE", result);
+                                }
                             }
                             // Adapter to display the data in ExpandableListView
                             ExpandableListAdapter adapter = new BaseExpandableListAdapter() {
@@ -192,7 +197,8 @@ public class TotalLeave extends AppCompatActivity {
 
                                 @Override
                                 public int getChildrenCount(int groupPosition) {
-                                    return childMap.get(groupList.get(groupPosition)).size();
+                                    List<String> children = childMap.get(groupList.get(groupPosition));
+                                    return children != null ? children.size() : 0;
                                 }
 
                                 @Override
@@ -249,11 +255,13 @@ public class TotalLeave extends AppCompatActivity {
                                     return true;
                                 }
                             };
+
                             expandableListView.setAdapter(adapter);
                             for (int i = 0; i < adapter.getGroupCount(); i++) {
                                 expandableListView.expandGroup(i);
                             }
                             setExpandableListViewHeightBasedOnChildren(expandableListView);
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Log.e("JSON Parsing Error", "Error parsing data: " + e.getMessage());
@@ -271,6 +279,7 @@ public class TotalLeave extends AppCompatActivity {
 
         requestQueue.add(jsonObjectRequest);
     }
+
 
     public void setExpandableListViewHeightBasedOnChildren(ExpandableListView expandableListView) {
         ExpandableListAdapter listAdapter = expandableListView.getExpandableListAdapter();
