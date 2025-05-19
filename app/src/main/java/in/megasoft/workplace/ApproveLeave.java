@@ -28,7 +28,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -61,6 +60,7 @@ public class ApproveLeave extends AppCompatActivity {
         leaveId = bundle.getString("leaveid");
         stUserId = bundle.getString("userid");
         stType = bundle.getString("type");
+
         tvEmployeeName = findViewById(R.id.tvEmployeeName);
         tvTotalLeaves = findViewById(R.id.tvApproveTotalLeaves);
         tvLeaves = findViewById(R.id.tvApproveLeaves);
@@ -176,43 +176,66 @@ public class ApproveLeave extends AppCompatActivity {
         lvEmployeenamesanddate.setLayoutParams(params);
         lvEmployeenamesanddate.requestLayout();
     }
-    private void getLeaveDates(){
-        String url = PublicURL + "fatchleavedetails.php?leaveid="+leaveId;
+    private void getLeaveDates() {
+        String url = URL + "fetch-leave-details";
         RequestQueue request = Volley.newRequestQueue(this);
         in.megasoft.workplace.HttpsTrustManager.allowAllSSL();
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
-            new Response.Listener<JSONArray>() {
-                @Override
-                public void onResponse(JSONArray response) {
-                try {
-                    JSONObject jsonObject = response.getJSONObject(0);
-                    String status = jsonObject.getString("status");
-                    String empremerk = jsonObject.getString("empremerk");
-                    String aproremark = jsonObject.getString("aproremark");
-                    tvEmpRemark.setText(empremerk);
-                    etApproveRemark.setText(aproremark);
-                    if(status.equals("0") && stType.equals("2")){
-                        btnCancel.setVisibility(View.VISIBLE);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONArray jsonArray = new JSONArray(response);
+                            JSONObject jsonObject = jsonArray.getJSONObject(0);
+
+                            String status = jsonObject.getString("status");
+                            String empremerk = jsonObject.getString("empremerk");
+                            String aproremark = jsonObject.getString("aproremark");
+
+                            tvEmpRemark.setText(empremerk);
+                            etApproveRemark.setText(aproremark);
+
+                            if (status.equals("0") && stType.equals("2")) {
+                                btnCancel.setVisibility(View.VISIBLE);
+                            }
+
+                            String[] dateStrings = jsonObject.getString("dates").split(",");
+                            List<String> datesList = new ArrayList<>(Arrays.asList(dateStrings));
+
+                            ArrayAdapter<String> adapter = new ArrayAdapter<>(ApproveLeave.this, R.layout.list_item, tvItem, datesList);
+                            ListView lvDates = findViewById(R.id.lvDates);
+                            lvDates.setAdapter(adapter);
+                            setListViewHeightBasedOnChildren(lvDates);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(ApproveLeave.this, "Error parsing response", Toast.LENGTH_SHORT).show();
+                        }
                     }
-                    String[] dateStrings = jsonObject.getString("dates").split(",");
-                    List<String> datesList = new ArrayList<>(Arrays.asList(dateStrings));
-                    datesList.clear();
-                    datesList.addAll(Arrays.asList(jsonObject.getString("dates").split(",")));
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(ApproveLeave.this, R.layout.list_item, tvItem, datesList);
-                    ListView lvDates = findViewById(R.id.lvDates);
-                    lvDates.setAdapter(adapter);
-                    setListViewHeightBasedOnChildren(lvDates);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(ApproveLeave.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }) {
             @Override
-            public void onErrorResponse(VolleyError error) {
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("leaveid", Base64.getEncoder().encodeToString(leaveId.trim().getBytes()));
+                return params;
             }
-        });
-        request.add(jsonArrayRequest);
+
+            @Override
+            public String getBodyContentType() {
+                return "application/x-www-form-urlencoded; charset=UTF-8";
+            }
+        };
+
+        request.add(stringRequest);
     }
+
     private void getLeaveEmps(){
         String url = PublicURL + "gatleaveappliedemplist.php?leaveid="+leaveId;
         RequestQueue request = Volley.newRequestQueue(this);

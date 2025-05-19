@@ -1,9 +1,8 @@
 package in.megasoft.workplace;
 
-import static in.megasoft.workplace.userDetails.PublicURL;
+import static in.megasoft.workplace.userDetails.URL;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -18,6 +17,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -30,7 +30,9 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class HolidayList extends AppCompatActivity{
 
@@ -48,12 +50,11 @@ public class HolidayList extends AppCompatActivity{
             return insets;
         });
 
-
         spnSelectYear = findViewById(R.id.spnSelectYear);
         lvHolidayList = findViewById(R.id.lvHolidayList);
 
         stYear = "Upcoming";
-        List<String> years = getYearsList(2023);
+        List<String> years = getYearsList(2024);
         years.add(0, "Upcoming");
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 this,
@@ -71,13 +72,11 @@ public class HolidayList extends AppCompatActivity{
                 stYear = parent.getItemAtPosition(position).toString();
                 HolidayListFun();
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
             }
         });
-
     }
     private List<String> getYearsList(int startYear) {
         List<String> years = new ArrayList<>();
@@ -88,39 +87,49 @@ public class HolidayList extends AppCompatActivity{
         return years;
     }
     private void HolidayListFun(){
-        String url = PublicURL + "fatchholiday.php?styear=" + stYear;
+        String url = URL + "fetch-holiday-list";
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-        HttpsTrustManager.allowAllSSL();
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONArray jsonArray = new JSONArray(response);
-                    String[] holidaylist = new String[jsonArray.length()];
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        holidaylist[i] = jsonArray.getString(i);
+        in.megasoft.workplace.HttpsTrustManager.allowAllSSL();
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONArray jsonArray = new JSONArray(response);
+                            String[] holidaylist = new String[jsonArray.length()];
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                holidaylist[i] = jsonArray.getString(i);
+                            }
+                            ArrayAdapter<String> adapter = new ArrayAdapter<>(HolidayList.this, android.R.layout.simple_list_item_1, holidaylist);
+                            ListView lvHolidayList = findViewById(R.id.lvHolidayList);
+                            lvHolidayList.setAdapter(adapter);
+                            setListViewHeightBasedOnChildren(lvHolidayList);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(HolidayList.this, android.R.layout.simple_list_item_1, holidaylist);
-                    ListView lvHolidayList = findViewById(R.id.lvHolidayList);
-                    lvHolidayList.setAdapter(adapter);
-                    setListViewHeightBasedOnChildren(lvHolidayList);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(HolidayList.this, "Error deleting request: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        error.printStackTrace();
+                    }
+                }){
             @Override
-            public void onErrorResponse(VolleyError error) {
-
-                Log.e("VolleyError", error.toString());
-                Toast.makeText(HolidayList.this, "Error fetching data", Toast.LENGTH_SHORT).show();
-
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("styear", stYear);
+                return params;
             }
-        });
+            @Override
+            public String getBodyContentType() {
+                return "application/x-www-form-urlencoded; charset=UTF-8";
+            }
+        };
         requestQueue.add(stringRequest);
-
     }
+
     public void setListViewHeightBasedOnChildren(ListView lvHolidayList) {
         ListAdapter listAdapter = lvHolidayList.getAdapter();
         if (listAdapter == null) {
