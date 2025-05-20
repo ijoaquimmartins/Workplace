@@ -36,7 +36,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText etusername, etuserpassword;
     private Button btnlogin, btncancel;
-    private TextView tvregister, txterrormsg;
+    private TextView tvregister, txterrormsg, tvUpdate;
     private CheckBox cbrememberme;
     public String username, password, mId, stMassage;
     public static final String SHARED_PREFS = "sharedprefs";
@@ -58,7 +58,16 @@ public class LoginActivity extends AppCompatActivity {
         btncancel = findViewById(R.id.btnCancle);
         tvregister = findViewById(R.id.tvRegister);
         cbrememberme = findViewById(R.id.checkboxRemember);
-        autologin();
+        tvUpdate = findViewById(R.id.tvUpdate);
+
+        tvUpdate.setOnClickListener(view -> {
+            update.checkForUpdate(this, this::autologin);
+        });
+
+    //    autologin();
+
+        update.checkForUpdate(this, this::autologin);
+
         if(!etusername.equals("") && !etuserpassword.equals("")){
             login();
         }

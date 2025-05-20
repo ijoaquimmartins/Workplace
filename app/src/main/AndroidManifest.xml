@@ -2,34 +2,32 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission
-        android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
-        tools:ignore="ScopedStorage" />
+    <!-- Permissions -->
+    <!-- For scoped storage on Android 13+ -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
+    <!-- For legacy support and special cases -->
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+
+    <!-- Common permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
+    <!-- Features -->
     <uses-feature android:name="android.hardware.camera.any" />
-    <uses-feature
-        android:name="android.hardware.camera.autofocus"
-        android:required="true" />
-    <uses-feature
-        android:name="android.hardware.telephony"
-        android:required="false" />
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="true" />
+    <uses-feature android:name="android.hardware.telephony" android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -43,66 +41,49 @@
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustPan"
         tools:targetApi="31">
+
+        <!-- Main launcher activity -->
         <activity
-            android:name=".InOutTime"
-            android:exported="false" />
-        <activity
-            android:name=".EmployeeDetails"
-            android:exported="false" />
-        <activity
-            android:name=".AttendanceDetails"
+            android:name=".LoginActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Other activities -->
+        <activity android:name=".InOutTime" android:exported="false" />
+        <activity android:name=".EmployeeDetails" android:exported="false" />
+        <activity android:name=".AttendanceDetails"
             android:exported="false"
             android:label="@string/title_activity_attendance_details" />
+        <activity android:name=".HolidayList" android:exported="false" />
+        <activity android:name=".DailyWorkDetails"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity android:name=".TotalLeave" android:exported="false" />
+        <activity android:name=".LeaveDetailsList" android:exported="false" />
+        <activity android:name=".ApproveLeavesList" android:exported="false" />
+        <activity android:name=".ApproveLeave" android:exported="false" />
+        <activity android:name=".DailyWork" android:exported="false" />
+        <activity android:name=".ManyDaysPickerActivity" android:exported="false" />
+        <activity android:name=".LeaveApplication" android:exported="false" />
+        <activity android:name=".RegisterActivity" android:exported="false" />
+        <activity android:name=".LoadingActivity" android:exported="false" />
+        <activity android:name=".MarkAttendance" android:exported="false" />
+        <activity android:name=".MainActivity" android:exported="false" />
 
+        <!-- Services -->
         <service
             android:name=".RSSPullService"
             android:exported="true" />
         <service
             android:name=".NotificationService"
             android:exported="true"
-            android:foregroundServiceType="dataSync"
-            android:permission="TODO" />
+            android:foregroundServiceType="dataSync" />
 
-        <activity
-            android:name=".HolidayList"
-            android:exported="false" />
-        <activity
-            android:name=".DailyWorkDetails"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".TotalLeave"
-            android:exported="false" />
-        <activity
-            android:name=".LeaveDetailsList"
-            android:exported="false" />
-        <activity
-            android:name=".ApproveLeavesList"
-            android:exported="false" />
-        <activity
-            android:name=".ApproveLeave"
-            android:exported="false" />
-        <activity
-            android:name=".DailyWork"
-            android:exported="false" />
-        <activity
-            android:name=".ManyDaysPickerActivity"
-            android:exported="false" />
-        <activity
-            android:name=".LeaveApplication"
-            android:exported="false" />
-
-        <uses-library
-            android:name="org.apache.http.legacy"
-            android:required="false" />
-
-        <activity
-            android:name=".RegisterActivity"
-            android:exported="false" />
-        <activity
-            android:name=".LoadingActivity"
-            android:exported="false" />
-
+        <!-- BroadcastReceiver for boot -->
         <receiver
             android:name=".BootReceiver"
             android:enabled="true"
@@ -112,21 +93,20 @@
             </intent-filter>
         </receiver>
 
-        <activity
-            android:name=".LoginActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+        <!-- FileProvider for sharing files -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".MarkAttendance"
-            android:exported="false" />
-        <activity
-            android:name=".MainActivity"
-            android:exported="false" />
+        <!-- Optional legacy library support -->
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
     </application>
-
 </manifest>

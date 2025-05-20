@@ -83,7 +83,6 @@ public class ApproveLeave extends AppCompatActivity {
             btnDecline.setVisibility(View.VISIBLE);
         } else if (stType.equals("2")) {
             llLeaveDetails.setVisibility(View.GONE);
-            btnCancel.setVisibility(View.VISIBLE);
             etApproveRemark.setEnabled(false);
             tvHeader.setText("Leave");
             tvEmployeeName.setVisibility(View.GONE);
@@ -180,7 +179,6 @@ public class ApproveLeave extends AppCompatActivity {
         String url = URL + "fetch-leave-details";
         RequestQueue request = Volley.newRequestQueue(this);
         in.megasoft.workplace.HttpsTrustManager.allowAllSSL();
-
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
@@ -188,21 +186,18 @@ public class ApproveLeave extends AppCompatActivity {
                         try {
                             JSONArray jsonArray = new JSONArray(response);
                             JSONObject jsonObject = jsonArray.getJSONObject(0);
-
                             String status = jsonObject.getString("status");
                             String empremerk = jsonObject.getString("empremerk");
                             String aproremark = jsonObject.getString("aproremark");
-
                             tvEmpRemark.setText(empremerk);
                             etApproveRemark.setText(aproremark);
-
                             if (status.equals("0") && stType.equals("2")) {
                                 btnCancel.setVisibility(View.VISIBLE);
+                            }else {
+                                btnCancel.setVisibility(View.GONE);
                             }
-
                             String[] dateStrings = jsonObject.getString("dates").split(",");
                             List<String> datesList = new ArrayList<>(Arrays.asList(dateStrings));
-
                             ArrayAdapter<String> adapter = new ArrayAdapter<>(ApproveLeave.this, R.layout.list_item, tvItem, datesList);
                             ListView lvDates = findViewById(R.id.lvDates);
                             lvDates.setAdapter(adapter);
@@ -226,13 +221,11 @@ public class ApproveLeave extends AppCompatActivity {
                 params.put("leaveid", Base64.getEncoder().encodeToString(leaveId.trim().getBytes()));
                 return params;
             }
-
             @Override
             public String getBodyContentType() {
                 return "application/x-www-form-urlencoded; charset=UTF-8";
             }
         };
-
         request.add(stringRequest);
     }
 
