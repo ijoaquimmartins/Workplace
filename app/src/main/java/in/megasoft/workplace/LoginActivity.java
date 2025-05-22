@@ -2,12 +2,14 @@ package in.megasoft.workplace;
 
 import static in.megasoft.workplace.userDetails.PublicURL;
 
+import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -61,16 +63,29 @@ public class LoginActivity extends AppCompatActivity {
         tvUpdate = findViewById(R.id.tvUpdate);
 
         tvUpdate.setOnClickListener(view -> {
-            update.checkForUpdate(this, this::autologin);
+            Update.checkForUpdate(this, this::autologin);
         });
 
     //    autologin();
 
-        update.checkForUpdate(this, this::autologin);
+    //    Update.checkForUpdate(this, this::autologin);
 
         if(!etusername.equals("") && !etuserpassword.equals("")){
             login();
         }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (this.getPackageManager().canRequestPackageInstalls()) {
+                Update.checkForUpdate(this, this::autologin);
+            } else {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES)
+                        .setData(Uri.parse("package:" + this.getPackageName()));
+                ((Activity) this).startActivityForResult(intent, 1234);
+            }
+        } else {
+            Update.checkForUpdate(this, this::autologin);
+        }
+
         tvregister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -183,6 +198,21 @@ public class LoginActivity extends AppCompatActivity {
             NotificationManager manager = context.getSystemService(NotificationManager.class);
             if (manager != null) {
                 manager.createNotificationChannel(channel);
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1234) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if (getPackageManager().canRequestPackageInstalls()) {
+                    Update.checkForUpdate(this, this::autologin);
+                } else {
+                    Toast.makeText(this, "Install permission not granted", Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }

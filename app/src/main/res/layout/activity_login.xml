@@ -59,7 +59,7 @@
                 android:id="@+id/checkboxRemember"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Remembar Me"
+                android:text="Remember Me"
                 android:textSize="14sp"
                 android:checked="true"
                 android:layout_marginStart="20dp"/>
