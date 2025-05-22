@@ -67,7 +67,6 @@ public class LoginActivity extends AppCompatActivity {
         });
 
     //    autologin();
-
     //    Update.checkForUpdate(this, this::autologin);
 
         if(!etusername.equals("") && !etuserpassword.equals("")){

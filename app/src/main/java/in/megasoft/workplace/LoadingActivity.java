@@ -37,7 +37,7 @@ public class LoadingActivity extends AppCompatActivity {
 
         progressBar = findViewById(R.id.progressBar);
         requestQueue = volleySingelton.getmInstance(this).getRequestQueue();
-        AttendanceMark = LeaveApplication = DailyWork = EmployeeDetails = HolidayDetails = TotalLeave = ApproveLeave = AttendanceDetails = LeaveDetails = DailyWorkDetails = InOutTime = "";
+        AttendanceMark = LeaveApplication = DailyWork = EmployeeDetails = HolidayDetails = TotalLeave = ApproveLeave = AttendanceDetails = LeaveDetails = DailyWorkDetails = InOutTime = ServerMetrics = "";
         Intent i = this.getIntent();
         userDetails.UserName = i.getStringExtra(LoginActivity.USER_NAME);
         user_name = i.getStringExtra(LoginActivity.USER_NAME);
@@ -105,6 +105,7 @@ public class LoadingActivity extends AppCompatActivity {
                 userDetails.LeaveDetails = Arrays.asList(data).contains("LeaveDetails") ? "1" : "2";
                 userDetails.DailyWorkDetails = Arrays.asList(data).contains("DailyWorkDetails") ? "1" : "2";
                 userDetails.InOutTime = Arrays.asList(data).contains("InOutTime") ? "1" : "2";
+                userDetails.ServerMetrics = Arrays.asList(data).contains("ServerMetrics") ? "1" : "2";
 
                 isModuleDataLoaded = true; // Mark as loaded
                 checkIfAllDataLoaded();

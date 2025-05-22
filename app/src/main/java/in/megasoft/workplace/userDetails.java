@@ -6,7 +6,7 @@ public class userDetails extends Application {
     public static String UserId, UserName, UserFullName, EmailID,
     MobileNo, PicPath;
     public static String AttendanceMark, LeaveApplication, DailyWork, EmployeeDetails, HolidayDetails,
-            TotalLeave, ApproveLeave, AttendanceDetails, LeaveDetails, DailyWorkDetails, InOutTime;
+            TotalLeave, ApproveLeave, AttendanceDetails, LeaveDetails, DailyWorkDetails, InOutTime, ServerMetrics;
     public static String AttnDateTime, AttnMarkedAs;
 
     public static String PublicURL = "https://mssgpsdata.in/megasoft/mobileapi/";

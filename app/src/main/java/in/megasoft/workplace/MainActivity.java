@@ -70,7 +70,7 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity {
     public static final String SHARED_PREFS = "sharedprefs";
     Button attendance, applyleave, dailywork, employeedetails, btnRefrash,
-            holidaydetails, totalleave, approveleave, attendancedetails, leavedetails, dailyworkdetails, btnInOutTime;
+            holidaydetails, totalleave, approveleave, attendancedetails, leavedetails, dailyworkdetails, btnInOutTime, btnServerMetric;
     TextView userfullname, emailid, mobileno, tvAttnLeaveList, badge_notification_1, tvUserId, marqueeText, tv_date;
     EditText etOldPassword, etNewPassword, etConfirmPassword;
     String stErrorMassage,holiday,birthday, stDate;
@@ -280,6 +280,10 @@ public class MainActivity extends AppCompatActivity {
             Intent inouttime = new Intent(MainActivity.this, InOutTime.class);
             startActivity(inouttime);
         });
+        btnServerMetric.setOnClickListener(view -> {
+            Intent servermetric = new Intent(MainActivity.this, ServerMetrics.class);
+            startActivity(servermetric);
+        });
     }
     @Override
     protected void onResume() {
@@ -314,6 +318,7 @@ public class MainActivity extends AppCompatActivity {
         leavedetails = findViewById(R.id.btnLeaveDetails);
         dailyworkdetails = findViewById(R.id.btnWorkDetails);
         btnInOutTime = findViewById(R.id.btnInOutTime);
+        btnServerMetric = findViewById(R.id.btnServerMetric);
 
         if (userDetails.AttendanceMark.equals("1")) {
             attendance.setVisibility(View.VISIBLE);
@@ -348,6 +353,9 @@ public class MainActivity extends AppCompatActivity {
         }
         if (userDetails.InOutTime.equals("1")) {
             btnInOutTime.setVisibility(View.VISIBLE);
+        }
+        if (userDetails.ServerMetrics.equals("1")) {
+            btnServerMetric.setVisibility(View.VISIBLE);
         }
     }
     public void getLeaveCount() {
@@ -648,6 +656,7 @@ public class MainActivity extends AppCompatActivity {
                 userDetails.LeaveDetails = Arrays.asList(data).contains("LeaveDetails") ? "1" : "2";
                 userDetails.DailyWorkDetails = Arrays.asList(data).contains("DailyWorkDetails") ? "1" : "2";
                 userDetails.InOutTime = Arrays.asList(data).contains("InOutTime") ? "1" : "2";
+                userDetails.ServerMetrics = Arrays.asList(data).contains("ServerMetrics") ? "1" : "2";
             }
         }, new Response.ErrorListener() {
             @Override
