@@ -61,7 +61,7 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
     EditText etRemark;
     Button btnDatePicker, btnApplyLeave, btnCancel;
     String stTotalLeaves, stLeaves, stBallance, stLeaveType, stDates, stremark,
-            stLeave, selectedId, stTotalCount1, stMassage, stResponse, stDateEmp;
+            stLeave, selectedId, stTotalCount1, stMassage, stResponse, stDateEmp, stFromToDate;
     String[] leavetype1 = {"Select", "Full Day", "Morning Half", "Evening Half"};
     String[] leavetype2 = {"Select", "Full Day"};
     String[] leavetype = {"Select"};
@@ -71,6 +71,8 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
     LinearLayout layZeroLeave;
     ArrayAdapter leavead;
     JSONArray leavedates = new JSONArray();
+    private List<String> allEmps = new ArrayList<>();
+    private ArrayAdapter<String> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +93,10 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
         btnApplyLeave.setVisibility(View.GONE);
         getLeave();
         getLeaveType();
+
+        ListView lvEmployeenames = findViewById(R.id.lvEmployeenames);
+        adapter = new ArrayAdapter<>(LeaveApplication.this, android.R.layout.simple_list_item_1, allEmps);
+        lvEmployeenames.setAdapter(adapter);
 
         spinLeaveType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -313,20 +319,32 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
         datearray.clear();
         newDateArray.clear();
         leavedates = new JSONArray();
+
+        allEmps.clear();
+        adapter.notifyDataSetChanged();
+
         if (calendars.size() > 0) {
             if (stLeaveType.equals("fullday")) {
                 if (calendars.size() < 6) {
-                        btnApplyLeave.setVisibility(View.VISIBLE);
-                        Stream.of(calendars).forEach(calendar -> {
-                        int day1 = calendar.get(Calendar.DAY_OF_MONTH);
-                        int month1 = calendar.get(Calendar.MONTH);
-                        int year1 = calendar.get(Calendar.YEAR);
+                    btnApplyLeave.setVisibility(View.VISIBLE);
+                    Stream.of(calendars).forEach(calendar -> {
+                    int day1 = calendar.get(Calendar.DAY_OF_MONTH);
+                    int month1 = calendar.get(Calendar.MONTH);
+                    int year1 = calendar.get(Calendar.YEAR);
 
                         datearray.add(day1 + "/" + (month1 + 1) + "/" + year1);
                         newDateArray.add(year1 + "-" + (month1 + 1) + "-" + day1);
                         leavedates.put(year1 + "-" + (month1 + 1) + "-" + day1);
-                        stDateEmp = leavedates.toString();
-                        getLeaveEmps();
+                        stDateEmp = String.valueOf(leavedates);
+                        for (int i = 0; i < leavedates.length(); i++) {
+                            try {
+                                String selectedDate = leavedates.getString(i);
+                                getLeaveEmps(selectedDate);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
                     });
                 } else {
                     stMassage = "Maximum 5 Days Only through the app";
@@ -342,8 +360,15 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
                         datearray.add(day1 + "/" + (month1 + 1) + "/" + year1);
                         newDateArray.add(year1 + "-" + (month1 + 1) + "-" + day1);
                         leavedates.put(year1 + "-" + (month1 + 1) + "-" + day1);
-                        stDateEmp = leavedates.toString();
-                        getLeaveEmps();
+                        stDateEmp = String.valueOf(leavedates);
+                            for (int i = 0; i < leavedates.length(); i++) {
+                                try {
+                                    String selectedDate = leavedates.getString(i);
+                                    getLeaveEmps(selectedDate);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
                     });
                 }else{
                     stMassage = "You can apply only 1 half day at a time";
@@ -399,24 +424,30 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
         lvEmployeenames.setLayoutParams(params);
         lvEmployeenames.requestLayout();
     }
-    private void getLeaveEmps(){
-        String url = PublicURL + "getappliedemplist.php?leavedates="+stDateEmp;
+    private void getLeaveEmps(String date) {
+        String url = URL + "fetch-leaves";
         RequestQueue request = Volley.newRequestQueue(this);
         in.megasoft.workplace.HttpsTrustManager.allowAllSSL();
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("response",response.toString());
+                Log.d("response", response);
                 try {
-                    JSONArray jsonArray = new JSONArray(response);
-                    String[] emps = new String[jsonArray.length()];
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        emps[i] = jsonArray.getString(i);
+                    JSONObject jsonObject = new JSONObject(response);
+                    JSONArray dataArray = jsonObject.getJSONArray("data");
+
+                    for (int i = 0; i < dataArray.length(); i++) {
+                        JSONObject empObject = dataArray.getJSONObject(i);
+                        String leaveDate = empObject.getString("leave_dates");
+                        String name = empObject.getString("name");
+                        String formatted = name + " (" + leaveDate + ")";
+                        allEmps.add(formatted);
                     }
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(LeaveApplication.this, android.R.layout.simple_list_item_1, emps);
-                    ListView lvEmployeenames = findViewById(R.id.lvEmployeenames);
-                    lvEmployeenames.setAdapter(adapter);
-                    setListViewHeightBasedOnChildren(lvEmployeenames);
+
+                    adapter.notifyDataSetChanged();
+                    setListViewHeightBasedOnChildren(findViewById(R.id.lvEmployeenames));
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -424,10 +455,21 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Log.e("Volley Error", error.toString());
             }
-        });
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("fromdate", date);
+                params.put("todate", date);
+                return params;
+            }
+        };
+
         request.add(stringRequest);
     }
+
     public void applyleave(){
         stremark = etRemark.getText().toString();
         String urlsubmit = URL + "leave-save";
@@ -527,7 +569,7 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if ("success".equals(stResponse)){
+                if ("success".equals(stMassage)){
 //                    startActivity(new Intent(LeaveApplication.this, MainActivity.class));
                     finish();
                 }else{

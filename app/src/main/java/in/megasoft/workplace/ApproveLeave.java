@@ -269,13 +269,23 @@ public class ApproveLeave extends AppCompatActivity {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, urlsubmit, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                if (response.equals("success")) {
+                Log.d("Response", response.toString());
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+
+                    if (jsonObject.has("success")) {
+                        String result = jsonObject.getString("success");
+                        stMassage = result;
+                    } else if (jsonObject.has("error")) {
+                        String error = jsonObject.getString("error");
+                        stMassage = "Error: " + error;
+                    } else {
+                        stMassage = "Please Contact Admin";
+                    }
                     showAlertDialog();
-                } else if (response.equals("failure")){
-                    stMassage = "Error Applying Leave";
-                    showAlertDialog();
-                }else{
-                    stMassage = "Please Contact Admin";
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    stMassage = "Failed to parse server response";
                     showAlertDialog();
                 }
             }
