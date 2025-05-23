@@ -1,5 +1,6 @@
 package in.megasoft.workplace;
 
+import static in.megasoft.workplace.Functions.*;
 import static in.megasoft.workplace.userDetails.PublicURL;
 
 import android.app.Activity;
@@ -66,23 +67,30 @@ public class LoginActivity extends AppCompatActivity {
             Update.checkForUpdate(this, this::autologin);
         });
 
-    //    autologin();
+        setAppVersion(this, tvUpdate);
+        autologin();
     //    Update.checkForUpdate(this, this::autologin);
 
-        if(!etusername.equals("") && !etuserpassword.equals("")){
-            login();
-        }
+//        if(!etusername.equals("") && !etuserpassword.equals("")){
+//            login();
+//        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             if (this.getPackageManager().canRequestPackageInstalls()) {
-                Update.checkForUpdate(this, this::autologin);
+                if(!etusername.equals("") && !etuserpassword.equals("")){
+                //    login();
+                    Update.checkForUpdate(this, this::login);
+                }
             } else {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES)
                         .setData(Uri.parse("package:" + this.getPackageName()));
                 ((Activity) this).startActivityForResult(intent, 1234);
             }
         } else {
-            Update.checkForUpdate(this, this::autologin);
+            if(!etusername.equals("") && !etuserpassword.equals("")){
+                //login();
+                Update.checkForUpdate(this, this::login);
+            }
         }
 
         tvregister.setOnClickListener(new View.OnClickListener() {

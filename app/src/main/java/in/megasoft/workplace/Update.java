@@ -1,5 +1,7 @@
 package in.megasoft.workplace;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,9 +10,10 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -19,12 +22,13 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
-public class Update {
-    public static void checkForUpdate(Context context, Runnable onNoUpdate) {
-        String url = "https://mssgpsdata.in/megasoft/public/app/update.json";
-        // String url = "http://100.168.10.75/workplace/public/app/update.json"; // for local testing
+import java.io.File;
 
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
+public class Update {
+    public static void checkForUpdate(Activity activity, Runnable onNoUpdate) {
+        String url = "https://mssgpsdata.in/megasoft/public/app/update.json";
+
+        RequestQueue requestQueue = Volley.newRequestQueue(activity);
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 response -> {
@@ -36,7 +40,7 @@ public class Update {
                         int currentVersion = BuildConfig.VERSION_CODE;
 
                         if (latestVersion > currentVersion) {
-                            showUpdateDialog(context, apkUrl);
+                            showUpdateDialog(activity, apkUrl);
                         } else {
                             onNoUpdate.run();
                         }
@@ -50,52 +54,73 @@ public class Update {
                     onNoUpdate.run();
                 }
         );
+
         requestQueue.add(stringRequest);
     }
-    private static void showUpdateDialog(Context context, String apkUrl) {
-        new AlertDialog.Builder(context)
+
+    private static void showUpdateDialog(Activity activity, String apkUrl) {
+        new AlertDialog.Builder(activity)
                 .setTitle("Update Available")
                 .setMessage("A new version is available. Do you want to update?")
-                .setPositiveButton("Yes", (dialog, which) -> downloadAndInstallApk(context, apkUrl))
+                .setPositiveButton("Yes", (dialog, which) -> downloadAndInstallApk(activity, apkUrl))
                 .setNegativeButton("Later", null)
                 .show();
     }
-    private static void downloadAndInstallApk(Context context, String apkUrl) {
+
+    private static void downloadAndInstallApk(Activity activity, String apkUrl) {
+        File apkFile = new File(activity.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "mss.apk");
+
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(apkUrl));
         request.setTitle("Downloading Update");
         request.setDescription("Please wait...");
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "mss.apk");
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setDestinationUri(Uri.fromFile(apkFile));
 
-        DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+        DownloadManager manager = (DownloadManager) activity.getSystemService(Context.DOWNLOAD_SERVICE);
         long downloadId = manager.enqueue(request);
 
         BroadcastReceiver onComplete = new BroadcastReceiver() {
             public void onReceive(Context ctxt, Intent intent) {
-                Uri apkUri = manager.getUriForDownloadedFile(downloadId);
-                installApk(context, apkUri);
-                context.unregisterReceiver(this);
+                File apkFile = new File(activity.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "mss.apk");
+                installApk(activity, apkFile);
+                ctxt.unregisterReceiver(this);
             }
         };
+
         IntentFilter filter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            context.registerReceiver(onComplete, filter, Context.RECEIVER_NOT_EXPORTED);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ContextCompat.registerReceiver(
+                    activity,
+                    onComplete,
+                    filter,
+                    ContextCompat.RECEIVER_EXPORTED
+            );
         } else {
-            ContextCompat.registerReceiver(context, onComplete, filter, ContextCompat.RECEIVER_EXPORTED);
+            activity.registerReceiver(onComplete, filter);
         }
-//        context.registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
-    }
-    private static void installApk(Context context, Uri apkUri) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
-        } else {
-            intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
-        }
-        context.startActivity(intent);
     }
+
+    private static void installApk(Activity activity, File apkFile) {
+        Uri apkUri = FileProvider.getUriForFile(
+                activity,
+                activity.getPackageName() + ".fileprovider",
+                apkFile
+        );
+
+        Intent intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
+        intent.setData(apkUri);
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true);
+        intent.putExtra(Intent.EXTRA_RETURN_RESULT, true);
+
+        try {
+            activity.startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(activity, "Failed to start installer", Toast.LENGTH_LONG).show();
+        }
+    }
+
 }
