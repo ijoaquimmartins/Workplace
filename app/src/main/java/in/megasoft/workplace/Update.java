@@ -60,15 +60,22 @@ public class Update {
 
     private static void showUpdateDialog(Activity activity, String apkUrl) {
         new AlertDialog.Builder(activity)
-                .setTitle("Update Available")
-                .setMessage("A new version is available. Do you want to update?")
-                .setPositiveButton("Yes", (dialog, which) -> downloadAndInstallApk(activity, apkUrl))
-                .setNegativeButton("Later", null)
-                .show();
+            .setTitle("Update Available")
+            .setMessage("A new version is available. Do you want to update?")
+            .setPositiveButton("Yes", (dialog, which) -> downloadAndInstallApk(activity, apkUrl))
+            .setNegativeButton("Later", null)
+            .show();
     }
 
     private static void downloadAndInstallApk(Activity activity, String apkUrl) {
         File apkFile = new File(activity.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "mss.apk");
+
+        if (apkFile.exists()) {
+            boolean deleted = apkFile.delete();
+            if (!deleted) {
+                Toast.makeText(activity, "Failed to delete old APK", Toast.LENGTH_SHORT).show();
+            }
+        }
 
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(apkUrl));
         request.setTitle("Downloading Update");
@@ -99,8 +106,8 @@ public class Update {
         } else {
             activity.registerReceiver(onComplete, filter);
         }
-
     }
+
 
     private static void installApk(Activity activity, File apkFile) {
         Uri apkUri = FileProvider.getUriForFile(

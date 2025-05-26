@@ -69,11 +69,6 @@ public class LoginActivity extends AppCompatActivity {
 
         setAppVersion(this, tvUpdate);
         autologin();
-    //    Update.checkForUpdate(this, this::autologin);
-
-//        if(!etusername.equals("") && !etuserpassword.equals("")){
-//            login();
-//        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             if (this.getPackageManager().canRequestPackageInstalls()) {

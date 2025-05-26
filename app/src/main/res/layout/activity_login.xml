@@ -121,7 +121,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="18sp"
-                    android:textColor="#b30000"
+                    android:textColor="#009933"
                     android:textStyle="italic"
                     android:text="App Version"
                     android:visibility="visible"/>

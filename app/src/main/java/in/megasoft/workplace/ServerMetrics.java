@@ -3,7 +3,11 @@ package in.megasoft.workplace;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,15 +27,17 @@ import java.util.List;
 import java.util.Scanner;
 
 public class ServerMetrics extends AppCompatActivity {
-    String[] serverNames = {"MSSiOT", "PHESGOA", "KTC", "MSS"};
+    String[] serverNames = {"MSS", "MSSiOT", "PHESGOA", "KTC"};
     String[] serverUrls = {
+        "https://mssgpsdata.in/sysmonitor/monitor.php",
         "https://netrasagar.in/sysmonitor/monitor.php",
         "https://mss-util.in/sysmonitor/monitor.php",
-        "https://ktc-orc.in/sysmonitor/monitor.php",
-        "https://mssgpsdata.in/sysmonitor/monitor.php"
+        "https://ktc-orc.in/sysmonitor/monitor.php"
+
     };
 
     LinearLayout chartContainer;
+    Spinner spSelectServer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,16 +45,41 @@ public class ServerMetrics extends AppCompatActivity {
         setContentView(R.layout.activity_server_metrics);
 
         chartContainer = findViewById(R.id.chartContainer);
+        spSelectServer = findViewById(R.id.spSelectServer);
 
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
 
-        for (int i = 0; i < serverUrls.length; i++) {
-            addServerCharts(serverNames[i], serverUrls[i]);
-        }
+//        for (int i = 0; i < serverUrls.length; i++) {
+//            addServerCharts(serverNames[i], serverUrls[i]);
+//        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this, android.R.layout.simple_spinner_item, serverNames);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spSelectServer.setAdapter(adapter);
+
+        spSelectServer.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                String selectedName = serverNames[position];
+                String selectedUrl = serverUrls[position];
+
+                addServerCharts(selectedName, selectedUrl);
+            //    Toast.makeText(ServerMetrics.this, "Selected: " + selectedName + "\nURL: " + selectedUrl, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Optional
+            }
+        });
     }
 
     void addServerCharts(String serverName, String urlStr) {
         try {
+            chartContainer.removeAllViews();
+
             URL url = new URL(urlStr);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             Scanner sc = new Scanner(conn.getInputStream()).useDelimiter("\\A");
