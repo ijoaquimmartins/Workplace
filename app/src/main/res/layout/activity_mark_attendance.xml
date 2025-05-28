@@ -21,24 +21,19 @@
                 android:orientation="horizontal"
                 android:gravity="center_horizontal"
                 android:layout_marginTop="30dp">
-
                 <TextView
-
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="ATTENDANCE"
                     android:textStyle="bold"
                     android:textSize="24sp"/>
-
             </LinearLayout>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_horizontal"
                 android:layout_marginTop="20dp">
-
                 <ImageView
                     android:id="@+id/iconCellTower"
                     android:layout_width="wrap_content"
@@ -50,9 +45,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/ic_satellite"/>
-
             </LinearLayout>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -61,7 +54,6 @@
                 android:layout_marginEnd="15dp"
                 android:orientation="vertical"
                 android:gravity="center_horizontal">
-
                 <TextView
                     android:id="@+id/txtViewDatetime"
                     android:layout_width="wrap_content"
@@ -75,7 +67,6 @@
                     android:text="Mark Attendance"
                     android:textStyle="bold|italic"
                     android:layout_marginTop="15dp"/>
-
                 <Spinner
                     android:id="@+id/spinAttnMark"
                     android:layout_width="match_parent"
@@ -83,7 +74,26 @@
                     android:layout_marginTop="10dp"
                     android:contentDescription="Select Attendance Status"
                     android:minHeight="30dp"
-                    android:textStyle="italic"/>
+                    android:textStyle="italic"
+                    android:visibility="gone"/>
+                <Button
+                    android:id="@+id/btnPresent"
+                    android:layout_width="150dp"
+                    android:layout_height="100dp"
+                    android:text="PRESENT"
+                    android:textSize="20sp"
+                    android:layout_margin="15dp"
+                    android:backgroundTint="@color/color_approved"
+                    android:enabled="false"/>
+                <Button
+                    android:id="@+id/btnEl"
+                    android:layout_width="150dp"
+                    android:layout_height="100dp"
+                    android:text="E L"
+                    android:textSize="20sp"
+                    android:layout_margin="15dp"
+                    android:backgroundTint="#004080"
+                    android:enabled="false"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -91,7 +101,6 @@
                 android:orientation="horizontal"
                 android:gravity="center_horizontal"
                 android:layout_marginTop="30dp">
-
                 <Button
                     android:id="@+id/btnSubmitAttn"
                     android:layout_width="wrap_content"
@@ -102,12 +111,11 @@
                     android:textColor="@color/black"/>
                 <Button
                     android:id="@+id/btncanceltAttn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/cancel"
+                    android:layout_width="150dp"
+                    android:layout_height="100dp"
                     android:layout_marginStart="15dp"
-                    android:backgroundTint="@color/cancle" />
-
+                    android:backgroundTint="@color/cancle"
+                    android:text="@string/cancel" />
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -115,13 +123,11 @@
                 android:layout_marginTop="20dp"
                 android:orientation="vertical"
                 android:gravity="center_horizontal">
-
                 <TextView
                     android:id="@+id/txtErrorMassage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#cc0000"/>
-
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -129,7 +135,6 @@
                 android:orientation="vertical"
                 android:gravity="center_horizontal"
                 android:layout_margin="25dp">
-
                 <TextView
                     android:id="@+id/tvAttenDataTime"
                     android:layout_width="match_parent"
@@ -156,7 +161,6 @@
                 android:gravity="center_horizontal"
                 android:orientation="vertical"
                 android:visibility="gone">
-
                 <TextView
                     android:id="@+id/tvSelectDate"
                     android:layout_width="wrap_content"

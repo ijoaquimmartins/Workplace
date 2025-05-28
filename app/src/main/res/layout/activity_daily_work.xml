@@ -20,7 +20,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-
         <TextView
             android:layout_width="200dp"
             android:layout_height="wrap_content"
@@ -49,7 +48,6 @@
             android:textStyle="bold"/>
         </LinearLayout>
     </LinearLayout>
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -59,19 +57,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_margin="15dp">
-
                 <TextView
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
                     android:text="Dept Reciept : "
                     android:textSize="24sp" />
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -85,7 +80,6 @@
                     android:inputType="number"
                     android:text="0"
                     android:textSize="24sp" />
-
                 <EditText
                     android:id="@+id/tvDpetRectPen"
                     android:layout_width="100dp"
@@ -96,13 +90,11 @@
                     android:gravity="center_horizontal"/>
                 </LinearLayout>
             </LinearLayout>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_margin="15dp">
-
                 <TextView
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
@@ -136,7 +128,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_margin="15dp">
-
                 <TextView
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
@@ -429,7 +420,6 @@
                     android:gravity="center_horizontal"/>
                 </LinearLayout>
             </LinearLayout>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -478,7 +468,6 @@
                     android:maxLength="100"
                     android:maxLines="5"
                     android:textSize="24sp" />
-
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -491,7 +480,6 @@
                     android:text="All Data Uploaded"
                     android:textSize="24sp"
                     android:layout_marginStart="15dp"/>
-
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -517,5 +505,4 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
-
 </LinearLayout>

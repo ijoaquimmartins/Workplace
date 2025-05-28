@@ -73,7 +73,6 @@ public class LoginActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             if (this.getPackageManager().canRequestPackageInstalls()) {
                 if(!etusername.equals("") && !etuserpassword.equals("")){
-                //    login();
                     Update.checkForUpdate(this, this::login);
                 }
             } else {
@@ -83,7 +82,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         } else {
             if(!etusername.equals("") && !etuserpassword.equals("")){
-                //login();
                 Update.checkForUpdate(this, this::login);
             }
         }
@@ -96,6 +94,7 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             }
         });
+
         btnlogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -218,4 +217,5 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
     }
+
 }

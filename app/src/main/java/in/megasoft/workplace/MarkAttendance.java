@@ -60,9 +60,9 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
 
     private String[] atten = {"Present", "E L"};
     private TextView datetime, errormassage, tvAttenDataTime, tvAttenAs, tvSelectDate, tvAdvanceElMark;
-    private String attnspinvalue, newattnspinvalue, latitude, longitude, attnstatus, attendatetime, stMassage;
+    private String attnspinvalue, newattnspinvalue, latitude, longitude, attnstatus, attendatetime, stMassage, stAttnStatus;
     private ImageView imgsetalight;
-    private Button btnSubmitAttn, btncanceltAttn, btnMarkAdvEl;
+    private Button btnSubmitAttn, btncanceltAttn, btnMarkAdvEl, btnPresent, btnEl;
     private Spinner spinattnmark;
     private FusedLocationProviderClient mFusedLocationClient;
 
@@ -84,6 +84,8 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
         llApplyEL = findViewById(R.id.llApplyEL);
         tvSelectDate = findViewById(R.id.tvSelectDate);
         btnMarkAdvEl = findViewById(R.id.btnMarkAdvEl);
+        btnPresent = findViewById(R.id.btnPresent);
+        btnEl = findViewById(R.id.btnEl);
 
         getLastLocation();
 
@@ -116,7 +118,17 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
         });
         //tvSelectDate.setOnClickListener(view -> openDatePicker());
         btnMarkAdvEl.setOnClickListener(view -> MarkAdvanceEl());
+
+        btnPresent.setOnClickListener(view -> {
+            stAttnStatus="1";
+            submitbtn();
+        });
+        btnEl.setOnClickListener(view -> {
+            stAttnStatus="2";
+            submitbtn();
+        });
     }
+
 
     @Override
     public void onResume() {
@@ -142,7 +154,6 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
                 break;
         }
     }
-
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {}
 
@@ -173,8 +184,8 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
     private LocationCallback mLocationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
-            Location mLastLocation = locationResult.getLastLocation();
-            handleLocation(mLastLocation);  // Handle new location
+        Location mLastLocation = locationResult.getLastLocation();
+        handleLocation(mLastLocation);  // Handle new location
         }
     };
 
@@ -241,11 +252,14 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
                 tvAttenDataTime.setText(attnmarkedas);
                 spinattnmark.setVisibility(View.GONE);
                 btnSubmitAttn.setVisibility(View.GONE);
+
                 break;
             case "7":
                 tvAttenAs.setVisibility(View.GONE);
                 tvAttenDataTime.setVisibility(View.GONE);
                 btnSubmitAttn.setVisibility(View.VISIBLE);
+                btnPresent.setEnabled(true);
+                btnEl.setEnabled(true);
                 break;
         }
     }
@@ -282,7 +296,7 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> data = new HashMap<>();
-                data.put("atten_status", newattnspinvalue);
+                data.put("atten_status", stAttnStatus);
                 data.put("userid", Base64.getEncoder().encodeToString((UserId.toString().trim()).getBytes()));
                 data.put("location_let", latitude);
                 data.put("location_long", longitude);
