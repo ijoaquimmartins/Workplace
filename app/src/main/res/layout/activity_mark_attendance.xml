@@ -7,7 +7,6 @@
     tools:context=".MarkAttendance"
     android:orientation="vertical"
     android:background="@color/color_back">
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -19,8 +18,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center_horizontal"
-                android:layout_marginTop="30dp">
+                android:gravity="center_horizontal">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -33,7 +31,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_horizontal"
-                android:layout_marginTop="20dp">
+                android:layout_marginTop="10dp">
                 <ImageView
                     android:id="@+id/iconCellTower"
                     android:layout_width="wrap_content"
@@ -49,9 +47,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginEnd="15dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
                 android:orientation="vertical"
                 android:gravity="center_horizontal">
                 <TextView
@@ -60,13 +58,13 @@
                     android:layout_height="wrap_content"
                     android:text="Date Time"
                     android:textStyle="bold|italic"
-                    android:layout_marginTop="15dp"/>
+                    android:layout_marginTop="5dp"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Mark Attendance"
                     android:textStyle="bold|italic"
-                    android:layout_marginTop="15dp"/>
+                    android:layout_marginTop="5dp"/>
                 <Spinner
                     android:id="@+id/spinAttnMark"
                     android:layout_width="match_parent"
@@ -78,29 +76,28 @@
                     android:visibility="gone"/>
                 <Button
                     android:id="@+id/btnPresent"
-                    android:layout_width="150dp"
+                    android:layout_width="250dp"
                     android:layout_height="100dp"
                     android:text="PRESENT"
                     android:textSize="20sp"
-                    android:layout_margin="15dp"
+                    android:layout_margin="5dp"
                     android:backgroundTint="@color/color_approved"
                     android:enabled="false"/>
                 <Button
                     android:id="@+id/btnEl"
-                    android:layout_width="150dp"
+                    android:layout_width="250dp"
                     android:layout_height="100dp"
                     android:text="E L"
                     android:textSize="20sp"
-                    android:layout_margin="15dp"
-                    android:backgroundTint="#004080"
+                    android:layout_margin="5dp"
+                    android:backgroundTint="@color/submit"
                     android:enabled="false"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center_horizontal"
-                android:layout_marginTop="30dp">
+                android:gravity="center_horizontal">
                 <Button
                     android:id="@+id/btnSubmitAttn"
                     android:layout_width="wrap_content"
@@ -111,11 +108,12 @@
                     android:textColor="@color/black"/>
                 <Button
                     android:id="@+id/btncanceltAttn"
-                    android:layout_width="150dp"
+                    android:layout_width="250dp"
                     android:layout_height="100dp"
-                    android:layout_marginStart="15dp"
+                    android:textSize="20sp"
+                    android:layout_margin="10dp"
                     android:backgroundTint="@color/cancle"
-                    android:text="@string/cancel" />
+                    android:text="@string/cancel"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"

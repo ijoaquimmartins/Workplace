@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -31,6 +32,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,7 +43,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button btnlogin, btncancel;
     private TextView tvregister, txterrormsg, tvUpdate;
     private CheckBox cbrememberme;
-    public String username, password, mId, stMassage;
+    public String username, password, mId, stMassage, token;
     public static final String SHARED_PREFS = "sharedprefs";
     public static final String USERID = "userid";
     public static final String PASSWORD = "password";
@@ -106,6 +108,18 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+
+        FirebaseMessaging.getInstance().getToken()
+            .addOnCompleteListener(task -> {
+                if (!task.isSuccessful()) {
+                    Log.w("FCM", "Fetching FCM registration token failed", task.getException());
+                    return;
+                }
+                // Get the FCM token
+                token = task.getResult();
+                Log.d("FCM", "Token: " + token);
+                // ecsZL7PNSbe8oUHUfO0b3Z:APA91bHS0NyKN1Q_4DI8C_iWxTI1K_JMGmk2MBAARXPIa-aUHK3T3iTkI5Za3jNDjnkP2vvCK5nOoO7RPc_ngve-hKzi0hFGB5eKu0gWBeijgN9rb8qZecM
+            });
     }
     public void login(){
         username = etusername.getText().toString().trim();
@@ -120,6 +134,10 @@ public class LoginActivity extends AppCompatActivity {
                     if (response.equals("success")) {
                         Intent intent = new Intent(LoginActivity.this, LoadingActivity.class);
                         intent.putExtra(USER_NAME, username);
+                        if (getIntent().getBooleanExtra("from_notification", false)) {
+                            Log.d("FCM_DEBUG", "Forwarding extras from LoginActivity to LoadingActivity");
+                            intent.putExtras(getIntent());
+                        }
                         startActivity(intent);
                         finish();
                     } else if (response.equals("failure")) {
@@ -143,6 +161,7 @@ public class LoginActivity extends AppCompatActivity {
                     data.put("username", username);
                     data.put("password", password);
                     data.put("deviceid", mId);
+                    data.put("token", token);
                     return data;
                 }
             };
@@ -176,6 +195,10 @@ public class LoginActivity extends AppCompatActivity {
                 if("success".equals(stMassage)){
                     Intent intent = new Intent(LoginActivity.this, LoadingActivity.class);
                     intent.putExtra(USER_NAME, username);
+                    if (getIntent().getBooleanExtra("from_notification", false)) {
+                        Log.d("FCM_DEBUG", "Forwarding extras from LoginActivity to LoadingActivity");
+                        intent.putExtras(getIntent());
+                    }
                     startActivity(intent);
                     finish();
                 }else{

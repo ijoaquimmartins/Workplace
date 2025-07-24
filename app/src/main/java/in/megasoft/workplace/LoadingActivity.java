@@ -4,6 +4,7 @@ import static in.megasoft.workplace.userDetails.*;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -38,9 +39,9 @@ public class LoadingActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         requestQueue = volleySingelton.getmInstance(this).getRequestQueue();
         AttendanceMark = LeaveApplication = DailyWork = EmployeeDetails = HolidayDetails = TotalLeave = ApproveLeave = AttendanceDetails = LeaveDetails = DailyWorkDetails = InOutTime = ServerMetrics = "";
-        Intent i = this.getIntent();
-        userDetails.UserName = i.getStringExtra(LoginActivity.USER_NAME);
-        user_name = i.getStringExtra(LoginActivity.USER_NAME);
+        Intent intent = this.getIntent();
+        userDetails.UserName = intent.getStringExtra(LoginActivity.USER_NAME);
+        user_name = intent.getStringExtra(LoginActivity.USER_NAME);
 
         getUserData();
         getusermoduledata();
@@ -116,7 +117,6 @@ public class LoadingActivity extends AppCompatActivity {
                 Toast.makeText(LoadingActivity.this, "Error fetching modules: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-
         requestQueue.add(stringRequest);
     }
 
@@ -124,6 +124,10 @@ public class LoadingActivity extends AppCompatActivity {
         // Proceed if both data requests have been completed successfully
         if (isUserDataLoaded && isModuleDataLoaded) {
             Intent intent = new Intent(LoadingActivity.this, MainActivity.class);
+            if (getIntent().getBooleanExtra("from_notification", false)) {
+                Log.d("FCM_DEBUG", "Forwarding extras from LoginActivity to LoadingActivity");
+                intent.putExtras(getIntent());
+            }
             startActivity(intent);
             finish();
         }

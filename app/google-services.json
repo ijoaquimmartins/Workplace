@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "233457244519",
-    "project_id": "workplace-ae663",
-    "storage_bucket": "workplace-ae663.firebasestorage.app"
+    "project_number": "947554114925",
+    "project_id": "workplace-6dbc3",
+    "storage_bucket": "workplace-6dbc3.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:233457244519:android:61caf0b84d560efa2677c2",
+        "mobilesdk_app_id": "1:947554114925:android:644bf038220da21c2b4e64",
         "android_client_info": {
           "package_name": "in.megasoft.workplace"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAP880daENEUCjgK5x12aVvcYaNODWT2jQ"
+          "current_key": "AIzaSyAaOeGz4LlbPVDKqb00gD4av7vdN2zFP7s"
         }
       ],
       "services": {

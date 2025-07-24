@@ -7,6 +7,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -34,7 +36,19 @@ public class Update {
                     JSONObject jsonObject = new JSONObject(response);
                     int latestVersion = jsonObject.getInt("versionCode");
                     String apkUrl = jsonObject.getString("apkUrl");
-                    int currentVersion = BuildConfig.VERSION_CODE;
+
+                    int currentVersion = 0;
+                    try {
+                        PackageManager pm = activity.getPackageManager();
+                        PackageInfo pInfo = pm.getPackageInfo(activity.getPackageName(), 0);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                            currentVersion = (int) pInfo.getLongVersionCode();
+                        } else {
+                            currentVersion = pInfo.versionCode;
+                        }
+                    } catch (PackageManager.NameNotFoundException e) {
+                        e.printStackTrace();
+                    }
                     if (latestVersion > currentVersion) {
                         showUpdateDialog(activity, apkUrl);
                     } else {

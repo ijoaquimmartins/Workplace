@@ -1,5 +1,6 @@
 package in.megasoft.workplace;
 
+import static android.view.View.GONE;
 import static in.megasoft.workplace.userDetails.PublicURL;
 import static in.megasoft.workplace.userDetails.URL;
 import static in.megasoft.workplace.userDetails.UserId;
@@ -250,14 +251,15 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
                 tvAttenDataTime.setVisibility(View.VISIBLE);
                 tvAttenAs.setText(attendatetime);
                 tvAttenDataTime.setText(attnmarkedas);
-                spinattnmark.setVisibility(View.GONE);
-                btnSubmitAttn.setVisibility(View.GONE);
-
+                spinattnmark.setVisibility(GONE);
+                btnSubmitAttn.setVisibility(GONE);
+                btnPresent.setVisibility(GONE);
+                btnEl.setVisibility(GONE);
                 break;
             case "7":
-                tvAttenAs.setVisibility(View.GONE);
-                tvAttenDataTime.setVisibility(View.GONE);
-                btnSubmitAttn.setVisibility(View.VISIBLE);
+                tvAttenAs.setVisibility(GONE);
+                tvAttenDataTime.setVisibility(GONE);
+//                btnSubmitAttn.setVisibility(View.VISIBLE);
                 btnPresent.setEnabled(true);
                 btnEl.setEnabled(true);
                 break;
@@ -267,7 +269,6 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
     private void submitbtn() {
 
         getLastLocation();
-
         String attngetdatetime = datetime.getText().toString();
         String urlsubmit = URL + "attendance-save";
 
@@ -314,7 +315,6 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
         while (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY) {
             calendar.add(Calendar.DAY_OF_MONTH, 1);
         }
-
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
@@ -353,11 +353,11 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
                             String message = jsonResponse.optString("message", "");
                             if(error.equals("")){
                                 stMassage=message.toString();
-                                btnMarkAdvEl.setVisibility(View.GONE);
+                                btnMarkAdvEl.setVisibility(GONE);
                                 showAlertDialog();
                             }else{
-                                llApplyEL.setVisibility(View.GONE);
-                                btnMarkAdvEl.setVisibility(View.GONE);
+                                llApplyEL.setVisibility(GONE);
+                                btnMarkAdvEl.setVisibility(GONE);
                                 stMassage=error.toString();
                                 showAlertDialog();
                             }

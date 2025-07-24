@@ -157,17 +157,20 @@ public class MainActivity extends AppCompatActivity {
         //    AttendanceMark = LeaveApplication = DailyWork = EmployeeDetails = HolidayDetails = TotalLeave = ApproveLeave = AttendanceDetails = LeaveDetails = DailyWorkDetails = InOutTime = "";
 
         swipeRefreshLayout.setOnRefreshListener(
-                new SwipeRefreshLayout.OnRefreshListener() {
-                    @Override
-                    public void onRefresh() {
-                        requestQueue = volleySingelton.getmInstance(MainActivity.this).getRequestQueue();
-                        getusermoduledata();
-                        rights();
-                        recreate();
-                        swipeRefreshLayout.setRefreshing(false);
-                    }
+            new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    requestQueue = volleySingelton.getmInstance(MainActivity.this).getRequestQueue();
+                    getusermoduledata();
+                    rights();
+                    recreate();
+                    swipeRefreshLayout.setRefreshing(false);
                 }
+            }
         );
+
+        //Firebase Notification
+        handleNotificationIntent(getIntent());
 
         userdata();
         rights();
@@ -665,5 +668,32 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         requestQueue.add(stringRequest);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleNotificationIntent(intent);
+    }
+    private void handleNotificationIntent(Intent intent) {
+        boolean fromNotification = intent.getBooleanExtra("from_notification", false);
+        Log.d("FCM_DEBUG", "from_notification = " + fromNotification);
+
+        if (fromNotification) {
+            String title = intent.getStringExtra("notif_title");
+            String body = intent.getStringExtra("notif_body");
+            Log.d("FCM_DEBUG", "Title = " + title + ", Body = " + body);
+
+            showNotificationDialog(title, body);
+        }
+    }
+    private void showNotificationDialog(String title, String message) {
+        new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(message)
+                .setCancelable(false)
+                .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
+                .show();
     }
 }
