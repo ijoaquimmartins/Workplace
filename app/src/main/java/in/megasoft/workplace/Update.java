@@ -82,32 +82,76 @@ public class Update {
                 Toast.makeText(activity, "Failed to delete old APK", Toast.LENGTH_SHORT).show();
             }
         }
+
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(apkUrl));
         request.setTitle("Downloading Update");
         request.setDescription("Please wait...");
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
         request.setDestinationUri(Uri.fromFile(apkFile));
+
         DownloadManager manager = (DownloadManager) activity.getSystemService(Context.DOWNLOAD_SERVICE);
         long downloadId = manager.enqueue(request);
+
+        // Progress dialog
+        AlertDialog progressDialog = new AlertDialog.Builder(activity)
+                .setTitle("Downloading Update")
+                .setMessage("Please wait...\n0%")
+                .setCancelable(false)
+                .create();
+        progressDialog.show();
+
+        // Periodic progress checker
+        new Thread(() -> {
+            boolean downloading = true;
+            DownloadManager.Query query = new DownloadManager.Query();
+            while (downloading) {
+                query.setFilterById(downloadId);
+                android.database.Cursor cursor = manager.query(query);
+                if (cursor != null && cursor.moveToFirst()) {
+                    int bytesDownloaded = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
+                    int bytesTotal = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
+
+                    if (bytesTotal > 0) {
+                        final int progress = (int) ((bytesDownloaded * 100L) / bytesTotal);
+                        activity.runOnUiThread(() -> {
+                            progressDialog.setMessage("Please wait...\n" + progress + "%");
+                        });
+                    }
+
+                    int status = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS));
+                    if (status == DownloadManager.STATUS_SUCCESSFUL || status == DownloadManager.STATUS_FAILED) {
+                        downloading = false;
+                    }
+                    cursor.close();
+                }
+
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            activity.runOnUiThread(progressDialog::dismiss);
+        }).start();
+
+        // On download complete
         BroadcastReceiver onComplete = new BroadcastReceiver() {
             public void onReceive(Context ctxt, Intent intent) {
+                ctxt.unregisterReceiver(this);
                 File apkFile = new File(activity.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "mss.apk");
                 installApk(activity, apkFile);
-                ctxt.unregisterReceiver(this);
             }
         };
+
         IntentFilter filter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            ContextCompat.registerReceiver(
-                activity,
-                onComplete,
-                filter,
-                ContextCompat.RECEIVER_EXPORTED
-            );
+            ContextCompat.registerReceiver(activity, onComplete, filter, ContextCompat.RECEIVER_EXPORTED);
         } else {
             activity.registerReceiver(onComplete, filter);
         }
     }
+
     private static void installApk(Activity activity, File apkFile) {
         Uri apkUri = FileProvider.getUriForFile(
             activity,

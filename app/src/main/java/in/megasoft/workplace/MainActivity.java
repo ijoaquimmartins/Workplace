@@ -9,7 +9,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.SpannableString;
@@ -35,6 +37,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.work.Constraints;
@@ -76,6 +79,9 @@ public class MainActivity extends AppCompatActivity {
     String stErrorMassage,holiday,birthday, stDate;
     RelativeLayout RlMarquee;
     private RequestQueue requestQueue;
+    public static final String USERID = "userid";
+    public static final String PASSWORD = "password";
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, 1, 1, menuIconWithText(this, R.drawable.ic_person, "PROFILE"));
@@ -146,12 +152,26 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 101);
+            }
+        }
+
+        // ✅ Check session before loading UI
+        if (!isLoggedIn()) {
+            Log.d("FCM_DEBUG", "MainActivity: No session, redirecting to LoginActivity");
+            Intent loginIntent = new Intent(this, LoginActivity.class);
+            startActivity(loginIntent);
+            finish();
+            return;
+        }
+
         setContentView(R.layout.activity_main);
-
-//        btnRefrash = findViewById(R.id.btnRefrash);
-//        btnRefrash.setOnClickListener(view -> onRefresh());
-
-    //    AttendanceMark = LeaveApplication = DailyWork = EmployeeDetails = HolidayDetails = TotalLeave = ApproveLeave = AttendanceDetails = LeaveDetails = DailyWorkDetails = InOutTime = "";
 
         SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.refreshLayout);
         //    AttendanceMark = LeaveApplication = DailyWork = EmployeeDetails = HolidayDetails = TotalLeave = ApproveLeave = AttendanceDetails = LeaveDetails = DailyWorkDetails = InOutTime = "";
@@ -169,8 +189,7 @@ public class MainActivity extends AppCompatActivity {
             }
         );
 
-        //Firebase Notification
-        handleNotificationIntent(getIntent());
+        checkNotificationIntent(getIntent());
 
         userdata();
         rights();
@@ -669,26 +688,59 @@ public class MainActivity extends AppCompatActivity {
         });
         requestQueue.add(stringRequest);
     }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 101) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted
+                Toast.makeText(this, "Notification permission granted", Toast.LENGTH_SHORT).show();
+            } else {
+                // Permission denied
+                Toast.makeText(this, "Notification permission denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        setIntent(intent);
-        handleNotificationIntent(intent);
+        setIntent(intent); // VERY IMPORTANT
+        checkNotificationIntent(intent);
     }
-    private void handleNotificationIntent(Intent intent) {
-        boolean fromNotification = intent.getBooleanExtra("from_notification", false);
-        Log.d("FCM_DEBUG", "from_notification = " + fromNotification);
 
-        if (fromNotification) {
+    /**
+     * ✅ Check if user is logged in
+     */
+    private boolean isLoggedIn() {
+        SharedPreferences prefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        String savedUser = prefs.getString(USERID, "");
+        String savedPass = prefs.getString(PASSWORD, "");
+        return !savedUser.isEmpty() && !savedPass.isEmpty(); // Simple session check
+    }
+
+    /**
+     * ✅ Handles notification extras when activity is opened
+     */
+    private void checkNotificationIntent(Intent intent) {
+        if (intent != null && intent.getBooleanExtra("from_notification", false)) {
             String title = intent.getStringExtra("notif_title");
             String body = intent.getStringExtra("notif_body");
-            Log.d("FCM_DEBUG", "Title = " + title + ", Body = " + body);
+            Log.d("FCM_DEBUG", "MainActivity: from_notification=true, title=" + title + ", body=" + body);
 
+            // ✅ Show dialog with title + message
             showNotificationDialog(title, body);
         }
     }
+
+    /**
+     * ✅ Show dialog when notification is tapped
+     */
     private void showNotificationDialog(String title, String message) {
+        if (title == null) title = "Notification";
+        if (message == null) message = "No message";
+
         new AlertDialog.Builder(this)
                 .setTitle(title)
                 .setMessage(message)

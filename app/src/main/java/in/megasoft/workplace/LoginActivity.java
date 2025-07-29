@@ -1,13 +1,12 @@
 package in.megasoft.workplace;
 
-import static in.megasoft.workplace.Functions.*;
+import static in.megasoft.workplace.Functions.setAppVersion;
 import static in.megasoft.workplace.userDetails.PublicURL;
 
 import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -15,7 +14,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -44,16 +42,21 @@ public class LoginActivity extends AppCompatActivity {
     private TextView tvregister, txterrormsg, tvUpdate;
     private CheckBox cbrememberme;
     public String username, password, mId, stMassage, token;
+
     public static final String SHARED_PREFS = "sharedprefs";
     public static final String USERID = "userid";
     public static final String PASSWORD = "password";
     public static final String USER_NAME = "username";
-    private final String loginurl = PublicURL +"login.php";
+
+    private final String loginurl = PublicURL + "login.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        // ✅ Check if opened from notification
+        checkNotificationExtras(getIntent());
 
         createNotificationChannel(this);
 
@@ -72,80 +75,90 @@ public class LoginActivity extends AppCompatActivity {
         setAppVersion(this, tvUpdate);
         autologin();
 
+        // ✅ Auto update check if fields not empty
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             if (this.getPackageManager().canRequestPackageInstalls()) {
-                if(!etusername.equals("") && !etuserpassword.equals("")){
+                if (!etusername.getText().toString().isEmpty() && !etuserpassword.getText().toString().isEmpty()) {
                     Update.checkForUpdate(this, this::login);
                 }
             } else {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES)
-                        .setData(Uri.parse("package:" + this.getPackageName()));
+                    .setData(Uri.parse("package:" + this.getPackageName()));
                 ((Activity) this).startActivityForResult(intent, 1234);
             }
         } else {
-            if(!etusername.equals("") && !etuserpassword.equals("")){
+            if (!etusername.getText().toString().isEmpty() && !etuserpassword.getText().toString().isEmpty()) {
                 Update.checkForUpdate(this, this::login);
             }
         }
 
-        tvregister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i =new Intent(LoginActivity.this, RegisterActivity.class);
-                startActivity(i);
-                finish();
-            }
+        // ✅ Register Activity
+        tvregister.setOnClickListener(view -> {
+            Intent i = new Intent(LoginActivity.this, RegisterActivity.class);
+            startActivity(i);
+            finish();
         });
 
-        btnlogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(cbrememberme.isChecked()){
-                    savedata();
-                    login();
-                }else {
-                    login();
-                }
+        // ✅ Login Button
+        btnlogin.setOnClickListener(view -> {
+            if (cbrememberme.isChecked()) {
+                savedata();
             }
+            login();
         });
 
+        // ✅ Get FCM Token
         FirebaseMessaging.getInstance().getToken()
             .addOnCompleteListener(task -> {
                 if (!task.isSuccessful()) {
                     Log.w("FCM", "Fetching FCM registration token failed", task.getException());
                     return;
                 }
-                // Get the FCM token
                 token = task.getResult();
                 Log.d("FCM", "Token: " + token);
-                // ecsZL7PNSbe8oUHUfO0b3Z:APA91bHS0NyKN1Q_4DI8C_iWxTI1K_JMGmk2MBAARXPIa-aUHK3T3iTkI5Za3jNDjnkP2vvCK5nOoO7RPc_ngve-hKzi0hFGB5eKu0gWBeijgN9rb8qZecM
             });
     }
-    public void login(){
+
+    private void checkNotificationExtras(Intent intent) {
+        boolean fromNotification = intent.getBooleanExtra("from_notification", false);
+        Log.d("FCM_DEBUG", "LoginActivity: from_notification=" + fromNotification);
+
+        if (fromNotification) {
+            String title = intent.getStringExtra("notif_title");
+            String body = intent.getStringExtra("notif_body");
+            Log.d("FCM_DEBUG", "LoginActivity: title=" + title + ", body=" + body);
+
+            Toast.makeText(this, "Opened from Notification: " + title, Toast.LENGTH_LONG).show();
+
+        }
+    }
+
+    public void login() {
         username = etusername.getText().toString().trim();
         password = etuserpassword.getText().toString().trim();
-        userDetails.UserName = username.toString();
+        userDetails.UserName = username;
         mId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        if (!username.equals("") && !password.equals("")) {
+
+        if (!username.isEmpty() && !password.isEmpty()) {
             in.megasoft.workplace.HttpsTrustManager.allowAllSSL();
+
             StringRequest stringRequest = new StringRequest(Request.Method.POST, loginurl, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     if (response.equals("success")) {
                         Intent intent = new Intent(LoginActivity.this, LoadingActivity.class);
                         intent.putExtra(USER_NAME, username);
+
+                        // ✅ Forward notification extras if any
                         if (getIntent().getBooleanExtra("from_notification", false)) {
                             Log.d("FCM_DEBUG", "Forwarding extras from LoginActivity to LoadingActivity");
                             intent.putExtras(getIntent());
                         }
+
                         startActivity(intent);
                         finish();
-                    } else if (response.equals("failure")) {
-                    //    Toast.makeText(LoginActivity.this, response.toString(), Toast.LENGTH_LONG).show();
-                        stMassage = response.toString();
-                        showAlertDialog();
-                    }else{
-                        stMassage = response.toString();
+                    } else {
+                        stMassage = response;
                         showAlertDialog();
                     }
                 }
@@ -154,7 +167,7 @@ public class LoginActivity extends AppCompatActivity {
                 public void onErrorResponse(VolleyError error) {
                     Toast.makeText(LoginActivity.this, error.toString().trim(), Toast.LENGTH_LONG).show();
                 }
-            }){
+            }) {
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> data = new HashMap<>();
@@ -165,58 +178,74 @@ public class LoginActivity extends AppCompatActivity {
                     return data;
                 }
             };
+
             RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
             requestQueue.add(stringRequest);
         } else {
-            Toast.makeText(LoginActivity.this, "Fields can not be empty", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, "Fields cannot be empty", Toast.LENGTH_SHORT).show();
         }
     }
-    public void savedata(){
+
+    public void savedata() {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(USERID, etusername.getText().toString().trim());
         editor.putString(PASSWORD, etuserpassword.getText().toString().trim());
         editor.apply();
     }
-    public void autologin(){
+
+    public void autologin() {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         username = sharedPreferences.getString(USERID, "");
         password = sharedPreferences.getString(PASSWORD, "");
         etusername.setText(username);
         etuserpassword.setText(password);
     }
+
     private void showAlertDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Massage");
+        builder.setTitle("Message");
         builder.setMessage(stMassage);
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if("success".equals(stMassage)){
-                    Intent intent = new Intent(LoginActivity.this, LoadingActivity.class);
-                    intent.putExtra(USER_NAME, username);
-                    if (getIntent().getBooleanExtra("from_notification", false)) {
-                        Log.d("FCM_DEBUG", "Forwarding extras from LoginActivity to LoadingActivity");
-                        intent.putExtras(getIntent());
-                    }
-                    startActivity(intent);
-                    finish();
-                }else{
-                    dialog.dismiss();
+        builder.setPositiveButton("OK", (dialog, which) -> {
+            if ("success".equals(stMassage)) {
+                Intent intent = new Intent(LoginActivity.this, LoadingActivity.class);
+                intent.putExtra(USER_NAME, username);
+
+                if (getIntent().getBooleanExtra("from_notification", false)) {
+                    Log.d("FCM_DEBUG", "Forwarding extras from LoginActivity to LoadingActivity");
+                    intent.putExtras(getIntent());
                 }
+
+                startActivity(intent);
+                finish();
+            } else {
+                dialog.dismiss();
             }
         });
-        builder.setCancelable(false);// Prevent dismissing the dialog by tapping outside
+        builder.setCancelable(false);
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+
+        boolean fromNotification = intent.getBooleanExtra("from_notification", false);
+        String notifTitle = intent.getStringExtra("notif_title");
+        String notifBody = intent.getStringExtra("notif_body");
+
+        Log.d("FCM_DEBUG", "onNewIntent received: from_notification=" + fromNotification +
+                ", title=" + notifTitle + ", body=" + notifBody);
+    }
+
     public void createNotificationChannel(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = "Notifications";
             String description = "Channel for app notifications";
             int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel channel = new NotificationChannel("channel_id", name, importance);
+            NotificationChannel channel = new NotificationChannel("default", name, importance);
             channel.setDescription(description);
 
             NotificationManager manager = context.getSystemService(NotificationManager.class);
@@ -240,5 +269,4 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
     }
-
 }
