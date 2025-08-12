@@ -61,9 +61,9 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
 
     private String[] atten = {"Present", "E L"};
     private TextView datetime, errormassage, tvAttenDataTime, tvAttenAs, tvSelectDate, tvAdvanceElMark;
-    private String attnspinvalue, newattnspinvalue, latitude, longitude, attnstatus, attendatetime, stMassage, stAttnStatus;
+    private String attnspinvalue, newattnspinvalue, latitude, longitude, attnstatus, attendatetime, stMassage, stAttnStatus, tableId;
     private ImageView imgsetalight;
-    private Button btnSubmitAttn, btncanceltAttn, btnMarkAdvEl, btnPresent, btnEl;
+    private Button btnSubmitAttn, btncanceltAttn, btnMarkAdvEl, btnPresent, btnEl, btnBackAttn;
     private Spinner spinattnmark;
     private FusedLocationProviderClient mFusedLocationClient;
 
@@ -87,6 +87,8 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
         btnMarkAdvEl = findViewById(R.id.btnMarkAdvEl);
         btnPresent = findViewById(R.id.btnPresent);
         btnEl = findViewById(R.id.btnEl);
+        btnBackAttn = findViewById(R.id.btnBackAttn);
+        btncanceltAttn = findViewById(R.id.btncanceltAttn);
 
         getLastLocation();
 
@@ -104,11 +106,11 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
         btnSubmitAttn = findViewById(R.id.btnSubmitAttn);
         btnSubmitAttn.setOnClickListener(view -> submitbtn());
 
-        btncanceltAttn = findViewById(R.id.btncanceltAttn);
-        btncanceltAttn.setOnClickListener(view -> {
+        btnBackAttn.setOnClickListener(view -> {
 //            startActivity(new Intent(MarkAttendance.this, MainActivity.class));
             finish();
         });
+
         //tvAdvanceElMark.setOnClickListener(view -> llApplyEL.setVisibility(View.VISIBLE));
         tvAdvanceElMark.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,12 +126,13 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
             stAttnStatus="1";
             submitbtn();
         });
+
         btnEl.setOnClickListener(view -> {
             stAttnStatus="2";
             submitbtn();
         });
+        btncanceltAttn.setOnClickListener(view -> cancelMarked());
     }
-
 
     @Override
     public void onResume() {
@@ -138,6 +141,7 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
             getLastLocation();
         }
     }
+
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         attnspinvalue = adapterView.getItemAtPosition(i).toString();
@@ -239,6 +243,7 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
             String[] data = response.split("\\|");
             attnstatus = data[0];
             attendatetime = data[1];
+            tableId = data[2];
             updateAttendanceStatus(attnstatus, attendatetime);
         }, error -> Log.e("Volley Error", error.toString()));
         request.add(stringRequest);
@@ -402,6 +407,57 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
         builder.setCancelable(false);
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+    private void cancelMarked(){
+        String elAvdDate = tvSelectDate.getText().toString();
+        String urlsub = userDetails.PublicURL + "cancelmarked.php";
+
+        in.megasoft.workplace.HttpsTrustManager.allowAllSSL();
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, urlsub,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonResponse = new JSONObject(response);
+                            String error = jsonResponse.optString("error", "");
+                            String message = jsonResponse.optString("message", "");
+                            if(error.equals("")){
+                                stMassage = message.toString();
+                                btnMarkAdvEl.setVisibility(GONE);
+                                showAlertDialog();
+                            }else{
+                                llApplyEL.setVisibility(GONE);
+                                btnMarkAdvEl.setVisibility(GONE);
+                                stMassage=error.toString();
+                                showAlertDialog();
+                            }
+                        } catch (Exception e) {
+                            Log.e("JSON Parse Error", "Error parsing JSON response: " + e.getMessage());
+                            Toast.makeText(MarkAttendance.this, "Error processing response.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(MarkAttendance.this, "Error Adding request: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        error.printStackTrace();
+                    }
+                }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> data = new HashMap<>();
+                data.put("userid", userDetails.UserId);
+                data.put("eldate", elAvdDate);
+                return data;
+            }
+            @Override
+            public String getBodyContentType() {
+                return "application/x-www-form-urlencoded; charset=UTF-8";
+            }
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        requestQueue.add(stringRequest);
     }
 }
 

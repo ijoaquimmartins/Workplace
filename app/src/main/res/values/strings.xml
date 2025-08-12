@@ -14,6 +14,7 @@
     //Comman
     <string name="submit">SUBMIT</string>
     <string name="cancel">CANCEL</string>
+    <string name="back">BACK</string>
     <string name="get">GET</string>
     <string name="export">EXPORT</string>
     <string name="compulsory">All the field marked <font color='#FF0000'>*</font> are compulsory</string>

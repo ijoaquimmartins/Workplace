@@ -119,6 +119,14 @@ public class LoginActivity extends AppCompatActivity {
             });
     }
 
+    /*
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Update.handleActivityResult(this, requestCode, resultCode, data);
+    }
+    */
+
     private void checkNotificationExtras(Intent intent) {
         boolean fromNotification = intent.getBooleanExtra("from_notification", false);
         Log.d("FCM_DEBUG", "LoginActivity: from_notification=" + fromNotification);
