@@ -18,12 +18,12 @@ public class RSSPullService extends IntentService {
 
         // Pass the data to the Worker
         Data inputData = new Data.Builder()
-                .putString("data_key", dataString)
-                .build();
+            .putString("data_key", dataString)
+            .build();
 
         OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(RSSPullWorker.class)
-                .setInputData(inputData)
-                .build();
+            .setInputData(inputData)
+            .build();
 
         // Enqueue the Worker
         WorkManager.getInstance(this).enqueue(workRequest);

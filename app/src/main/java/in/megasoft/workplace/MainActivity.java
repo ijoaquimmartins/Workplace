@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
                     != PackageManager.PERMISSION_GRANTED) {
 
                 ActivityCompat.requestPermissions(this,
-                        new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 101);
+                    new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 101);
             }
         }
 
@@ -172,20 +172,21 @@ public class MainActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_main);
+//        showNotificationDialog(title, body);
 
         SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.refreshLayout);
         //    AttendanceMark = LeaveApplication = DailyWork = EmployeeDetails = HolidayDetails = TotalLeave = ApproveLeave = AttendanceDetails = LeaveDetails = DailyWorkDetails = InOutTime = "";
 
         swipeRefreshLayout.setOnRefreshListener(
             new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    requestQueue = volleySingelton.getmInstance(MainActivity.this).getRequestQueue();
-                    getusermoduledata();
-                    rights();
-                    recreate();
-                    swipeRefreshLayout.setRefreshing(false);
-                }
+            @Override
+            public void onRefresh() {
+                requestQueue = volleySingelton.getmInstance(MainActivity.this).getRequestQueue();
+                getusermoduledata();
+                rights();
+                recreate();
+                swipeRefreshLayout.setRefreshing(false);
+            }
             }
         );
 
@@ -210,7 +211,6 @@ public class MainActivity extends AppCompatActivity {
             public void onTick(long millisUntilFinished) {
                 getAttendanceLeave();
             }
-
             public void onFinish() {
                 getAttendanceLeave();
             }
@@ -306,6 +306,7 @@ public class MainActivity extends AppCompatActivity {
             Intent servermetric = new Intent(MainActivity.this, ServerMetrics.class);
             startActivity(servermetric);
         });
+
     }
     @Override
     protected void onResume() {
@@ -417,7 +418,6 @@ public class MainActivity extends AppCompatActivity {
         lvEmployee.setLayoutParams(params);
         lvEmployee.requestLayout();
     }
-
     private void showDatePickerDialog() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -711,8 +711,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * ✅ Check if user is logged in
-     */
+    * ✅ Check if user is logged in
+    */
     private boolean isLoggedIn() {
         SharedPreferences prefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         String savedUser = prefs.getString(USERID, "");
@@ -721,8 +721,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * ✅ Handles notification extras when activity is opened
-     */
+    * ✅ Handles notification extras when activity is opened
+    */
     private void checkNotificationIntent(Intent intent) {
         if (intent != null && intent.getBooleanExtra("from_notification", false)) {
             String title = intent.getStringExtra("notif_title");
@@ -735,9 +735,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * ✅ Show dialog when notification is tapped
-     */
+    * ✅ Show dialog when notification is tapped
+    */
     private void showNotificationDialog(String title, String message) {
+
+        List<String> notifications = new NotificationDAO(this).getAllNotifications();
+        for (String notif : notifications) {
+            Log.d("LOCAL_NOTIF", notif);
+        }
+
         if (title == null) title = "Notification";
         if (message == null) message = "No message";
 

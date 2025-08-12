@@ -18,16 +18,19 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         String title = remoteMessage.getNotification() != null ? remoteMessage.getNotification().getTitle() : "No Title";
         String body = remoteMessage.getNotification() != null ? remoteMessage.getNotification().getBody() : "No Body";
 
-        Intent intent = new Intent(this, MainActivity.class);  // ✅ go directly to MainActivity
+        // Save notification
+        new NotificationDAO(this).insertNotification(title, body);
+
+        // Create tap intent
+        Intent intent = new Intent(this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.putExtra("from_notification", true);
         intent.putExtra("notif_title", title);
         intent.putExtra("notif_body", body);
 
-        int requestCode = (int) System.currentTimeMillis(); // unique
         PendingIntent pendingIntent = PendingIntent.getActivity(
             this,
-            requestCode,
+            (int) System.currentTimeMillis(),
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
@@ -41,7 +44,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             .setContentIntent(pendingIntent);
 
         NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        manager.notify(requestCode, builder.build());
+        manager.notify(1, builder.build());
     }
 
 }
