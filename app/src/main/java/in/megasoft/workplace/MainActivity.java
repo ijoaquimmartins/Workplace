@@ -742,10 +742,10 @@ public class MainActivity extends AppCompatActivity {
         if (message == null) message = "No message";
 
         new AlertDialog.Builder(this)
-                .setTitle(title)
-                .setMessage(message)
-                .setCancelable(false)
-                .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
-                .show();
+            .setTitle(title)
+            .setMessage(message)
+            .setCancelable(false)
+            .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
+            .show();
     }
 }

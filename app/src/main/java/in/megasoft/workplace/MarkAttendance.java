@@ -414,36 +414,36 @@ public class MarkAttendance extends AppCompatActivity implements AdapterView.OnI
 
         in.megasoft.workplace.HttpsTrustManager.allowAllSSL();
         StringRequest stringRequest = new StringRequest(Request.Method.POST, urlsub,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONObject jsonResponse = new JSONObject(response);
-                            String error = jsonResponse.optString("error", "");
-                            String message = jsonResponse.optString("message", "");
-                            if(error.equals("")){
-                                stMassage = message.toString();
-                                btnMarkAdvEl.setVisibility(GONE);
-                                showAlertDialog();
-                            }else{
-                                llApplyEL.setVisibility(GONE);
-                                btnMarkAdvEl.setVisibility(GONE);
-                                stMassage=error.toString();
-                                showAlertDialog();
-                            }
-                        } catch (Exception e) {
-                            Log.e("JSON Parse Error", "Error parsing JSON response: " + e.getMessage());
-                            Toast.makeText(MarkAttendance.this, "Error processing response.", Toast.LENGTH_SHORT).show();
+            new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        JSONObject jsonResponse = new JSONObject(response);
+                        String error = jsonResponse.optString("error", "");
+                        String message = jsonResponse.optString("message", "");
+                        if(error.equals("")){
+                            stMassage = message.toString();
+                            btnMarkAdvEl.setVisibility(GONE);
+                            showAlertDialog();
+                        }else{
+                            llApplyEL.setVisibility(GONE);
+                            btnMarkAdvEl.setVisibility(GONE);
+                            stMassage=error.toString();
+                            showAlertDialog();
                         }
+                    } catch (Exception e) {
+                        Log.e("JSON Parse Error", "Error parsing JSON response: " + e.getMessage());
+                        Toast.makeText(MarkAttendance.this, "Error processing response.", Toast.LENGTH_SHORT).show();
                     }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(MarkAttendance.this, "Error Adding request: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-                        error.printStackTrace();
-                    }
-                }){
+                }
+            },
+            new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(MarkAttendance.this, "Error Adding request: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    error.printStackTrace();
+                }
+            }){
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> data = new HashMap<>();
