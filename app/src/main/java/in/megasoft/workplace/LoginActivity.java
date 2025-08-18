@@ -107,6 +107,21 @@ public class LoginActivity extends AppCompatActivity {
             login();
         });
 
+        boolean fromNotification = getIntent().getBooleanExtra("from_notification", false);
+        String notifTitle = getIntent().getStringExtra("notif_title");
+        String notifBody = getIntent().getStringExtra("notif_body");
+
+        Log.d("LoginActivity", "from_notification=" + fromNotification);
+
+        if (fromNotification) {
+            // Show dialog with notification details
+            new AlertDialog.Builder(this)
+                .setTitle(notifTitle)
+                .setMessage(notifBody)
+                .setPositiveButton("OK", null)
+                .show();
+        }
+
         // ✅ Get FCM Token
         FirebaseMessaging.getInstance().getToken()
             .addOnCompleteListener(task -> {
@@ -118,14 +133,6 @@ public class LoginActivity extends AppCompatActivity {
                 Log.d("FCM", "Token: " + token);
             });
     }
-
-    /*
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Update.handleActivityResult(this, requestCode, resultCode, data);
-    }
-    */
 
     private void checkNotificationExtras(Intent intent) {
         boolean fromNotification = intent.getBooleanExtra("from_notification", false);

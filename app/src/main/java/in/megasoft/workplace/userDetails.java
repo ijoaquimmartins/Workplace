@@ -14,4 +14,5 @@ public class userDetails extends Application {
 
 //    public static String PublicURL = "http://100.168.10.75:8001/mobileapi/";
 //    public static String URL = "http://100.168.10.75:8001/api/";
+
 }

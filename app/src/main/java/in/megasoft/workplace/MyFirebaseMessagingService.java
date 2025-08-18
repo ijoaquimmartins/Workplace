@@ -15,36 +15,58 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-        String title = remoteMessage.getNotification() != null ? remoteMessage.getNotification().getTitle() : "No Title";
-        String body = remoteMessage.getNotification() != null ? remoteMessage.getNotification().getBody() : "No Body";
+        String title = null;
+        String body = null;
 
-        // Save notification
-        new NotificationDAO(this).insertNotification(title, body);
+        // 1. Prefer Data payload
+        if (remoteMessage.getData().size() > 0) {
+            title = remoteMessage.getData().get("title");
+            body = remoteMessage.getData().get("body");
+        }
 
-        // Create tap intent
-        Intent intent = new Intent(this, LoginActivity.class);
+        // 2. Fallback to Notification payload
+        if (title == null && remoteMessage.getNotification() != null) {
+            title = remoteMessage.getNotification().getTitle();
+            body = remoteMessage.getNotification().getBody();
+        }
+
+        if (title == null) title = "No Title";
+        if (body == null) body = "No Body";
+
+        // ✅ Save to DB
+        NotificationDAO dao = new NotificationDAO(this);
+        dao.insertNotification(title, body);
+
+        // ✅ Send broadcast so NotificationActivity can refresh
+        Intent broadcastIntent = new Intent("NEW_NOTIFICATION");
+        broadcastIntent.putExtra("notif_title", title);
+        broadcastIntent.putExtra("notif_body", body);
+        sendBroadcast(broadcastIntent);  // normal broadcast
+
+
+        // ✅ Build PendingIntent for NotificationActivity
+        Intent intent = new Intent(this, NotificationActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        intent.putExtra("from_notification", true);
         intent.putExtra("notif_title", title);
         intent.putExtra("notif_body", body);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(
-            this,
-            (int) System.currentTimeMillis(),
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+                this,
+                (int) System.currentTimeMillis(),
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
+        // ✅ Build Notification
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "default")
-            .setSmallIcon(R.drawable.ic_notification)
-            .setContentTitle(title)
-            .setContentText(body)
-            .setAutoCancel(true)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setContentIntent(pendingIntent);
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle(title)
+                .setContentText(body)
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(pendingIntent);
 
         NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        manager.notify(1, builder.build());
+        manager.notify((int) System.currentTimeMillis(), builder.build());
     }
-
 }

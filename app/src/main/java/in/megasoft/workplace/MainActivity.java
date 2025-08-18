@@ -85,12 +85,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, 1, 1, menuIconWithText(this, R.drawable.ic_person, "PROFILE"));
-        menu.add(0, 2, 2, menuIconWithText(this, R.drawable.ic_password, "CHANGE PASSWORD"));
-        menu.add(0, 3, 3, menuIconWithText(this, R.drawable.ic_logout, "LOGOUT"));
+        menu.add(0, 2, 2, menuIconWithText(this, R.drawable.ic_notification, "NOTIFICATION"));
+        menu.add(0, 3, 3, menuIconWithText(this, R.drawable.ic_password, "CHANGE PASSWORD"));
+        menu.add(0, 4, 4, menuIconWithText(this, R.drawable.ic_logout, "LOGOUT"));
 
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
         return true;
+
     }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -99,6 +101,38 @@ public class MainActivity extends AppCompatActivity {
             case 1:
                 return true;
             case 2:
+                //showAllNotificationsDialog();
+                /*
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                LayoutInflater inflater = getLayoutInflater();
+                View view1 = inflater.inflate(R.layout.change_password, null);
+                builder.setView(view1);
+
+                tvUserId = view1.findViewById(R.id.txtUserID);
+                etOldPassword = view1.findViewById(R.id.txtOldPassword);
+                etNewPassword = view1.findViewById(R.id.txtNewPassword);
+                etConfirmPassword = view1.findViewById(R.id.txtConfirmPassword);
+
+                builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ChangePassword();
+                        dialog.dismiss();
+                    }
+                });
+                builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.show();*/
+
+                Intent notification = new Intent(MainActivity.this, NotificationActivity.class);
+                startActivity(notification);
+
+                return true;
+            case 3:
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 LayoutInflater inflater = getLayoutInflater();
                 View view1 = inflater.inflate(R.layout.change_password, null);
@@ -124,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
                 });
                 builder.show();
                 return true;
-            case 3:
+            case 4:
                 logout();
                 return true;
         }
@@ -586,7 +620,7 @@ public class MainActivity extends AppCompatActivity {
 
                     if(!holiday.equals("")){
 
-                    //    RlMarquee = findViewById(R.id.RlMarquee);
+//    RlMarquee = findViewById(R.id.RlMarquee);
                         marqueeText = findViewById(R.id.marqueeText);
 
 // Set text before measuring
@@ -714,14 +748,16 @@ public class MainActivity extends AppCompatActivity {
     * ✅ Check if user is logged in
     */
     private boolean isLoggedIn() {
+
         SharedPreferences prefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         String savedUser = prefs.getString(USERID, "");
         String savedPass = prefs.getString(PASSWORD, "");
         return !savedUser.isEmpty() && !savedPass.isEmpty(); // Simple session check
+
     }
 
     /**
-    * ✅ Handles notification extras when activity is opened
+    *  Handles notification extras when activity is opened
     */
     private void checkNotificationIntent(Intent intent) {
         if (intent != null && intent.getBooleanExtra("from_notification", false)) {
@@ -729,29 +765,58 @@ public class MainActivity extends AppCompatActivity {
             String body = intent.getStringExtra("notif_body");
             Log.d("FCM_DEBUG", "MainActivity: from_notification=true, title=" + title + ", body=" + body);
 
-            // ✅ Show dialog with title + message
-            showNotificationDialog(title, body);
+            //  Show dialog with title + message
+        //    showNotificationDialog(title, body);
+
         }
     }
 
     /**
-    * ✅ Show dialog when notification is tapped
+    *  Show dialog when notification is tapped
     */
-    private void showNotificationDialog(String title, String message) {
+//    private void showNotificationDialog(String title, String message) {
+//
+//        List<String> notifications = new NotificationDAO(this).getAllNotifications();
+//        for (String notif : notifications) {
+//            Log.d("LOCAL_NOTIF", notif);
+//        }
+//
+//        if (title == null) title = "Notification";
+//        if (message == null) message = "No message";
+//
+//        new AlertDialog.Builder(this)
+//            .setTitle(title)
+//            .setMessage(message)
+//            .setCancelable(false)
+//            .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
+//            .show();
+//    }
+//    private void showAllNotificationsDialog() {
+//
+//        DatabaseHelper dbHelper = new DatabaseHelper(this);
+//        List<String> notifications = new NotificationDAO(this).getAllNotificationsAsText(); // returns List<String>
+//
+//        if (notifications.isEmpty()) {
+//            new AlertDialog.Builder(this)
+//                .setTitle("Notifications")
+//                .setMessage("No notifications found.")
+//                .setPositiveButton("OK", null)
+//                .show();
+//            return;
+//        }
+//
+//        // Combine into one string
+//        StringBuilder sb = new StringBuilder();
+//        for (String notif : notifications) {
+//            sb.append("• ").append(notif).append("\n\n");
+//        }
+//
+//        new AlertDialog.Builder(this)
+//            .setTitle("Stored Notifications")
+//            .setMessage(sb.toString())
+//            .setCancelable(true)
+//            .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
+//            .show();
+//    }
 
-        List<String> notifications = new NotificationDAO(this).getAllNotifications();
-        for (String notif : notifications) {
-            Log.d("LOCAL_NOTIF", notif);
-        }
-
-        if (title == null) title = "Notification";
-        if (message == null) message = "No message";
-
-        new AlertDialog.Builder(this)
-            .setTitle(title)
-            .setMessage(message)
-            .setCancelable(false)
-            .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
-            .show();
-    }
 }
