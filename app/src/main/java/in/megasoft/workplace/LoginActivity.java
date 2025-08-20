@@ -4,9 +4,6 @@ import static in.megasoft.workplace.Functions.setAppVersion;
 import static in.megasoft.workplace.userDetails.PublicURL;
 
 import android.app.Activity;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -58,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
         // ✅ Check if opened from notification
         checkNotificationExtras(getIntent());
 
-        createNotificationChannel(this);
+    //    createNotificationChannel(this);
 
         etusername = findViewById(R.id.editUserText);
         etuserpassword = findViewById(R.id.editPasswordText);
@@ -75,7 +72,7 @@ public class LoginActivity extends AppCompatActivity {
         setAppVersion(this, tvUpdate);
         autologin();
 
-        // ✅ Auto update check if fields not empty
+        //  Auto update check if fields not empty
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             if (this.getPackageManager().canRequestPackageInstalls()) {
                 if (!etusername.getText().toString().isEmpty() && !etuserpassword.getText().toString().isEmpty()) {
@@ -92,37 +89,71 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
 
-        // ✅ Register Activity
+        //  Register Activity
         tvregister.setOnClickListener(view -> {
             Intent i = new Intent(LoginActivity.this, RegisterActivity.class);
             startActivity(i);
             finish();
         });
 
-        // ✅ Login Button
+        //  Login Button
         btnlogin.setOnClickListener(view -> {
             if (cbrememberme.isChecked()) {
                 savedata();
             }
-            login();
+
+            if (token == null) {
+                Toast.makeText(this, "Please wait, fetching token...", Toast.LENGTH_SHORT).show();
+                FirebaseMessaging.getInstance().getToken()
+                        .addOnSuccessListener(t -> {
+                            token = t;
+                            login(); // retry login once token is available
+                        });
+            } else {
+                login();
+            }
         });
 
-        boolean fromNotification = getIntent().getBooleanExtra("from_notification", false);
-        String notifTitle = getIntent().getStringExtra("notif_title");
-        String notifBody = getIntent().getStringExtra("notif_body");
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        String username = sharedPreferences.getString(USERID, "");
+        String password = sharedPreferences.getString(PASSWORD, "");
+        boolean isLoggedIn = !username.isEmpty() && !password.isEmpty();
 
-        Log.d("LoginActivity", "from_notification=" + fromNotification);
+         boolean fromNotification = getIntent().getBooleanExtra("from_notification", false);
+         String notifTitle = getIntent().getStringExtra("notif_title");
+         String notifBody = getIntent().getStringExtra("notif_body");
 
-        if (fromNotification) {
-            // Show dialog with notification details
-            new AlertDialog.Builder(this)
-                .setTitle(notifTitle)
-                .setMessage(notifBody)
-                .setPositiveButton("OK", null)
-                .show();
-        }
+         Log.d("FCM_DEBUG", "LoadingActivity: isLoggedIn=" + isLoggedIn +
+         ", from_notification=" + fromNotification);
 
-        // ✅ Get FCM Token
+         Intent nextIntent;
+
+         if (fromNotification) {
+         if (isLoggedIn) {
+         //  User already logged in, go directly to NotificationActivity
+         nextIntent = new Intent(this, NotificationActivity.class);
+         nextIntent.putExtra("notif_title", notifTitle);
+         nextIntent.putExtra("notif_body", notifBody);
+         } else {
+         //  Not logged in, send back to LoginActivity
+         nextIntent = new Intent(this, LoginActivity.class);
+         nextIntent.putExtra("from_notification", true);
+         nextIntent.putExtra("notif_title", notifTitle);
+         nextIntent.putExtra("notif_body", notifBody);
+         }
+         } else {
+         //  Normal app open
+         if (isLoggedIn) {
+         nextIntent = new Intent(this, MainActivity.class);
+         } else {
+         nextIntent = new Intent(this, LoginActivity.class);
+         }
+         }
+
+         startActivity(nextIntent);
+         finish();
+
+        //  Get FCM Token
         FirebaseMessaging.getInstance().getToken()
             .addOnCompleteListener(task -> {
                 if (!task.isSuccessful()) {
@@ -164,7 +195,7 @@ public class LoginActivity extends AppCompatActivity {
                         Intent intent = new Intent(LoginActivity.this, LoadingActivity.class);
                         intent.putExtra(USER_NAME, username);
 
-                        // ✅ Forward notification extras if any
+                        //  Forward notification extras if any
                         if (getIntent().getBooleanExtra("from_notification", false)) {
                             Log.d("FCM_DEBUG", "Forwarding extras from LoginActivity to LoadingActivity");
                             intent.putExtras(getIntent());
@@ -241,33 +272,6 @@ public class LoginActivity extends AppCompatActivity {
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
-    }
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        setIntent(intent);
-
-        boolean fromNotification = intent.getBooleanExtra("from_notification", false);
-        String notifTitle = intent.getStringExtra("notif_title");
-        String notifBody = intent.getStringExtra("notif_body");
-
-        Log.d("FCM_DEBUG", "onNewIntent received: from_notification=" + fromNotification +
-                ", title=" + notifTitle + ", body=" + notifBody);
-    }
-
-    public void createNotificationChannel(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "Notifications";
-            String description = "Channel for app notifications";
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel channel = new NotificationChannel("default", name, importance);
-            channel.setDescription(description);
-
-            NotificationManager manager = context.getSystemService(NotificationManager.class);
-            if (manager != null) {
-                manager.createNotificationChannel(channel);
-            }
-        }
     }
 
     @Override

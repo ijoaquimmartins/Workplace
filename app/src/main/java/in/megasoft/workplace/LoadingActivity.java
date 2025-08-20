@@ -121,14 +121,26 @@ public class LoadingActivity extends AppCompatActivity {
     }
 
     private void checkIfAllDataLoaded() {
+
         // Proceed if both data requests have been completed successfully
         if (isUserDataLoaded && isModuleDataLoaded) {
-            Intent intent = new Intent(LoadingActivity.this, MainActivity.class);
-            if (getIntent().getBooleanExtra("from_notification", false)) {
-                Log.d("FCM_DEBUG", "Forwarding extras from LoginActivity to LoadingActivity");
-                intent.putExtras(getIntent());
+            boolean fromNotification = getIntent().getBooleanExtra("from_notification", false);
+
+            Intent nextIntent;
+            if (fromNotification) {
+                // If launched from notification → go to NotificationActivity
+                Log.d("FCM_DEBUG", "LoadingActivity: going to NotificationActivity");
+                nextIntent = new Intent(LoadingActivity.this, NotificationActivity.class);
+            } else {
+                // Normal flow → go to MainActivity
+                Log.d("FCM_DEBUG", "LoadingActivity: going to MainActivity");
+                nextIntent = new Intent(LoadingActivity.this, MainActivity.class);
             }
-            startActivity(intent);
+
+            // Forward all extras (title, body, etc.)
+            nextIntent.putExtras(getIntent());
+
+            startActivity(nextIntent);
             finish();
         }
     }

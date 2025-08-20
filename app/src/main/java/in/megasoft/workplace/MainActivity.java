@@ -224,8 +224,6 @@ public class MainActivity extends AppCompatActivity {
             }
         );
 
-        checkNotificationIntent(getIntent());
-
         userdata();
         rights();
         getLeaveCount();
@@ -737,13 +735,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        setIntent(intent); // VERY IMPORTANT
-        checkNotificationIntent(intent);
-    }
-
     /**
     * ✅ Check if user is logged in
     */
@@ -755,68 +746,5 @@ public class MainActivity extends AppCompatActivity {
         return !savedUser.isEmpty() && !savedPass.isEmpty(); // Simple session check
 
     }
-
-    /**
-    *  Handles notification extras when activity is opened
-    */
-    private void checkNotificationIntent(Intent intent) {
-        if (intent != null && intent.getBooleanExtra("from_notification", false)) {
-            String title = intent.getStringExtra("notif_title");
-            String body = intent.getStringExtra("notif_body");
-            Log.d("FCM_DEBUG", "MainActivity: from_notification=true, title=" + title + ", body=" + body);
-
-            //  Show dialog with title + message
-        //    showNotificationDialog(title, body);
-
-        }
-    }
-
-    /**
-    *  Show dialog when notification is tapped
-    */
-//    private void showNotificationDialog(String title, String message) {
-//
-//        List<String> notifications = new NotificationDAO(this).getAllNotifications();
-//        for (String notif : notifications) {
-//            Log.d("LOCAL_NOTIF", notif);
-//        }
-//
-//        if (title == null) title = "Notification";
-//        if (message == null) message = "No message";
-//
-//        new AlertDialog.Builder(this)
-//            .setTitle(title)
-//            .setMessage(message)
-//            .setCancelable(false)
-//            .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
-//            .show();
-//    }
-//    private void showAllNotificationsDialog() {
-//
-//        DatabaseHelper dbHelper = new DatabaseHelper(this);
-//        List<String> notifications = new NotificationDAO(this).getAllNotificationsAsText(); // returns List<String>
-//
-//        if (notifications.isEmpty()) {
-//            new AlertDialog.Builder(this)
-//                .setTitle("Notifications")
-//                .setMessage("No notifications found.")
-//                .setPositiveButton("OK", null)
-//                .show();
-//            return;
-//        }
-//
-//        // Combine into one string
-//        StringBuilder sb = new StringBuilder();
-//        for (String notif : notifications) {
-//            sb.append("• ").append(notif).append("\n\n");
-//        }
-//
-//        new AlertDialog.Builder(this)
-//            .setTitle("Stored Notifications")
-//            .setMessage(sb.toString())
-//            .setCancelable(true)
-//            .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
-//            .show();
-//    }
 
 }

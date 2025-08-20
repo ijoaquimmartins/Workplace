@@ -1,5 +1,6 @@
 package in.megasoft.workplace;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.util.List;
 
@@ -18,13 +20,18 @@ public class NotificationActivity extends AppCompatActivity {
     private ArrayAdapter<String> adapter;
     private List<String> notifications;
 
-    private BroadcastReceiver notificationReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver notificationReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            // refresh data from DB
-            notifications.clear();
-            notifications.addAll(new NotificationDAO(context).getAllNotificationsAsText());
-            adapter.notifyDataSetChanged();
+            refreshList(); //  always reload DB
+
+            //  show dialog only for real-time pushes
+            String title = intent.getStringExtra("notif_title");
+            String body  = intent.getStringExtra("notif_body");
+
+            if (title != null && body != null) {
+                showDialog(title, body);
+            }
         }
     };
 
@@ -38,17 +45,54 @@ public class NotificationActivity extends AppCompatActivity {
         notifications = new NotificationDAO(this).getAllNotificationsAsText();
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, notifications);
         listView.setAdapter(adapter);
+
+        handleIntent(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleIntent(intent);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        registerReceiver(notificationReceiver, new IntentFilter("NEW_NOTIFICATION"));
+        LocalBroadcastManager.getInstance(this)
+                .registerReceiver(notificationReceiver, new IntentFilter("NEW_NOTIFICATION"));
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(notificationReceiver);
+        LocalBroadcastManager.getInstance(this)
+                .unregisterReceiver(notificationReceiver);
+    }
+
+    private void handleIntent(Intent intent) {
+        boolean fromNotification = intent.getBooleanExtra("from_notification", false);
+        String title = intent.getStringExtra("notif_title");
+        String body = intent.getStringExtra("notif_body");
+
+        refreshList();
+
+        if (fromNotification && title != null && body != null) {
+            showDialog(title, body);
+        }
+    }
+
+    private void refreshList() {
+        notifications.clear();
+        notifications.addAll(new NotificationDAO(this).getAllNotificationsAsText());
+        adapter.notifyDataSetChanged();
+    }
+
+    private void showDialog(String title, String body) {
+        new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(body)
+                .setPositiveButton("OK", null)
+                .show();
     }
 }

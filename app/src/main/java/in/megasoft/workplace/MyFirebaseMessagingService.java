@@ -1,9 +1,12 @@
 package in.megasoft.workplace;
 
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
+import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
@@ -37,27 +40,40 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         NotificationDAO dao = new NotificationDAO(this);
         dao.insertNotification(title, body);
 
+        Log.d("FCM_DEBUG", "MainActivity: from_notification=true, title=" + title + ", body=" + body);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    "default", "General Notifications", NotificationManager.IMPORTANCE_HIGH
+            );
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
+        }
+
         // ✅ Send broadcast so NotificationActivity can refresh
         Intent broadcastIntent = new Intent("NEW_NOTIFICATION");
+        broadcastIntent.putExtra("from_notification", true);
         broadcastIntent.putExtra("notif_title", title);
         broadcastIntent.putExtra("notif_body", body);
-        sendBroadcast(broadcastIntent);  // normal broadcast
+        sendBroadcast(broadcastIntent);
 
-
-        // ✅ Build PendingIntent for NotificationActivity
-        Intent intent = new Intent(this, NotificationActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        // Build PendingIntent for NotificationActivity
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.putExtra("from_notification", true);
         intent.putExtra("notif_title", title);
         intent.putExtra("notif_body", body);
 
+        // Use NEW_TASK to ensure it opens even if app is killed
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 this,
-                (int) System.currentTimeMillis(),
+                0,
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
-        // ✅ Build Notification
+// Build Notification
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "default")
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(title)

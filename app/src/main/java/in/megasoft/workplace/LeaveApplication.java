@@ -533,7 +533,7 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
 
         massage.setText(errordates);
 
-        title.setText("Error");
+        title.setText("Massage");
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
