@@ -13,7 +13,6 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ImageSpan;
@@ -40,11 +39,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.work.Constraints;
-import androidx.work.ExistingPeriodicWorkPolicy;
-import androidx.work.NetworkType;
-import androidx.work.PeriodicWorkRequest;
-import androidx.work.WorkManager;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.android.volley.AuthFailureError;
@@ -67,8 +61,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
     public static final String SHARED_PREFS = "sharedprefs";
@@ -227,26 +219,6 @@ public class MainActivity extends AppCompatActivity {
         userdata();
         rights();
         getLeaveCount();
-        long totalTime = 60000;
-        long interval = 180000;
-        try {
-            schedulePeriodicWork();
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        Intent serviceIntent = new Intent(MainActivity.this, RSSPullService.class);
-        startService(serviceIntent);
-
-        new CountDownTimer(totalTime, interval) {
-            public void onTick(long millisUntilFinished) {
-                getAttendanceLeave();
-            }
-            public void onFinish() {
-                getAttendanceLeave();
-            }
-        }.start();
 
         getAttendanceLeave();
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
@@ -375,41 +347,41 @@ public class MainActivity extends AppCompatActivity {
         btnInOutTime = findViewById(R.id.btnInOutTime);
         btnServerMetric = findViewById(R.id.btnServerMetric);
 
-        if (userDetails.AttendanceMark.equals("1")) {
+        if ("1".equals(userDetails.AttendanceMark)) {
             attendance.setVisibility(View.VISIBLE);
         }
-        if (userDetails.LeaveApplication.equals("1")) {
+        if ("1".equals(userDetails.LeaveApplication)) {
             applyleave.setVisibility(View.VISIBLE);
         }
-        if (userDetails.DailyWork.equals("1")) {
+        if ("1".equals(userDetails.DailyWork)) {
             dailywork.setVisibility(View.VISIBLE);
         }
-        if (userDetails.EmployeeDetails.equals("1")) {
+        if ("1".equals(userDetails.EmployeeDetails)) {
             employeedetails.setVisibility(View.VISIBLE);
         }
-        if (userDetails.HolidayDetails.equals("1")) {
+        if ("1".equals(userDetails.HolidayDetails)) {
             holidaydetails.setVisibility(View.VISIBLE);
         }
-        if (userDetails.TotalLeave.equals("1")) {
+        if ("1".equals(userDetails.TotalLeave)) {
             totalleave.setVisibility(View.VISIBLE);
         }
-        if (userDetails.ApproveLeave.equals("1")) {
+        if ("1".equals(userDetails.ApproveLeave)) {
             approveleave.setVisibility(View.VISIBLE);
             badge_notification_1.setVisibility(View.VISIBLE);
         }
-        if (userDetails.AttendanceDetails.equals("1")) {
+        if ("1".equals(userDetails.AttendanceDetails)) {
             attendancedetails.setVisibility(View.VISIBLE);
         }
-        if (userDetails.LeaveDetails.equals("1")) {
+        if ("1".equals(userDetails.LeaveDetails)) {
             leavedetails.setVisibility(View.VISIBLE);
         }
-        if (userDetails.DailyWorkDetails.equals("1")) {
+        if ("1".equals(userDetails.DailyWorkDetails)) {
             dailyworkdetails.setVisibility(View.VISIBLE);
         }
-        if (userDetails.InOutTime.equals("1")) {
+        if ("1".equals(userDetails.InOutTime)) {
             btnInOutTime.setVisibility(View.VISIBLE);
         }
-        if (userDetails.ServerMetrics.equals("1")) {
+        if ("1".equals(userDetails.ServerMetrics)) {
             btnServerMetric.setVisibility(View.VISIBLE);
         }
     }
@@ -572,21 +544,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    private void schedulePeriodicWork() throws ExecutionException, InterruptedException {
-        PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(NotificationWorker.class, 5, TimeUnit.MINUTES)
-                .setConstraints(new Constraints.Builder()
-                        .setRequiredNetworkType(NetworkType.CONNECTED)
-                        .setRequiresBatteryNotLow(true)
-                        .build())
-                .build();
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-                "notification_work",
-                ExistingPeriodicWorkPolicy.KEEP,
-                workRequest
-        );
-        WorkManager.getInstance(MainActivity.this).getWorkInfosForUniqueWork("notification_work")
-                .get().forEach(info -> Log.d("WorkerState", info.getState().toString()));
-    }
+
     private void showAlertDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Massage");
@@ -602,6 +560,7 @@ public class MainActivity extends AppCompatActivity {
         alertDialog.show();
     }
     public void FlashMassage() {
+
         String userid = Base64.getEncoder().encodeToString(userDetails.UserId.getBytes());
 
         String urlflashmassage = URL + "get-flash-message";
@@ -618,15 +577,15 @@ public class MainActivity extends AppCompatActivity {
 
                     if(!holiday.equals("")){
 
-//    RlMarquee = findViewById(R.id.RlMarquee);
+                        // RlMarquee = findViewById(R.id.RlMarquee);
                         marqueeText = findViewById(R.id.marqueeText);
 
-// Set text before measuring
+                        // Set text before measuring
                         String holidayText = jsonObject.getString("holiday");
                         marqueeText.setText(holidayText);
                         marqueeText.setVisibility(View.VISIBLE);
 
-// Enable marquee effect
+                        // Enable marquee effect
                         marqueeText.setSelected(true);
                         marqueeText.setSingleLine(true);
                         marqueeText.setEllipsize(null);

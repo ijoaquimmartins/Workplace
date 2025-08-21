@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,14 +18,18 @@ public class NotificationDAO {
     }
 
     //  Insert a new notification
-    public long insertNotification(String title, String body) {
+    public void insertNotification(String title, String body) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(DatabaseHelper.COL_TITLE, title);
-        values.put(DatabaseHelper.COL_BODY, body);
-        long id = db.insert(DatabaseHelper.TABLE_NAME, null, values);
+        values.put("title", title);
+        values.put("body", body);
+        try {
+            db.insert(DatabaseHelper.TABLE_NAME, null, values);
+            Log.d("DAO", "Inserted: " + title + " | " + body);
+        } catch (Exception e) {
+            Log.e("DAO", "Insert failed", e);
+        }
         db.close();
-        return id;
     }
 
     //  Get all notifications (formatted as "title: body")

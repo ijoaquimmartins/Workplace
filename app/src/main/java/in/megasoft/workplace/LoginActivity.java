@@ -52,10 +52,10 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // ✅ Check if opened from notification
+        // Check if opened from notification
         checkNotificationExtras(getIntent());
 
-    //    createNotificationChannel(this);
+        // createNotificationChannel(this);
 
         etusername = findViewById(R.id.editUserText);
         etuserpassword = findViewById(R.id.editPasswordText);
@@ -129,25 +129,25 @@ public class LoginActivity extends AppCompatActivity {
          Intent nextIntent;
 
          if (fromNotification) {
-         if (isLoggedIn) {
-         //  User already logged in, go directly to NotificationActivity
-         nextIntent = new Intent(this, NotificationActivity.class);
-         nextIntent.putExtra("notif_title", notifTitle);
-         nextIntent.putExtra("notif_body", notifBody);
+             if (isLoggedIn) {
+                 //  User already logged in, go directly to NotificationActivity
+                 nextIntent = new Intent(this, NotificationActivity.class);
+                 nextIntent.putExtra("notif_title", notifTitle);
+                 nextIntent.putExtra("notif_body", notifBody);
+             } else {
+                 //  Not logged in, send back to LoginActivity
+                 nextIntent = new Intent(this, LoginActivity.class);
+                 nextIntent.putExtra("from_notification", true);
+                 nextIntent.putExtra("notif_title", notifTitle);
+                 nextIntent.putExtra("notif_body", notifBody);
+             }
          } else {
-         //  Not logged in, send back to LoginActivity
-         nextIntent = new Intent(this, LoginActivity.class);
-         nextIntent.putExtra("from_notification", true);
-         nextIntent.putExtra("notif_title", notifTitle);
-         nextIntent.putExtra("notif_body", notifBody);
-         }
-         } else {
-         //  Normal app open
-         if (isLoggedIn) {
-         nextIntent = new Intent(this, MainActivity.class);
-         } else {
-         nextIntent = new Intent(this, LoginActivity.class);
-         }
+             //  Normal app open
+             if (isLoggedIn) {
+                nextIntent = new Intent(this, MainActivity.class);
+             } else {
+                nextIntent = new Intent(this, LoginActivity.class);
+             }
          }
 
          startActivity(nextIntent);
@@ -180,8 +180,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void login() {
-        username = etusername.getText().toString().trim();
-        password = etuserpassword.getText().toString().trim();
+//        username = etusername.getText().toString().trim();
+//        password = etuserpassword.getText().toString().trim();
+
         userDetails.UserName = username;
         mId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
