@@ -180,6 +180,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void login() {
+
 //        username = etusername.getText().toString().trim();
 //        password = etuserpassword.getText().toString().trim();
 
