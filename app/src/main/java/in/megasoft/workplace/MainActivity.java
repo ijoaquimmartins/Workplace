@@ -321,7 +321,7 @@ public class MainActivity extends AppCompatActivity {
         rights();
         getLeaveCount();
         getAttendanceLeave();
-        FlashMassage();
+    //    FlashMassage();
     }
     public void userdata() {
         userfullname = findViewById(R.id.txtUserFullName);

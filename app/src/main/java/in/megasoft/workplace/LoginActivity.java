@@ -23,8 +23,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -36,7 +34,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText etusername, etuserpassword;
     private Button btnlogin, btncancel;
-    private TextView tvregister, txterrormsg, tvUpdate;
+    private TextView tvregister, tvUpdate;
     private CheckBox cbrememberme;
     public String username, password, mId, stMassage, token;
 
@@ -47,6 +45,20 @@ public class LoginActivity extends AppCompatActivity {
 
     private final String loginurl = PublicURL + "login.php";
 
+    /*
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent); // very important!
+        checkNotificationExtras(intent);
+    }
+*/
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("FCM", "onResume extras: " + getIntent().getExtras());
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,8 +66,6 @@ public class LoginActivity extends AppCompatActivity {
 
         // Check if opened from notification
         checkNotificationExtras(getIntent());
-
-        // createNotificationChannel(this);
 
         etusername = findViewById(R.id.editUserText);
         etuserpassword = findViewById(R.id.editPasswordText);
@@ -70,9 +80,11 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         setAppVersion(this, tvUpdate);
+
+        // Try auto-login if prefs available
         autologin();
 
-        //  Auto update check if fields not empty
+        // Update check if username & password filled
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             if (this.getPackageManager().canRequestPackageInstalls()) {
                 if (!etusername.getText().toString().isEmpty() && !etuserpassword.getText().toString().isEmpty()) {
@@ -80,7 +92,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
             } else {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES)
-                    .setData(Uri.parse("package:" + this.getPackageName()));
+                        .setData(Uri.parse("package:" + this.getPackageName()));
                 ((Activity) this).startActivityForResult(intent, 1234);
             }
         } else {
@@ -89,14 +101,14 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
 
-        //  Register Activity
+        // Register Activity
         tvregister.setOnClickListener(view -> {
             Intent i = new Intent(LoginActivity.this, RegisterActivity.class);
             startActivity(i);
             finish();
         });
 
-        //  Login Button
+        // Login Button
         btnlogin.setOnClickListener(view -> {
             if (cbrememberme.isChecked()) {
                 savedata();
@@ -114,55 +126,24 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        String username = sharedPreferences.getString(USERID, "");
-        String password = sharedPreferences.getString(PASSWORD, "");
-        boolean isLoggedIn = !username.isEmpty() && !password.isEmpty();
+        // Get FCM Token
+    FirebaseMessaging.getInstance().getToken()
+        .addOnCompleteListener(task -> {
+            if (!task.isSuccessful()) {
+                Log.w("FCM", "Fetching FCM registration token failed", task.getException());
+                return;
+            }
 
-         boolean fromNotification = getIntent().getBooleanExtra("from_notification", false);
-         String notifTitle = getIntent().getStringExtra("notif_title");
-         String notifBody = getIntent().getStringExtra("notif_body");
+            // Get new FCM registration token
+            String token = task.getResult();
+            Log.d("FCM", "Token: " + token);
 
-         Log.d("FCM_DEBUG", "LoadingActivity: isLoggedIn=" + isLoggedIn +
-         ", from_notification=" + fromNotification);
-
-         Intent nextIntent;
-
-         if (fromNotification) {
-             if (isLoggedIn) {
-                 //  User already logged in, go directly to NotificationActivity
-                 nextIntent = new Intent(this, NotificationActivity.class);
-                 nextIntent.putExtra("notif_title", notifTitle);
-                 nextIntent.putExtra("notif_body", notifBody);
-             } else {
-                 //  Not logged in, send back to LoginActivity
-                 nextIntent = new Intent(this, LoginActivity.class);
-                 nextIntent.putExtra("from_notification", true);
-                 nextIntent.putExtra("notif_title", notifTitle);
-                 nextIntent.putExtra("notif_body", notifBody);
-             }
-         } else {
-             //  Normal app open
-             if (isLoggedIn) {
-                nextIntent = new Intent(this, MainActivity.class);
-             } else {
-                nextIntent = new Intent(this, LoginActivity.class);
-             }
-         }
-
-         startActivity(nextIntent);
-         finish();
-
-        //  Get FCM Token
-        FirebaseMessaging.getInstance().getToken()
-            .addOnCompleteListener(task -> {
-                if (!task.isSuccessful()) {
-                    Log.w("FCM", "Fetching FCM registration token failed", task.getException());
-                    return;
-                }
-                token = task.getResult();
-                Log.d("FCM", "Token: " + token);
-            });
+            // Save in SharedPreferences
+            getSharedPreferences("app_prefs", MODE_PRIVATE)
+                .edit()
+                .putString("fcm_token", token)
+                .apply();
+        });
     }
 
     private void checkNotificationExtras(Intent intent) {
@@ -173,49 +154,40 @@ public class LoginActivity extends AppCompatActivity {
             String title = intent.getStringExtra("notif_title");
             String body = intent.getStringExtra("notif_body");
             Log.d("FCM_DEBUG", "LoginActivity: title=" + title + ", body=" + body);
-
             Toast.makeText(this, "Opened from Notification: " + title, Toast.LENGTH_LONG).show();
-
         }
     }
 
     public void login() {
-
-//        username = etusername.getText().toString().trim();
-//        password = etuserpassword.getText().toString().trim();
-
+        username = etusername.getText().toString().trim();
+        password = etuserpassword.getText().toString().trim();
         userDetails.UserName = username;
         mId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
         if (!username.isEmpty() && !password.isEmpty()) {
             in.megasoft.workplace.HttpsTrustManager.allowAllSSL();
 
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, loginurl, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, loginurl,
+                response -> {
                     if (response.equals("success")) {
-                        Intent intent = new Intent(LoginActivity.this, LoadingActivity.class);
-                        intent.putExtra(USER_NAME, username);
-
-                        //  Forward notification extras if any
+                        Intent intent;
                         if (getIntent().getBooleanExtra("from_notification", false)) {
-                            Log.d("FCM_DEBUG", "Forwarding extras from LoginActivity to LoadingActivity");
+                            intent = new Intent(LoginActivity.this, NotificationActivity.class);
                             intent.putExtras(getIntent());
+                        } else {
+                            intent = new Intent(LoginActivity.this, LoadingActivity.class);
+                            intent.putExtra(USER_NAME, username);
                         }
-
+                        intent.putExtra(USER_NAME, username);
                         startActivity(intent);
                         finish();
                     } else {
                         stMassage = response;
                         showAlertDialog();
                     }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(LoginActivity.this, error.toString().trim(), Toast.LENGTH_LONG).show();
-                }
-            }) {
+                },
+                error -> Toast.makeText(LoginActivity.this, error.toString().trim(), Toast.LENGTH_LONG).show()
+            ) {
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> data = new HashMap<>();
@@ -246,30 +218,32 @@ public class LoginActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         username = sharedPreferences.getString(USERID, "");
         password = sharedPreferences.getString(PASSWORD, "");
-        etusername.setText(username);
-        etuserpassword.setText(password);
+
+        if (!username.isEmpty() && !password.isEmpty()) {
+            // Already logged in → go to next activity
+            Intent intent;
+            if (getIntent().getBooleanExtra("from_notification", false)) {
+                intent = new Intent(this, NotificationActivity.class);
+                intent.putExtras(getIntent());
+            } else {
+                intent = new Intent(this, LoadingActivity.class);
+                intent.putExtra(USER_NAME, username);
+            }
+            intent.putExtra(USER_NAME, username);
+            startActivity(intent);
+            finish();
+        } else {
+            // stay on login screen
+            etusername.setText("");
+            etuserpassword.setText("");
+        }
     }
 
     private void showAlertDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Message");
         builder.setMessage(stMassage);
-        builder.setPositiveButton("OK", (dialog, which) -> {
-            if ("success".equals(stMassage)) {
-                Intent intent = new Intent(LoginActivity.this, LoadingActivity.class);
-                intent.putExtra(USER_NAME, username);
-
-                if (getIntent().getBooleanExtra("from_notification", false)) {
-                    Log.d("FCM_DEBUG", "Forwarding extras from LoginActivity to LoadingActivity");
-                    intent.putExtras(getIntent());
-                }
-
-                startActivity(intent);
-                finish();
-            } else {
-                dialog.dismiss();
-            }
-        });
+        builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
         builder.setCancelable(false);
 
         AlertDialog alertDialog = builder.create();

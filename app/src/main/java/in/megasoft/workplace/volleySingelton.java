@@ -13,7 +13,6 @@ public class volleySingelton {
 
     private volleySingelton(Context context){
         requestQueue = Volley.newRequestQueue(context.getApplicationContext());
-
     }
     public static  synchronized volleySingelton getmInstance(Context context){
 
