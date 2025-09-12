@@ -24,20 +24,20 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         String title = null;
         String body = null;
+        Map<String, String> data = remoteMessage.getData();
+        Log.d("FCM_DEBUG", "Data payload: " + new JSONObject(data).toString());
 
         // 1. Prefer Data payload
         if (remoteMessage.getData().size() > 0) {
 
-            Map<String, String> data = remoteMessage.getData();
+        //    Map<String, String> data = remoteMessage.getData();
 
             // Convert to JSON-like string for logging
             Log.d("FCM_DEBUG", "Data payload: " + new JSONObject(data).toString());
 
             title = remoteMessage.getData().get("title");
             body = remoteMessage.getData().get("body");
-            //  Save to DB
-            NotificationDAO dao = new NotificationDAO(this);
-            dao.insertNotification(title, body);
+
             Log.d("FCM_DEBUG", "MainActivity: from_notification=true, title=" + title + ", body=" + body);
         }
 
@@ -49,8 +49,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         if (title == null) title = "No Title";
         if (body == null) body = "No Body";
-
-
 
         Log.d("FCM_DEBUG", "MainActivity: from_notification=true, title=" + title + ", body=" + body);
 
@@ -75,24 +73,21 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         intent.putExtra("notif_title", title);
         intent.putExtra("notif_body", body);
 
-        // Better flags
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        // This is important to ensure the intent is delivered as-is:
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(
-            this,
-            0,
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+                this,
+                0,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
-
-        // Build Notification
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "default")
-            .setSmallIcon(R.drawable.ic_notification)
-            .setContentTitle(title)
-            .setContentText(body)
-            .setAutoCancel(true)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setContentIntent(pendingIntent);
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle(title)
+                .setContentText(body)
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent);
 
         NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         manager.notify((int) System.currentTimeMillis(), builder.build());

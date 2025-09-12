@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -47,6 +48,17 @@ public class NotificationActivity extends AppCompatActivity {
         listView.setAdapter(adapter);
 
         handleIntent(getIntent());
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                // Handle the back button event
+                Intent intent = new Intent(NotificationActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        };
+    //    requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
     @Override
@@ -95,4 +107,6 @@ public class NotificationActivity extends AppCompatActivity {
                 .setPositiveButton("OK", null)
                 .show();
     }
+
+
 }

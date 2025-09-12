@@ -45,7 +45,6 @@
             android:name=".NotificationActivity"
             android:exported="true"
             android:launchMode="singleTop"
-            android:taskAffinity=""
             android:excludeFromRecents="true"  />
         <activity
             android:name=".ServerMetrics"
@@ -123,6 +122,21 @@
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
+        <service
+            android:name="com.google.firebase.components.ComponentDiscoveryService"
+            android:exported="false">
+            <meta-data
+                android:name="com.google.firebase.components:com.google.firebase.messaging.FirebaseMessagingRegistrar"
+                android:value="com.google.firebase.components.ComponentRegistrar" />
+        </service>
+        <service
+            android:name=".MyFirebaseMessagingService"
+            android:exported="false"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

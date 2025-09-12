@@ -45,14 +45,23 @@ public class LoginActivity extends AppCompatActivity {
 
     private final String loginurl = PublicURL + "login.php";
 
-    /*
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent); // very important!
         checkNotificationExtras(intent);
+
+        Bundle extras = intent.getExtras();
+        if (extras != null) {
+            for (String key : extras.keySet()) {
+                Log.d("FCM_DEBUG", "Extra: " + key + " = " + extras.get(key));
+            }
+        } else {
+            Log.d("FCM_DEBUG", "No extras found!");
+        }
     }
-*/
+
     @Override
     protected void onResume() {
         super.onResume();
