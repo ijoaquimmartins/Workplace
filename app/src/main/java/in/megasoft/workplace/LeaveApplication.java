@@ -484,7 +484,7 @@ public class LeaveApplication extends AppCompatActivity implements OnSelectDateL
                             stMassage = "Leave Applied "+leavedates.toString();
                             showAlertDialog();
                         } else if (response.equals("failure")){
-                            stMassage = "Error Applying Leave";
+                            stMassage = "Leave Applied "+leavedates.toString();
                             showAlertDialog();
                         }else {
                             showCustomDialog(response.toString().trim());

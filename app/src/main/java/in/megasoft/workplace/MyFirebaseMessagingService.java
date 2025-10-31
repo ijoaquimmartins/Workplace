@@ -30,7 +30,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // 1. Prefer Data payload
         if (remoteMessage.getData().size() > 0) {
 
-        //    Map<String, String> data = remoteMessage.getData();
+            // Map<String, String> data = remoteMessage.getData();
 
             // Convert to JSON-like string for logging
             Log.d("FCM_DEBUG", "Data payload: " + new JSONObject(data).toString());
@@ -60,7 +60,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             manager.createNotificationChannel(channel);
         }
 
-        //  Send broadcast so NotificationActivity can refresh
+        // Send broadcast so NotificationActivity can refresh
         Intent broadcastIntent = new Intent("NEW_NOTIFICATION");
         broadcastIntent.putExtra("from_notification", true);
         broadcastIntent.putExtra("notif_title", title);
@@ -77,17 +77,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(
-                this,
-                0,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+            this,
+            0,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "default")
-                .setSmallIcon(R.drawable.ic_notification)
-                .setContentTitle(title)
-                .setContentText(body)
-                .setAutoCancel(true)
-                .setContentIntent(pendingIntent);
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle(title)
+            .setContentText(body)
+            .setAutoCancel(true)
+            .setContentIntent(pendingIntent);
 
         NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         manager.notify((int) System.currentTimeMillis(), builder.build());
